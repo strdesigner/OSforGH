@@ -1,0 +1,367 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E79DA210-412F-4AC9-806B-F9EC07DC9A9E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenSeesUtility</RootNamespace>
+    <AssemblyName>OpenSeesUtility</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GH_IO">
+      <HintPath>..\packages\GH_IO.dll</HintPath>
+    </Reference>
+    <Reference Include="Grasshopper">
+      <HintPath>..\packages\Grasshopper.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenSees.NET.x64, Version=1.0.7450.6850, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OpenSees.NET.x64.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RhinoCommon">
+      <HintPath>..\packages\RhinoCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AnchorBoltCheck.cs" />
+    <Compile Include="AssembleTree.cs" />
+    <Compile Include="AssembleWalls.cs" />
+    <Compile Include="Boundary.cs" />
+    <Compile Include="JapaneseFontResolver.cs" />
+    <Compile Include="ElasticAnalysis.cs" />
+    <Compile Include="ElementAxisVector.cs" />
+    <Compile Include="AssembleLoads.cs" />
+    <Compile Include="BeamShell.cs" />
+    <Compile Include="FromGridPoints.cs" />
+    <Compile Include="kabecheck.cs" />
+    <Compile Include="Material.cs" />
+    <Compile Include="BsplineSurface.cs" />
+    <Compile Include="AIZ.cs" />
+    <Compile Include="FromTriPoints.cs" />
+    <Compile Include="AnalysisResultPDF.cs" />
+    <Compile Include="FromRevit.cs" />
+    <Compile Include="ChangeSection.cs" />
+    <Compile Include="MakeIndex.cs" />
+    <Compile Include="CLTCheck.cs" />
+    <Compile Include="MakeIndex2.cs" />
+    <Compile Include="ElasticAnalysis2.cs" />
+    <Compile Include="CLTCheckPDF.cs" />
+    <Compile Include="kabecheckRC.cs" />
+    <Compile Include="rigidF.cs" />
+    <Compile Include="SurfLoad.cs" />
+    <Compile Include="VisualizeWave.cs" />
+    <Compile Include="PickTree.cs" />
+    <Compile Include="ReadViscousDamper.cs" />
+    <Compile Include="ReadWave.cs" />
+    <Compile Include="RcColumnCheck.cs" />
+    <Compile Include="RcWallCheck.cs" />
+    <Compile Include="ReadBeam3.cs" />
+    <Compile Include="TimeHistoryAnalysis.cs" />
+    <Compile Include="VisualizeResultShell.cs" />
+    <Compile Include="ReadPoint.cs" />
+    <Compile Include="TREEorLISTtoCSV.cs" />
+    <Compile Include="SteelCheckPDF.cs" />
+    <Compile Include="SurfAutoCreation.cs" />
+    <Compile Include="ReadBeam2.cs" />
+    <Compile Include="VisualizeSelection.cs" />
+    <Compile Include="NValue.cs" />
+    <Compile Include="ReadSpring.cs" />
+    <Compile Include="SpringCheck.cs" />
+    <Compile Include="ToRevit.cs" />
+    <Compile Include="TriBezierMetric.cs" />
+    <Compile Include="TriBezierSurface.cs" />
+    <Compile Include="TimberCheckPDF.cs" />
+    <Compile Include="RCBeamCheck.cs" />
+    <Compile Include="SteelBar.cs" />
+    <Compile Include="SolidBase.cs" />
+    <Compile Include="ReadShell.cs" />
+    <Compile Include="NLP.cs" />
+    <Compile Include="MinMax.cs" />
+    <Compile Include="AssembleLines.cs" />
+    <Compile Include="Assembleshells.cs" />
+    <Compile Include="AssembleGeometries.cs" />
+    <Compile Include="LineLoads.cs" />
+    <Compile Include="BeamJoints.cs" />
+    <Compile Include="PlateJoints.cs" />
+    <Compile Include="ReadBeam.cs" />
+    <Compile Include="SeismicLoads.cs" />
+    <Compile Include="StripFooting.cs" />
+    <Compile Include="SurfLoads.cs" />
+    <Compile Include="SteelCheck.cs" />
+    <Compile Include="Rotation.cs" />
+    <Compile Include="NodalLoads.cs" />
+    <Compile Include="PlateFolding.cs" />
+    <Compile Include="SecPerfComponent.cs" />
+    <Compile Include="TimberCheck.cs" />
+    <Compile Include="VisualizeResult.cs" />
+    <Compile Include="VisualizeModel.cs" />
+    <Compile Include="OpenSeesUtilityInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Wick.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="fonts\GenShinGothic-Monospace-Medium.ttf" />
+    <None Include="packages.config" />
+    <None Include="Resources\ElasticAnalysis.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\l_vec.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Loads.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SecPerf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\VisMod.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\VisResult.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lineload.png" />
+    <None Include="Resources\steelcheck.png" />
+    <None Include="Resources\timbercheck.png" />
+    <None Include="Resources\rotation.png" />
+    <None Include="Resources\nodalload.png" />
+    <None Include="Resources\minmax.png" />
+    <None Include="Resources\platefolding.png" />
+    <None Include="Resources\beamshell.png" />
+    <None Include="Resources\boundary.png" />
+    <None Include="Resources\assembletree.png" />
+    <None Include="Resources\assemblelines.png" />
+    <None Include="Resources\assembleshells.png" />
+    <None Include="Resources\assemblegeometry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\surfaceload.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\beamjoint.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nlp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\platejoint.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fromgridpoints.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wick.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\kabew.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\seismic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\stripbase.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\readbeam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\readshell.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\material.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\urbs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\aiz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\solidbase.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rcbeamcheck.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\timbercheckpdf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fromtripoints.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tribezier.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\metric.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\VisPdf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fromrevit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\torevit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\burn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\springcheck.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\readspring.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\kabecheck.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\index.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Nvalue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cltcheck.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\visualizeselection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\readbeam2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\index2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\surfaceload2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\surfautocreation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\steelcheckpdf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\boltcheckpdf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\csv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\readpoint.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ElasticAnalysis2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\VisResultShell.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cltcheckpdf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rcwallcheck.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\readbeam3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\unit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rccolumncheck.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\readwave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\timehistoryanalysis.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\picktree.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\readdamper.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\visualizewave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rigidplane.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)$(ProjectName).gha"
+Erase "$(TargetPath)"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <FallbackCulture>en-US</FallbackCulture>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <StartProgram>D:\Program Files\Rhino 6\System\Rhino.exe</StartProgram>
+    <StartArguments>
+    </StartArguments>
+    <StartAction>Program</StartAction>
+  </PropertyGroup>
+</Project>
