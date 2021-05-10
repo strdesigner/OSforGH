@@ -786,7 +786,7 @@ namespace kabecheckRC
                             values1.Add(floor[i]);//階
                             values1.Add(""); values1.Add(Math.Round(beta[i], 2).ToString()); values1.Add(""); values1.Add(Math.Round(IZWAi, 0).ToString()); values1.Add(""); values1.Add("");
                             values2.Add(""); values2.Add("Y"); values2.Add(""); values2.Add(Math.Round(sumAy[i] * 1000000, 0).ToString()); values2.Add(""); values2.Add(Math.Round(sumAy[i] * 2500000 / beta[i], 0).ToString());
-                            if (sumAy[i] * 2500000 / beta[i] / IZWAi >= 1.0) { values0.Add(Math.Round(sumAy[i] * 2500000 / beta[i] / IZWAi, 2).ToString() + ":O.K."); }
+                            if (sumAy[i] * 2500000 / beta[i] / IZWAi >= 1.0) { values2.Add(Math.Round(sumAy[i] * 2500000 / beta[i] / IZWAi, 2).ToString() + ":O.K."); }
                             else { values2.Add(Math.Round(sumAy[i] * 2500000 / beta[i] / IZWAi, 2).ToString() + ":N.G."); }
                             for (int j = 0; j < values0.Count; j++)
                             {

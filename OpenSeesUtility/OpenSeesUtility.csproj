@@ -83,6 +83,7 @@
     <Compile Include="ElasticAnalysis2.cs" />
     <Compile Include="CLTCheckPDF.cs" />
     <Compile Include="kabecheckRC.cs" />
+    <Compile Include="SteelBase.cs" />
     <Compile Include="rigidF.cs" />
     <Compile Include="SurfLoad.cs" />
     <Compile Include="VisualizeWave.cs" />
