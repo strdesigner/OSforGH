@@ -218,17 +218,17 @@ namespace SteelCheck
                                 if (S[sec] == "〇" || S[sec] == "4" || S[sec] == "○" || S[sec] == "●" || S[sec] == "2")
                                 {
                                     var k = Math.Sqrt(klist[3].Value * klist[3].Value + klist[4].Value * klist[4].Value) + klist[0].Value;//i端の検定比
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(ri);
                                     var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = Math.Sqrt(klist[8].Value * klist[8].Value + klist[9].Value * klist[9].Value) + klist[5].Value;//j端の検定比
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rj);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = Math.Sqrt(klist[13].Value * klist[13].Value + klist[14].Value * klist[14].Value) + klist[10].Value;//中央の検定比
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rc);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
@@ -236,17 +236,17 @@ namespace SteelCheck
                                 else
                                 {
                                     var k = klist[3].Value + klist[4].Value + klist[0].Value;//i端の検定比
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(ri);
                                     var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = klist[8].Value + klist[9].Value + klist[5].Value;//j端の検定比
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rj);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = klist[13].Value + klist[14].Value + klist[10].Value;//中央の検定比
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rc);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
@@ -257,17 +257,17 @@ namespace SteelCheck
                                 if (S[sec] == "〇" || S[sec] == "4" || S[sec] == "○" || S[sec] == "●" || S[sec] == "2")
                                 {
                                     var k = Math.Sqrt(klist[1].Value * klist[1].Value + klist[2].Value * klist[2].Value);
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(ri);
                                     var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = Math.Sqrt(klist[6].Value * klist[6].Value + klist[7].Value * klist[7].Value);
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rj);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = Math.Sqrt(klist[11].Value * klist[11].Value + klist[12].Value * klist[12].Value);
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rc);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
@@ -275,17 +275,17 @@ namespace SteelCheck
                                 else
                                 {
                                     var k = klist[1].Value + klist[2].Value;
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(ri);
                                     var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = klist[6].Value + klist[7].Value;
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rj);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = klist[11].Value + klist[12].Value;
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rc);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
@@ -296,17 +296,17 @@ namespace SteelCheck
                                 if (S[sec] == "〇" || S[sec] == "4" || S[sec] == "○" || S[sec] == "●" || S[sec] == "2")
                                 {
                                     var k = Math.Max(Math.Sqrt(klist[3].Value * klist[3].Value + klist[4].Value * klist[4].Value) + klist[0].Value, Math.Sqrt(klist[1].Value * klist[1].Value + klist[2].Value * klist[2].Value));
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(ri);
                                     var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = Math.Max(Math.Sqrt(klist[8].Value * klist[8].Value + klist[9].Value * klist[9].Value) + klist[5].Value, Math.Sqrt(klist[6].Value * klist[6].Value + klist[7].Value * klist[7].Value));
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rj);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = Math.Max(Math.Sqrt(klist[13].Value * klist[13].Value + klist[14].Value * klist[14].Value) + klist[10].Value, Math.Sqrt(klist[11].Value * klist[11].Value + klist[12].Value * klist[12].Value));
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rc);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
@@ -314,17 +314,17 @@ namespace SteelCheck
                                 else
                                 {
                                     var k = Math.Max(klist[3].Value + klist[4].Value + klist[0].Value, klist[1].Value + klist[2].Value);
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(ri);
                                     var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = Math.Max(klist[8].Value + klist[9].Value + klist[5].Value, klist[6].Value + klist[7].Value);
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rj);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
                                     k = Math.Max(klist[13].Value + klist[14].Value + klist[10].Value, klist[11].Value + klist[12].Value);
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rc);
                                     color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                     _c.Add(color);
@@ -333,7 +333,7 @@ namespace SteelCheck
                             else if (on_off_24 == 1)
                             {
                                 var k = lam;
-                                _text.Add(k.ToString("F").Substring(0, digit));
+                                _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                 _p.Add(rc);
                                 var color = Color.Crimson;
                                 _c.Add(color);
@@ -447,7 +447,7 @@ namespace SteelCheck
                                         var k3 = Math.Sqrt(k3list[3].Value * k3list[3].Value + k3list[4].Value * k3list[4].Value) + k3list[0].Value;
                                         var k4 = Math.Sqrt(k4list[3].Value * k4list[3].Value + k4list[4].Value * k4list[4].Value) + k4list[0].Value;
                                         var k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(ri);
                                         var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -456,7 +456,7 @@ namespace SteelCheck
                                         k3 = Math.Sqrt(k3list[8].Value * k3list[8].Value + k3list[9].Value * k3list[9].Value) + k3list[5].Value;
                                         k4 = Math.Sqrt(k4list[8].Value * k4list[8].Value + k4list[9].Value * k4list[9].Value) + k4list[5].Value;
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rj);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -465,7 +465,7 @@ namespace SteelCheck
                                         k3 = Math.Sqrt(k3list[13].Value * k3list[13].Value + k3list[14].Value * k3list[14].Value) + k3list[10].Value;
                                         k4 = Math.Sqrt(k4list[13].Value * k4list[13].Value + k4list[14].Value * k4list[14].Value) + k4list[10].Value;
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rc);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -477,7 +477,7 @@ namespace SteelCheck
                                         var k3 = k3list[3].Value + k3list[4].Value + k3list[0].Value;
                                         var k4 = k4list[3].Value + k4list[4].Value + k4list[0].Value;
                                         var k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(ri);
                                         var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -486,7 +486,7 @@ namespace SteelCheck
                                         k3 = k3list[8].Value + k3list[9].Value + k3list[5].Value;
                                         k4 = k4list[8].Value + k4list[9].Value + k4list[5].Value;
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rj);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -495,7 +495,7 @@ namespace SteelCheck
                                         k3 = k3list[13].Value + k3list[14].Value + k3list[10].Value;
                                         k4 = k4list[13].Value + k4list[14].Value + k4list[10].Value;
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rc);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -510,7 +510,7 @@ namespace SteelCheck
                                         var k3 = Math.Sqrt(k3list[1].Value * k3list[1].Value + k3list[2].Value * k3list[2].Value);
                                         var k4 = Math.Sqrt(k4list[1].Value * k4list[1].Value + k4list[2].Value * k4list[2].Value);
                                         var k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(ri);
                                         var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -519,7 +519,7 @@ namespace SteelCheck
                                         k3 = Math.Sqrt(k3list[6].Value * k3list[6].Value + k3list[7].Value * k3list[7].Value);
                                         k4 = Math.Sqrt(k4list[6].Value * k4list[6].Value + k4list[7].Value * k4list[7].Value);
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rj);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -528,7 +528,7 @@ namespace SteelCheck
                                         k3 = Math.Sqrt(k3list[11].Value * k3list[11].Value + k3list[12].Value * k3list[12].Value);
                                         k4 = Math.Sqrt(k4list[11].Value * k4list[11].Value + k4list[12].Value * k4list[12].Value);
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rc);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -540,7 +540,7 @@ namespace SteelCheck
                                         var k3 = k3list[1].Value + k3list[2].Value;
                                         var k4 = k4list[1].Value + k4list[2].Value;
                                         var k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(ri);
                                         var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -549,7 +549,7 @@ namespace SteelCheck
                                         k3 = k3list[6].Value + k3list[7].Value;
                                         k4 = k4list[6].Value + k4list[7].Value;
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rj);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -558,7 +558,7 @@ namespace SteelCheck
                                         k3 = k3list[11].Value + k3list[12].Value;
                                         k4 = k4list[11].Value + k4list[12].Value;
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rc);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -573,7 +573,7 @@ namespace SteelCheck
                                         var k3 = Math.Max(Math.Sqrt(k3list[3].Value * k3list[3].Value + k3list[4].Value * k3list[4].Value) + k3list[0].Value, Math.Sqrt(k3list[1].Value * k3list[1].Value + k3list[2].Value * k3list[2].Value));
                                         var k4 = Math.Max(Math.Sqrt(k4list[3].Value * k4list[3].Value + k4list[4].Value * k4list[4].Value) + k4list[0].Value, Math.Sqrt(k4list[1].Value * k4list[1].Value + k4list[2].Value * k4list[2].Value));
                                         var k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(ri);
                                         var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -582,7 +582,7 @@ namespace SteelCheck
                                         k3 = Math.Max(Math.Sqrt(k3list[8].Value * k3list[8].Value + k3list[9].Value * k3list[9].Value) + k3list[5].Value, Math.Sqrt(k3list[6].Value * k3list[6].Value + k3list[7].Value * k3list[7].Value));
                                         k4 = Math.Max(Math.Max(k4list[8].Value, k4list[9].Value) + k4list[5].Value, Math.Max(Math.Max(k4list[6].Value, k4list[7].Value), k4list[5].Value));
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rj);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -591,7 +591,7 @@ namespace SteelCheck
                                         k3 = Math.Max(Math.Sqrt(k3list[13].Value * k3list[13].Value + k3list[14].Value * k3list[14].Value) + k3list[10].Value, Math.Sqrt(k3list[11].Value * k3list[11].Value + k3list[12].Value * k3list[12].Value));
                                         k4 = Math.Max(Math.Sqrt(k4list[13].Value * k4list[13].Value + k4list[14].Value * k4list[14].Value) + k4list[10].Value, Math.Sqrt(k4list[11].Value * k4list[11].Value + k4list[12].Value * k4list[12].Value));
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rc);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -603,7 +603,7 @@ namespace SteelCheck
                                         var k3 = Math.Max(k3list[3].Value + k3list[4].Value + k3list[0].Value, k3list[1].Value + k3list[2].Value);
                                         var k4 = Math.Max(k4list[3].Value + k4list[4].Value + k4list[0].Value, k4list[1].Value + k4list[2].Value);
                                         var k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(ri);
                                         var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -612,7 +612,7 @@ namespace SteelCheck
                                         k3 = Math.Max(k3list[8].Value + k3list[9].Value + k3list[5].Value, k3list[6].Value + k3list[7].Value);
                                         k4 = Math.Max(Math.Max(k4list[8].Value, k4list[9].Value) + k4list[5].Value, Math.Max(Math.Max(k4list[6].Value, k4list[7].Value), k4list[5].Value));
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rj);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -621,7 +621,7 @@ namespace SteelCheck
                                         k3 = Math.Max(k3list[13].Value + k3list[14].Value + k3list[10].Value, k3list[11].Value + k3list[12].Value);
                                         k4 = Math.Max(k4list[13].Value + k4list[14].Value + k4list[10].Value, k4list[11].Value + k4list[12].Value);
                                         k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
-                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                         _p.Add(rc);
                                         color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
                                         _c.Add(color);
@@ -630,7 +630,7 @@ namespace SteelCheck
                                 else if (on_off_24 == 1)
                                 {
                                     var k = lam;
-                                    _text.Add(k.ToString("F").Substring(0, digit));
+                                    _text.Add(k.ToString("F").Substring(0, Math.Min(digit, k.ToString("F").Length)));
                                     _p.Add(rc);
                                     var color = Color.Crimson;
                                     _c.Add(color);

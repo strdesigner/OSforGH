@@ -25,9 +25,11 @@ namespace OpenSeesUtility
         {
             pManager.AddTextParameter("name", "name", "[joint1,...](DataList) Joint name", GH_ParamAccess.list, "BJ1");///
             pManager.AddTextParameter("BOLT", "BOLT", "[n-M**,...](DataList) Tension-side anchor bolt", GH_ParamAccess.list,"2-M16");///
+            pManager.AddNumberParameter("Ab", "Ab", "if inputted, BOLT text is ignored", GH_ParamAccess.list);///
             pManager.AddNumberParameter("Lb", "Lb", "[Lb1,...](DataList) Bolt length [mm]", GH_ParamAccess.list, 400);///
             pManager.AddNumberParameter("d", "d", "[d1,...](DataList) Span between bolt center and column edge [mm]", GH_ParamAccess.list, 200);///
             pManager.AddNumberParameter("Eb", "Eb", "[Eb1,...](DataList) Young's modulus of A.bolt [kN/m2]", GH_ParamAccess.list, 2.05e+8);///
+            pManager[2].Optional = true;
         }
 
         /// <summary>
@@ -45,18 +47,21 @@ namespace OpenSeesUtility
         {
             var boltname = new List<string>(); DA.GetDataList("BOLT", boltname);
             var nb = new List<double>(); var Mb = new List<double>(); var Ab = new List<double>(); var K = new List<double>();
-            for (int i = 0; i < boltname.Count; i++)
+            if (!DA.GetDataList("Ab", Ab))
             {
-                nb.Add(double.Parse(boltname[i].Substring(0, boltname[i].IndexOf("-"))));
-                Mb.Add(double.Parse(boltname[i].Substring(boltname[i].IndexOf("M"))));
-                Ab.Add(nb[i] * Mb[i] * Mb[i] * Math.PI / 4.0);
+                for (int i = 0; i < boltname.Count; i++)
+                {
+                    nb.Add(double.Parse(boltname[i].Substring(0, boltname[i].IndexOf("-"))));//
+                    Mb.Add(double.Parse(boltname[i].Substring(boltname[i].IndexOf("M") + 1)));//[mm]
+                    Ab.Add(nb[i] * Mb[i] * Mb[i] * Math.PI / 4.0);//[mm2]
+                }
             }
             var lb = new List<double>(); DA.GetDataList("Lb", lb);
             var d = new List<double>(); DA.GetDataList("d", d);
             var Eb = new List<double>(); DA.GetDataList("Eb", Eb);
             for (int i = 0; i < boltname.Count; i++)
             {
-                K.Add(Eb[i] * Ab[i] * Math.Pow(d[i] / 1000.0, 2) / 2.0 / (lb[i] / 1000.0));
+                K.Add(Eb[i] * (Ab[i] / 1e+6) * Math.Pow(d[i] / 1000.0, 2) / 2.0 / (lb[i] / 1000.0));//[kNm/rad]
             }
             DA.SetDataList("K", K);
         }
@@ -70,7 +75,7 @@ namespace OpenSeesUtility
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return null;
+                return OpenSeesUtility.Properties.Resources.steelbase;
             }
         }
 
