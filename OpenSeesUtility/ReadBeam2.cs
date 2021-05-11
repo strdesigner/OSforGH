@@ -49,7 +49,7 @@ namespace ReadBeam2
             pManager.AddTextParameter("name angle(spring)", "name angle(spring)", "usertextname for code-angle", GH_ParamAccess.item, "angle");
             pManager.AddTextParameter("name spring_a", "name spring_a", "usertextname for allowable force of spring", GH_ParamAccess.list, new List<string> { "Nta", "Nca", "Qyta", "Qyca", "Qzta", "Qzca", "Mxa", "Mya", "Mza" });
             pManager.AddNumberParameter("rigid & pin value", "rigid & pin value", "[para_rigid,para_pin](Datalist) stiffness of rigid and pin joint", GH_ParamAccess.list, new List<double> { 1.0e+12, 0.001 });
-            pManager.AddNumberParameter("accuracy", "accuracy", "oversection accuracy", GH_ParamAccess.item,5e-3);
+            pManager.AddNumberParameter("accuracy", "accuracy", "oversection accuracy", GH_ParamAccess.item, 5e-3);
             pManager[9].Optional = true;
         }
 
@@ -263,7 +263,10 @@ namespace ReadBeam2
                     var l1 = xyz[i] - r1;
                     if (l1.Length > acc && (r2 - xyz[i]).Length > acc)//線分上に節点がいるかどうかチェック
                     {
-                        if ((l0 / l0.Length - l1 / l1.Length).Length < 1e-5 && l0.Length - l1.Length > acc) { rc.Add(xyz[i]); }
+                        if ((l0 / l0.Length - l1 / l1.Length).Length < 1e-5 && l0.Length - l1.Length > acc)
+                        {
+                            rc.Add(xyz[i]);
+                        }
                     }
                 }
                 if (rc.Count != 0)
@@ -285,7 +288,7 @@ namespace ReadBeam2
                     else { lbz_new.Add(lbz[e]); }
                     for (int i = 0; i < idx.Length - 1; i++)
                     {
-                        lines_new.Add(new Line(rc[idx[i]], rc[idx[i + 1]]));k += 1;
+                        lines_new.Add(new Line(rc[idx[i]], rc[idx[i + 1]])); k += 1;
                         mat_new.Add(mat[e]); sec_new.Add(sec[e]); angle_new.Add(angle[e]); bar_new.Add(bar[e]); names_new.AppendRange(names[e], new GH_Path(k)); index_new.Add(k);
                         if (ind2 >= 0) { e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3] }, new GH_Path(kkk)); kkk += 1; }
                         if (lby[e] == -1) { lby_new.Add(new Line(rc[idx[i]], rc[idx[i + 1]]).Length); }

@@ -31,6 +31,7 @@ namespace MakeIndex2
             pManager.AddTextParameter("layer", "layer", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
             pManager.AddTextParameter("name wick", "name wick", "usertextname for wick1 and wick2", GH_ParamAccess.list, new List<string> { "wickX", "wickY" });
             pManager.AddTextParameter("wick", "wick", "[wickname1,wickname2,...](Datalist)", GH_ParamAccess.list);
+            pManager.AddNumberParameter("accuracy", "accuracy", "oversection accuracy", GH_ParamAccess.item, 5e-3);
             pManager[0].Optional = true; pManager[1].Optional = true; pManager[4].Optional = true;
         }
 
@@ -53,7 +54,7 @@ namespace MakeIndex2
             List<string> layer = new List<string>(); if (!DA.GetDataList("layer", layer)) { };
             List<string> wick = new List<string>(); if (!DA.GetDataList("wick", wick)) { };
             var lines = new List<Curve>(); var lines_new = new List<Line>(); var lines2 = new List<Curve>();
-            var name_x = "wickX"; var name_y = "wickY"; var name_xy = new List<string> { "wickX", "wickY" }; DA.GetDataList("name wick", name_xy); name_x = name_xy[0]; name_y = name_xy[1];
+            var name_x = "wickX"; var name_y = "wickY"; var name_xy = new List<string> { "wickX", "wickY" }; DA.GetDataList("name wick", name_xy); name_x = name_xy[0]; name_y = name_xy[1]; var acc = 5e-3; DA.GetData("accuracy", ref acc);
             var doc = RhinoDoc.ActiveDoc; var index = new List<int>(); var index_new = new List<int>(); var index2 = new List<int>();
             if (layer.Count == 0 && layers.Count != 0) { layer = layers; }
             int k = 0;
@@ -62,24 +63,29 @@ namespace MakeIndex2
                 var line = doc.Objects.FindByLayer(layers[i]);
                 for (int j = 0; j < line.Length; j++)
                 {
-                    var obj = line[j];
-                    if (layer.Contains(layers[i]))
+                    var obj = line[j]; Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() };
+                    int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
+                    if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
+                    for (int jj = 0; jj < nl; jj++)
                     {
-                        if (wick.Count == 0 || wick == new List<string>())
+                        if (layer.Contains(layers[i]))
                         {
-                            index.Add(k);
-                        }
-                        else
-                        {
-                            string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y);//軸ラベル
-                            if (wick.Contains(text1) == true || wick.Contains(text2) == true)
+                            if (wick.Count == 0 || wick == new List<string>())
                             {
-                                index.Add(k);//指定軸が含まれていればindexを格納
+                                index.Add(k);
+                            }
+                            else
+                            {
+                                string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y);//軸ラベル
+                                if (wick.Contains(text1) == true || wick.Contains(text2) == true)
+                                {
+                                    index.Add(k);//指定軸が含まれていればindexを格納
+                                }
                             }
                         }
+                        lines.Add(l[jj]);
+                        k += 1;
                     }
-                    var l = (new ObjRef(obj)).Curve(); lines.Add(l);
-                    k += 1;
                 }
             }
             if (layer.Count == 0 && layers2.Count != 0) { layer = layers2; }
@@ -114,22 +120,22 @@ namespace MakeIndex2
                 var xyz = new List<Point3d>();
                 for (int e = 0; e < lines.Count; e++)//節点生成
                 {
-                    var r1 = lines[e].PointAt(0); var r2 = lines[e].PointAtEnd; var l1 = 10.0; var l2 = 10.0;
+                    var r1 = lines[e].PointAtStart; var r2 = lines[e].PointAtEnd; var l1 = 10.0; var l2 = 10.0;
                     for (int i = 0; i < xyz.Count; i++) { l1 = Math.Min(l1, (xyz[i] - r1).Length); }
-                    if (l1 > 5e-3) { xyz.Add(r1); }
+                    if (l1 > acc) { xyz.Add(r1); }
                     for (int i = 0; i < xyz.Count; i++) { l2 = Math.Min(l2, (xyz[i] - r2).Length); }
-                    if (l2 > 5e-3) { xyz.Add(r2); }
+                    if (l2 > acc) { xyz.Add(r2); }
                     for (int e2 = 0; e2 < lines.Count; e2++)//中間交差点も考慮
                     {
                         if (e2 != e)
                         {
-                            var cp = Rhino.Geometry.Intersect.Intersection.CurveCurve(lines[e], lines[e2], 5e-3, 5e-3);
+                            var cp = Rhino.Geometry.Intersect.Intersection.CurveCurve(lines[e], lines[e2], acc, acc);
                             if (cp != null && cp.Count != 0)
                             {
                                 var rc = cp[0].PointA;
                                 l1 = 10.0;
                                 for (int i = 0; i < xyz.Count; i++) { l1 = Math.Min(l1, (xyz[i] - rc).Length); }
-                                if (l1 > 5e-3) { xyz.Add(rc); }
+                                if (l1 > acc) { xyz.Add(rc); }
                             }
                         }
                     }
@@ -138,20 +144,23 @@ namespace MakeIndex2
                 {
                     var r1 = lines2[e].PointAt(0); var r2 = lines2[e].PointAtEnd; var l1 = 10.0; var l2 = 10.0;
                     for (int i = 0; i < xyz.Count; i++) { l1 = Math.Min(l1, (xyz[i] - r1).Length); }
-                    if (l1 > 5e-3) { xyz.Add(r1); }
+                    if (l1 > acc) { xyz.Add(r1); }
                     for (int i = 0; i < xyz.Count; i++) { l2 = Math.Min(l2, (xyz[i] - r2).Length); }
-                    if (l2 > 5e-3) { xyz.Add(r2); }
+                    if (l2 > acc) { xyz.Add(r2); }
                 }
                 k = -1;
                 for (int e = 0; e < lines.Count; e++)//交差判定を行い交差部で要素分割する
                 {
-                    var r1 = lines[e].PointAt(0); var r2 = lines[e].PointAtEnd; var l0 = r2 - r1; var rc = new List<Point3d>();
+                    var r1 = lines[e].PointAt(0); var r2 = lines[e].PointAtEnd; var l0 = r2 - r1; var rc = new List<Point3d>(); 
                     for (int i = 0; i < xyz.Count; i++)
                     {
                         var l1 = xyz[i] - r1;
-                        if (l1.Length > 5e-3 && (r2 - xyz[i]).Length > 5e-3)//線分上に節点がいるかどうかチェック
+                        if (l1.Length > acc && (r2 - xyz[i]).Length > acc)//線分上に節点がいるかどうかチェック
                         {
-                            if ((l0 / l0.Length - l1 / l1.Length).Length < 1e-5 && l0.Length - l1.Length > 5e-3) { rc.Add(xyz[i]); }
+                            if ((l0 / l0.Length - l1 / l1.Length).Length < 1e-5 && l0.Length - l1.Length > acc)
+                            {
+                                rc.Add(xyz[i]);
+                            }
                         }
                     }
                     if (rc.Count != 0)
