@@ -406,7 +406,7 @@ namespace SeismicLoads
             internal CustomGUI(GH_Component owner) : base(owner)
             {
             }
-            private Rectangle radio_rec;
+            private Rectangle radio_rec; private Rectangle radio_rec2;//パネルx2
             private Rectangle radio_rec_1; private Rectangle text_rec_1;
             private Rectangle radio_rec_2; private Rectangle text_rec_2;
             private Rectangle radio_rec_3; private Rectangle text_rec_3;
@@ -419,20 +419,23 @@ namespace SeismicLoads
             {
                 base.Layout();
                 Rectangle global_rec = GH_Convert.ToRectangle(Bounds);
-                int height = 27; int radi1 = 7; int radi2 = 19; int width = 24;
-                int pitchy = 15;
+                int height = 27; int radi1 = 7; int radi2 = 25; int width = 35;
+                int pitchy = 15; int offset = 10;
                 global_rec.Height += height;
 
                 radio_rec = global_rec;
                 radio_rec.Y = radio_rec.Bottom - height;
-                radio_rec.Height = 27;
+                radio_rec.Height = height;
+                radio_rec2 = radio_rec;
+                global_rec.Height += height;
+                radio_rec2.Y = radio_rec.Bottom;
 
-                text_rec_1 = radio_rec; text_rec_1.X += 0;
+                text_rec_1 = radio_rec; text_rec_1.X += offset;
                 text_rec_1.Height = radi2; text_rec_1.Width = width;
                 text_rec_2 = text_rec_1; text_rec_2.X += radi2;
                 text_rec_3 = text_rec_2; text_rec_3.X += radi2;
                 text_rec_4 = text_rec_3; text_rec_4.X += radi2;
-                text_rec_5 = text_rec_4; text_rec_5.X += radi2;
+                text_rec_5 = text_rec_1; text_rec_5.Y += height;
                 text_rec_6 = text_rec_5; text_rec_6.X += radi2;
                 text_rec_7 = text_rec_6; text_rec_7.X += radi2;
                 text_rec_8 = text_rec_7; text_rec_8.X += radi2;
@@ -441,11 +444,11 @@ namespace SeismicLoads
                 radio_rec_1.X += 5;
                 radio_rec_1.Y += pitchy;
                 radio_rec_2 = radio_rec_1; radio_rec_2.X += radi2;
-                radio_rec_3 = radio_rec_2; radio_rec_3.X += radi2;
+                radio_rec_3 = radio_rec_2; radio_rec_3.X += radi2 + 5;
                 radio_rec_4 = radio_rec_3; radio_rec_4.X += radi2;
-                radio_rec_5 = radio_rec_4; radio_rec_5.X += radi2;
+                radio_rec_5 = radio_rec_1; radio_rec_5.Y += height;
                 radio_rec_6 = radio_rec_5; radio_rec_6.X += radi2;
-                radio_rec_7 = radio_rec_6; radio_rec_7.X += radi2;
+                radio_rec_7 = radio_rec_6; radio_rec_7.X += radi2 + 5;
                 radio_rec_8 = radio_rec_7; radio_rec_8.X += radi2;
 
                 Bounds = global_rec;
@@ -464,25 +467,28 @@ namespace SeismicLoads
                     GH_Capsule radio = GH_Capsule.CreateCapsule(radio_rec, GH_Palette.White, 2, 0);
                     radio.Render(graphics, Selected, Owner.Locked, false); radio.Dispose();
 
+                    GH_Capsule radio2 = GH_Capsule.CreateCapsule(radio_rec2, GH_Palette.White, 2, 0);
+                    radio2.Render(graphics, Selected, Owner.Locked, false); radio2.Dispose();
+
                     GH_Capsule radio_1 = GH_Capsule.CreateCapsule(radio_rec_1, GH_Palette.Black, 5, 5);
                     radio_1.Render(graphics, Selected, Owner.Locked, false); radio_1.Dispose();
                     graphics.FillEllipse(c1, radio_rec_1);
-                    graphics.DrawString("X", GH_FontServer.Standard, Brushes.Black, text_rec_1);
+                    graphics.DrawString("+X", GH_FontServer.Standard, Brushes.Black, text_rec_1);
 
                     GH_Capsule radio_2 = GH_Capsule.CreateCapsule(radio_rec_2, GH_Palette.Black, 5, 5);
                     radio_2.Render(graphics, Selected, Owner.Locked, false); radio_2.Dispose();
                     graphics.FillEllipse(c2, radio_rec_2);
-                    graphics.DrawString("Y", GH_FontServer.Standard, Brushes.Black, text_rec_2);
+                    graphics.DrawString("+Y", GH_FontServer.Standard, Brushes.Black, text_rec_2);
 
                     GH_Capsule radio_3 = GH_Capsule.CreateCapsule(radio_rec_3, GH_Palette.Black, 5, 5);
                     radio_3.Render(graphics, Selected, Owner.Locked, false); radio_3.Dispose();
                     graphics.FillEllipse(c3, radio_rec_3);
-                    graphics.DrawString("45", GH_FontServer.Standard, Brushes.Black, text_rec_3);
+                    graphics.DrawString("+45", GH_FontServer.Standard, Brushes.Black, text_rec_3);
 
                     GH_Capsule radio_4 = GH_Capsule.CreateCapsule(radio_rec_4, GH_Palette.Black, 5, 5);
                     radio_4.Render(graphics, Selected, Owner.Locked, false); radio_4.Dispose();
                     graphics.FillEllipse(c4, radio_rec_4);
-                    graphics.DrawString("135", GH_FontServer.Standard, Brushes.Black, text_rec_4);
+                    graphics.DrawString("+135", GH_FontServer.Standard, Brushes.Black, text_rec_4);
 
                     GH_Capsule radio_5 = GH_Capsule.CreateCapsule(radio_rec_5, GH_Palette.Black, 5, 5);
                     radio_5.Render(graphics, Selected, Owner.Locked, false); radio_5.Dispose();
@@ -497,12 +503,12 @@ namespace SeismicLoads
                     GH_Capsule radio_7 = GH_Capsule.CreateCapsule(radio_rec_7, GH_Palette.Black, 5, 5);
                     radio_7.Render(graphics, Selected, Owner.Locked, false); radio_7.Dispose();
                     graphics.FillEllipse(c7, radio_rec_7);
-                    graphics.DrawString("225", GH_FontServer.Standard, Brushes.Black, text_rec_7);
+                    graphics.DrawString("-45", GH_FontServer.Standard, Brushes.Black, text_rec_7);
 
                     GH_Capsule radio_8 = GH_Capsule.CreateCapsule(radio_rec_8, GH_Palette.Black, 5, 5);
                     radio_8.Render(graphics, Selected, Owner.Locked, false); radio_8.Dispose();
                     graphics.FillEllipse(c8, radio_rec_8);
-                    graphics.DrawString("315", GH_FontServer.Standard, Brushes.Black, text_rec_8);
+                    graphics.DrawString("-135", GH_FontServer.Standard, Brushes.Black, text_rec_8);
                 }
 
             }
