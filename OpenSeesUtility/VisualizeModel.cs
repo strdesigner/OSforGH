@@ -480,7 +480,7 @@ namespace VisualizeModel
                         {
                             _value2.Add(Math.Abs(f_v[i][4].Value));
                             _color2.Add(Color.Yellow);
-                            if (f_v[i][4].Value > 0)
+                            if (f_v[i][4].Value < 0)///2021.05.22 bug fixed
                             {
                                 r1 = new Point3d(r[j][0].Value, r[j][1].Value - arcsize, r[j][2].Value);
                                 r2 = new Point3d(r[j][0].Value, r[j][1].Value, r[j][2].Value + arcsize);
