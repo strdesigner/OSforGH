@@ -20,7 +20,7 @@ namespace SeismicLoads
 {
     public class SeismicLoads : GH_Component
     {
-        public static int px_load = 0; public static int py_load = 0; public static int pxy_load = 0; public static int mx_load = 0; public static int my_load = 0; public static int mxy_load = 0;
+        public static int px_load = 0; public static int py_load = 0; public static int pxy_load = 0; public static int pxy2_load = 0; public static int mx_load = 0; public static int my_load = 0; public static int mxy_load = 0; public static int mxy2_load = 0;
         public static void SetButton(string s, int i)
         {
             if (s == "px")
@@ -35,6 +35,10 @@ namespace SeismicLoads
             {
                 pxy_load = i;
             }
+            else if (s == "pxy2")
+            {
+                pxy2_load = i;
+            }
             else if (s == "mx")
             {
                 mx_load = i;
@@ -46,6 +50,10 @@ namespace SeismicLoads
             else if (s == "mxy")
             {
                 mxy_load = i;
+            }
+            else if (s == "mxy2")
+            {
+                mxy2_load = i;
             }
         }
         public override void CreateAttributes()
@@ -69,7 +77,7 @@ namespace SeismicLoads
             pManager.AddNumberParameter("layer", "layer", "[[zmin,zmax],...](DataTree)", GH_ParamAccess.tree, -9999);///
             pManager.AddNumberParameter("Z", "Z", "Regional coefficient", GH_ParamAccess.item, 1.0);///
             pManager.AddNumberParameter("Rt", "Rt", "Vibration characteristic coefficient", GH_ParamAccess.item, 1.0);///
-            pManager.AddNumberParameter("C0", "C0", "Base shear", GH_ParamAccess.item, 0.2);///
+            pManager.AddNumberParameter("C0", "C0", "Base shear", GH_ParamAccess.list, new List<double> { 0.2 });///
             pManager.AddNumberParameter("T", "T", "Natural period h(0.02+0.01α) default=0.2", GH_ParamAccess.item, 0.2);///
         }
 
@@ -78,20 +86,22 @@ namespace SeismicLoads
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddIntegerParameter("index", "index", "List of node numbers belonging to each layer", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("Wi", "Wi", "layer weight", GH_ParamAccess.list);///
-            pManager.AddNumberParameter("sumWi", "sumWi", "layer support weight", GH_ParamAccess.list);///
-            pManager.AddNumberParameter("Ai", "Ai", "Ai distribution", GH_ParamAccess.list);///
-            pManager.AddNumberParameter("Ci", "Ci", "shear factor", GH_ParamAccess.list);///
-            pManager.AddNumberParameter("Qi", "Qi", "shear force", GH_ParamAccess.list);///
-            pManager.AddNumberParameter("Pi", "Pi", "horizontal force on layer", GH_ParamAccess.list);///
-            pManager.AddNumberParameter("ki", "ki", "horizontal seismic intensity", GH_ParamAccess.list);///
-            pManager.AddNumberParameter("+FX", "+FX", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("+FY", "+FY", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("+FXY(45)", "+FXY(45)", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("-FX", "-FX", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("-FY", "-FY", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("-FXY(45)", "-FXY(45)", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);
+            pManager.AddIntegerParameter("index", "index", "List of node numbers belonging to each layer", GH_ParamAccess.tree);///0
+            pManager.AddNumberParameter("Wi", "Wi", "layer weight", GH_ParamAccess.list);///1
+            pManager.AddNumberParameter("sumWi", "sumWi", "layer support weight", GH_ParamAccess.list);///2
+            pManager.AddNumberParameter("Ai", "Ai", "Ai distribution", GH_ParamAccess.list);///3
+            pManager.AddNumberParameter("Ci", "Ci", "shear factor", GH_ParamAccess.list);///4
+            pManager.AddNumberParameter("Qi", "Qi", "shear force", GH_ParamAccess.list);///5
+            pManager.AddNumberParameter("Pi", "Pi", "horizontal force on layer", GH_ParamAccess.list);///6
+            pManager.AddNumberParameter("ki", "ki", "horizontal seismic intensity", GH_ParamAccess.list);///7
+            pManager.AddNumberParameter("+FX", "+FX", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);///8
+            pManager.AddNumberParameter("+FY", "+FY", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);///9
+            pManager.AddNumberParameter("+FXY(45)", "+FXY(45)", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);///10
+            pManager.AddNumberParameter("+FXY(135)", "+FXY(135)", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);///11
+            pManager.AddNumberParameter("-FX", "-FX", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);///12
+            pManager.AddNumberParameter("-FY", "-FY", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);///13
+            pManager.AddNumberParameter("-FXY(45)", "-FXY(45)", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);///14
+            pManager.AddNumberParameter("-FXY(135)", "-FXY(135)", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);///15
         }
 
         /// <summary>
@@ -102,7 +112,11 @@ namespace SeismicLoads
         {
             DA.GetDataTree("R", out GH_Structure<GH_Number> _r); DA.GetDataTree("F", out GH_Structure<GH_Number> _f_v); DA.GetDataTree("layer", out GH_Structure<GH_Number> _layer);
             var r= _r.Branches; var f_v = _f_v.Branches; var layer = _layer.Branches; int n = layer.Count;
-            var Z = 0.0; DA.GetData("Z", ref Z); var Rt = 0.0; DA.GetData("Rt", ref Rt); var C0 = 0.0; DA.GetData("C0", ref C0); var T = 0.0; DA.GetData("T", ref T);
+            var Z = 0.0; DA.GetData("Z", ref Z); var Rt = 0.0; DA.GetData("Rt", ref Rt); var C0 = new List<double>(); DA.GetDataList("C0", C0); var T = 0.0; DA.GetData("T", ref T);
+            if (C0.Count != n)
+            {
+                for (int i = 1; i < n; i++) { C0.Add(C0[0]); }
+            }
             var arrow = new List<Line>();
             if (r[0][0].Value!=-9999 && f_v[0][0].Value!=-9999 && layer[0][0].Value != -9999)
             {
@@ -161,7 +175,7 @@ namespace SeismicLoads
                     }
                     ai.Add(sumWi[i] / W);
                     Ai.Add(1.0 + (1.0 / Math.Sqrt(ai[i]) - ai[i]) * 2 * T / (1.0 + 3 * T));
-                    Ci.Add(Z * Rt * Ai[i] * C0);
+                    Ci.Add(Z * Rt * Ai[i] * C0[i]);
                     Qi.Add(sumWi[i] * Ci[i]);
                 }
                 for (int i = 0; i < n; i++)
@@ -251,6 +265,28 @@ namespace SeismicLoads
                         var fi = index[i][j]; List<GH_Number> flist = new List<GH_Number>();
                         flist.Add(new GH_Number(fi));
                         var fx = 0.0; var fy = 0.0;
+                        fx -= -f_v[fi][3].Value * ki[i] / Math.Sqrt(2); fy += -f_v[fi][3].Value * ki[i] / Math.Sqrt(2);
+                        flist.Add(new GH_Number(fx)); flist.Add(new GH_Number(fy)); flist.Add(new GH_Number(0.0));
+                        flist.Add(new GH_Number(0.0)); flist.Add(new GH_Number(0.0)); flist.Add(new GH_Number(0.0));
+                        seismic_load.AppendRange(flist, new GH_Path(k));
+                        if (pxy2_load == 1)
+                        {
+                            var r1 = new Point3d(r[fi][0].Value, r[fi][1].Value, r[fi][2].Value); var r2 = new Point3d(r[fi][0].Value - VisualizeModel.VisualizeModel.arrowsize * fx, r[fi][1].Value - VisualizeModel.VisualizeModel.arrowsize * fy, r[fi][2].Value);
+                            _arrow.Add(new Line(r2, r1)); arrow.Add(new Line(r2, r1));
+                            _text.Add(Math.Round(Math.Sqrt(Math.Pow(fx, 2) + Math.Pow(fy, 2)), 2).ToString());
+                        }
+                        k += 1;
+                    }
+                }
+                DA.SetDataTree(11, seismic_load);
+                k = 0; seismic_load = new GH_Structure<GH_Number>();
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = 0; j < index[i].Count; j++)
+                    {
+                        var fi = index[i][j]; List<GH_Number> flist = new List<GH_Number>();
+                        flist.Add(new GH_Number(fi));
+                        var fx = 0.0; var fy = 0.0;
                         fx += f_v[fi][3].Value * ki[i];
                         flist.Add(new GH_Number(fx)); flist.Add(new GH_Number(fy)); flist.Add(new GH_Number(0.0));
                         flist.Add(new GH_Number(0.0)); flist.Add(new GH_Number(0.0)); flist.Add(new GH_Number(0.0));
@@ -264,7 +300,7 @@ namespace SeismicLoads
                         k += 1;
                     }
                 }
-                DA.SetDataTree(11, seismic_load);
+                DA.SetDataTree(12, seismic_load);
                 k = 0; seismic_load = new GH_Structure<GH_Number>();
                 for (int i = 0; i < n; i++)
                 {
@@ -286,7 +322,7 @@ namespace SeismicLoads
                         k += 1;
                     }
                 }
-                DA.SetDataTree(12, seismic_load);
+                DA.SetDataTree(13, seismic_load);
                 k = 0; seismic_load = new GH_Structure<GH_Number>();
                 for (int i = 0; i < n; i++)
                 {
@@ -308,6 +344,29 @@ namespace SeismicLoads
                         k += 1;
                     }
                 }
+                DA.SetDataTree(14, seismic_load);
+                k = 0; seismic_load = new GH_Structure<GH_Number>();
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = 0; j < index[i].Count; j++)
+                    {
+                        var fi = index[i][j]; List<GH_Number> flist = new List<GH_Number>();
+                        flist.Add(new GH_Number(fi));
+                        var fx = 0.0; var fy = 0.0;
+                        fx -= f_v[fi][3].Value * ki[i] / Math.Sqrt(2); fy += f_v[fi][3].Value * ki[i] / Math.Sqrt(2);
+                        flist.Add(new GH_Number(fx)); flist.Add(new GH_Number(fy)); flist.Add(new GH_Number(0.0));
+                        flist.Add(new GH_Number(0.0)); flist.Add(new GH_Number(0.0)); flist.Add(new GH_Number(0.0));
+                        seismic_load.AppendRange(flist, new GH_Path(k));
+                        if (mxy2_load == 1)
+                        {
+                            var r1 = new Point3d(r[fi][0].Value, r[fi][1].Value, r[fi][2].Value); var r2 = new Point3d(r[fi][0].Value - VisualizeModel.VisualizeModel.arrowsize * fx, r[fi][1].Value - VisualizeModel.VisualizeModel.arrowsize * fy, r[fi][2].Value);
+                            _arrow.Add(new Line(r2, r1)); arrow.Add(new Line(r2, r1));
+                            _text.Add(Math.Round(Math.Sqrt(Math.Pow(fx, 2) + Math.Pow(fy, 2)), 2).ToString());
+                        }
+                        k += 1;
+                    }
+                }
+                DA.SetDataTree(15, seismic_load);
             }
         }
 
@@ -354,6 +413,8 @@ namespace SeismicLoads
             private Rectangle radio_rec_4; private Rectangle text_rec_4;
             private Rectangle radio_rec_5; private Rectangle text_rec_5;
             private Rectangle radio_rec_6; private Rectangle text_rec_6;
+            private Rectangle radio_rec_7; private Rectangle text_rec_7;
+            private Rectangle radio_rec_8; private Rectangle text_rec_8;
             protected override void Layout()
             {
                 base.Layout();
@@ -369,23 +430,27 @@ namespace SeismicLoads
                 text_rec_1 = radio_rec; text_rec_1.X += 0;
                 text_rec_1.Height = radi2; text_rec_1.Width = width;
                 text_rec_2 = text_rec_1; text_rec_2.X += radi2;
-                text_rec_3 = text_rec_2; text_rec_3.X += radi2-2;
-                text_rec_4 = text_rec_3; text_rec_4.X += radi2+7;
+                text_rec_3 = text_rec_2; text_rec_3.X += radi2;
+                text_rec_4 = text_rec_3; text_rec_4.X += radi2;
                 text_rec_5 = text_rec_4; text_rec_5.X += radi2;
-                text_rec_6 = text_rec_5; text_rec_6.X += radi2-2;
+                text_rec_6 = text_rec_5; text_rec_6.X += radi2;
+                text_rec_7 = text_rec_6; text_rec_7.X += radi2;
+                text_rec_8 = text_rec_7; text_rec_8.X += radi2;
 
                 radio_rec_1 = text_rec_1; radio_rec_1.Height = radi1; radio_rec_1.Width = radi1;
                 radio_rec_1.X += 5;
                 radio_rec_1.Y += pitchy;
                 radio_rec_2 = radio_rec_1; radio_rec_2.X += radi2;
                 radio_rec_3 = radio_rec_2; radio_rec_3.X += radi2;
-                radio_rec_4 = radio_rec_3; radio_rec_4.X += radi2+5;
+                radio_rec_4 = radio_rec_3; radio_rec_4.X += radi2;
                 radio_rec_5 = radio_rec_4; radio_rec_5.X += radi2;
                 radio_rec_6 = radio_rec_5; radio_rec_6.X += radi2;
+                radio_rec_7 = radio_rec_6; radio_rec_7.X += radi2;
+                radio_rec_8 = radio_rec_7; radio_rec_8.X += radi2;
 
                 Bounds = global_rec;
             }
-            Brush c1 = Brushes.White; Brush c2 = Brushes.White; Brush c3 = Brushes.White; Brush c4 = Brushes.White; Brush c5 = Brushes.White; Brush c6 = Brushes.White;
+            Brush c1 = Brushes.White; Brush c2 = Brushes.White; Brush c3 = Brushes.White; Brush c4 = Brushes.White; Brush c5 = Brushes.White; Brush c6 = Brushes.White; Brush c7 = Brushes.White; Brush c8 = Brushes.White;
             protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
             {
                 base.Render(canvas, graphics, channel);
@@ -402,32 +467,42 @@ namespace SeismicLoads
                     GH_Capsule radio_1 = GH_Capsule.CreateCapsule(radio_rec_1, GH_Palette.Black, 5, 5);
                     radio_1.Render(graphics, Selected, Owner.Locked, false); radio_1.Dispose();
                     graphics.FillEllipse(c1, radio_rec_1);
-                    graphics.DrawString("+X", GH_FontServer.Standard, Brushes.Black, text_rec_1);
+                    graphics.DrawString("X", GH_FontServer.Standard, Brushes.Black, text_rec_1);
 
                     GH_Capsule radio_2 = GH_Capsule.CreateCapsule(radio_rec_2, GH_Palette.Black, 5, 5);
                     radio_2.Render(graphics, Selected, Owner.Locked, false); radio_2.Dispose();
                     graphics.FillEllipse(c2, radio_rec_2);
-                    graphics.DrawString("+Y", GH_FontServer.Standard, Brushes.Black, text_rec_2);
+                    graphics.DrawString("Y", GH_FontServer.Standard, Brushes.Black, text_rec_2);
 
                     GH_Capsule radio_3 = GH_Capsule.CreateCapsule(radio_rec_3, GH_Palette.Black, 5, 5);
                     radio_3.Render(graphics, Selected, Owner.Locked, false); radio_3.Dispose();
                     graphics.FillEllipse(c3, radio_rec_3);
-                    graphics.DrawString("+45", GH_FontServer.Standard, Brushes.Black, text_rec_3);
+                    graphics.DrawString("45", GH_FontServer.Standard, Brushes.Black, text_rec_3);
 
                     GH_Capsule radio_4 = GH_Capsule.CreateCapsule(radio_rec_4, GH_Palette.Black, 5, 5);
                     radio_4.Render(graphics, Selected, Owner.Locked, false); radio_4.Dispose();
                     graphics.FillEllipse(c4, radio_rec_4);
-                    graphics.DrawString("-X", GH_FontServer.Standard, Brushes.Black, text_rec_4);
+                    graphics.DrawString("135", GH_FontServer.Standard, Brushes.Black, text_rec_4);
 
                     GH_Capsule radio_5 = GH_Capsule.CreateCapsule(radio_rec_5, GH_Palette.Black, 5, 5);
                     radio_5.Render(graphics, Selected, Owner.Locked, false); radio_5.Dispose();
                     graphics.FillEllipse(c5, radio_rec_5);
-                    graphics.DrawString("-Y", GH_FontServer.Standard, Brushes.Black, text_rec_5);
+                    graphics.DrawString("-X", GH_FontServer.Standard, Brushes.Black, text_rec_5);
 
                     GH_Capsule radio_6 = GH_Capsule.CreateCapsule(radio_rec_6, GH_Palette.Black, 5, 5);
                     radio_6.Render(graphics, Selected, Owner.Locked, false); radio_6.Dispose();
                     graphics.FillEllipse(c6, radio_rec_6);
-                    graphics.DrawString("-45", GH_FontServer.Standard, Brushes.Black, text_rec_6);
+                    graphics.DrawString("-Y", GH_FontServer.Standard, Brushes.Black, text_rec_6);
+
+                    GH_Capsule radio_7 = GH_Capsule.CreateCapsule(radio_rec_7, GH_Palette.Black, 5, 5);
+                    radio_7.Render(graphics, Selected, Owner.Locked, false); radio_7.Dispose();
+                    graphics.FillEllipse(c7, radio_rec_7);
+                    graphics.DrawString("225", GH_FontServer.Standard, Brushes.Black, text_rec_7);
+
+                    GH_Capsule radio_8 = GH_Capsule.CreateCapsule(radio_rec_8, GH_Palette.Black, 5, 5);
+                    radio_8.Render(graphics, Selected, Owner.Locked, false); radio_8.Dispose();
+                    graphics.FillEllipse(c8, radio_rec_8);
+                    graphics.DrawString("315", GH_FontServer.Standard, Brushes.Black, text_rec_8);
                 }
 
             }
@@ -435,7 +510,7 @@ namespace SeismicLoads
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    RectangleF rec1 = radio_rec_1; RectangleF rec2 = radio_rec_2; RectangleF rec3 = radio_rec_3; RectangleF rec4 = radio_rec_4; RectangleF rec5 = radio_rec_5; RectangleF rec6 = radio_rec_6; RectangleF rec = radio_rec;
+                    RectangleF rec1 = radio_rec_1; RectangleF rec2 = radio_rec_2; RectangleF rec3 = radio_rec_3; RectangleF rec4 = radio_rec_4; RectangleF rec5 = radio_rec_5; RectangleF rec6 = radio_rec_6; RectangleF rec7 = radio_rec_7; RectangleF rec8 = radio_rec_8; RectangleF rec = radio_rec;
                     if (rec1.Contains(e.CanvasLocation))
                     {
                         if (c1 == Brushes.White) { c1 = Brushes.Black; SetButton("px", 1); }
@@ -459,22 +534,36 @@ namespace SeismicLoads
                     }
                     else if (rec4.Contains(e.CanvasLocation))
                     {
-                        if (c4 == Brushes.White) { c4 = Brushes.Black; SetButton("mx", 1); }
-                        else { c4 = Brushes.White; SetButton("mx", 0); }
+                        if (c4 == Brushes.White) { c4 = Brushes.Black; SetButton("pxy2", 1); }
+                        else { c4 = Brushes.White; SetButton("pxy2", 0); }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec5.Contains(e.CanvasLocation))
                     {
-                        if (c5 == Brushes.White) { c5 = Brushes.Black; SetButton("my", 1); }
-                        else { c5 = Brushes.White; SetButton("my", 0); }
+                        if (c5 == Brushes.White) { c5 = Brushes.Black; SetButton("mx", 1); }
+                        else { c5 = Brushes.White; SetButton("mx", 0); }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec6.Contains(e.CanvasLocation))
                     {
-                        if (c6 == Brushes.White) { c6 = Brushes.Black; SetButton("mxy", 1); }
-                        else { c6 = Brushes.White; SetButton("mxy", 0); }
+                        if (c6 == Brushes.White) { c6 = Brushes.Black; SetButton("my", 1); }
+                        else { c6 = Brushes.White; SetButton("my", 0); }
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Handled;
+                    }
+                    else if (rec7.Contains(e.CanvasLocation))
+                    {
+                        if (c7 == Brushes.White) { c7 = Brushes.Black; SetButton("mxy", 1); }
+                        else { c7 = Brushes.White; SetButton("mxy", 0); }
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Handled;
+                    }
+                    else if (rec8.Contains(e.CanvasLocation))
+                    {
+                        if (c8 == Brushes.White) { c8 = Brushes.Black; SetButton("mxy2", 1); }
+                        else { c8 = Brushes.White; SetButton("mxy2", 0); }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }

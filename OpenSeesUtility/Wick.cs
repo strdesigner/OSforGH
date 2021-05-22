@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Grasshopper.Kernel;
 using Rhino.DocObjects;
@@ -18,7 +19,7 @@ namespace Wick
 {
     public class Wick : GH_Component
     {
-        public static int x_guideline = 0; public static int y_guideline = 0; static double fontsize;
+        public static int x_guideline = 0; public static int y_guideline = 0; public static int z_guideline = 0; static double fontsize;
         public static void SetButton(string s, int i)
         {
             if (s == "x")
@@ -28,6 +29,10 @@ namespace Wick
             else if (s == "y")
             {
                 y_guideline = i;
+            }
+            else if (s == "z")
+            {
+                z_guideline = i;
             }
         }
         public override void CreateAttributes()
@@ -51,11 +56,15 @@ namespace Wick
         {
             pManager.AddNumberParameter("x", "x", "x coordinate of guide lines", GH_ParamAccess.list,new List<double> { 0.0 });///
             pManager.AddNumberParameter("y", "y", "y coordinate of guide lines", GH_ParamAccess.list, new List<double> { 0.0 });///
-            pManager.AddNumberParameter("z", "z", "z coordinate of guide lines", GH_ParamAccess.list, new List<double> { 0.0 });///
-            pManager.AddNumberParameter("offsetx", "offsetx", "offset for xy", GH_ParamAccess.item, 1.0);///
-            pManager.AddNumberParameter("offsety", "offsety", "offset for FL", GH_ParamAccess.item, 1.0);///
+            pManager.AddNumberParameter("z", "z", "distance between origin and extra guide lines", GH_ParamAccess.list, new List<double> { 0.0 });///
+            pManager.AddNumberParameter("h", "h", "h coordinate of guide lines", GH_ParamAccess.list, new List<double> { 0.0 });///
+            pManager.AddNumberParameter("angle", "angle", "angle of extra guide lines", GH_ParamAccess.item, 0);///
+            pManager.AddNumberParameter("offsetx", "offsetx", "offset for x", GH_ParamAccess.item, 1.0);///
+            pManager.AddNumberParameter("offsety", "offsety", "offset for y", GH_ParamAccess.item, 1.0);///
+            pManager.AddNumberParameter("offsetz", "offsetz", "offset for z", GH_ParamAccess.item, 1.0);///
             pManager.AddTextParameter("xlabel", "xlabel", "[label1, label2...](if default, X0,X1,..)", GH_ParamAccess.list, new List<string> { "default" });///
-            pManager.AddTextParameter("ylabel", "ylabel", "[label1, label2...](if default, X0,X1,..)", GH_ParamAccess.list, new List<string> { "default" });///
+            pManager.AddTextParameter("ylabel", "ylabel", "[label1, label2...](if default, Y0,Y1,..)", GH_ParamAccess.list, new List<string> { "default" });///
+            pManager.AddTextParameter("zlabel", "zlabel", "[label1, label2...](if default, Z0,Z1,..)", GH_ParamAccess.list, new List<string> { "default" });///
             pManager.AddNumberParameter("fontsize", "FS", "font size for display texts", GH_ParamAccess.item, 20.0);///
         }
 
@@ -72,23 +81,37 @@ namespace Wick
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            var x = new List<double>(); var y = new List<double>(); var z = new List<double>(); var xlabel = new List<string>(); var ylabel = new List<string>();
-            var offsetx = 1.0; var offsety = 1.0;
-            DA.GetDataList("x", x); DA.GetDataList("y", y); DA.GetDataList("z", z); DA.GetDataList("xlabel", xlabel); DA.GetDataList("ylabel", ylabel); DA.GetData("offsetx", ref offsetx); DA.GetData("offsety", ref offsety); DA.GetData("fontsize", ref fontsize);
-            var xmax = x[x.Count - 1]; var xmin = x[0]; var ymax = y[y.Count - 1]; var ymin = x[0];
-            for (int i = 0; i < z.Count; i++)
+            var x = new List<double>(); var y = new List<double>(); var z = new List<double>(); var h = new List<double>(); var xlabel = new List<string>(); var ylabel = new List<string>(); var zlabel = new List<string>(); var angle = 0.0;
+            var offsetx = 1.0; var offsety = 1.0; var offsetz = 1.0;
+            DA.GetDataList("x", x); DA.GetDataList("y", y); DA.GetDataList("z", z); DA.GetDataList("h", h); DA.GetDataList("xlabel", xlabel); DA.GetDataList("ylabel", ylabel); DA.GetDataList("zlabel", zlabel); DA.GetData("offsetx", ref offsetx); DA.GetData("offsety", ref offsety); DA.GetData("offsetz", ref offsetz); DA.GetData("fontsize", ref fontsize); DA.GetData("angle", ref angle);
+            var xmax = x.Max(); var xmin = x.Min(); var ymax = y.Max(); var ymin = y.Min();
+            var normal = new Vector3d(Math.Cos(angle / 180 * Math.PI), Math.Sin(angle / 180 * Math.PI), 0);
+            var direction = new Vector3d(Math.Cos((angle + 90) / 180 * Math.PI), Math.Sin((angle + 90) / 180 * Math.PI), 0);
+            var vecmin = new Vector3d(xmin, ymin, 0); var vecmax = new Vector3d(xmax, ymax, 0);
+            var d1 = (vecmin + Vector3d.Multiply(-vecmin, normal) * normal).Length; var d2 = (vecmax + Vector3d.Multiply(-vecmax, normal) * normal).Length;
+            for (int i = 0; i < h.Count; i++)
             {
                 for (int j = 0; j < x.Count; j++)
                 {
-                    _xline.Add(new Line(new Point3d(x[j], ymin - offsetx, z[i]), new Point3d(x[j], ymax + offsetx, z[i])));
+                    _xline.Add(new Line(new Point3d(x[j], ymin - offsetx, h[i]), new Point3d(x[j], ymax + offsetx, h[i])));
                     if (xlabel[0] == "default") { _xlabel.Add("X" + j.ToString()); }
                     else { _xlabel.Add(xlabel[j]); }
                 }
                 for (int j = 0; j < y.Count; j++)
                 {
-                    _yline.Add(new Line(new Point3d(xmin - offsety, y[j], z[i]), new Point3d(xmax + offsety, y[j], z[i])));
+                    _yline.Add(new Line(new Point3d(xmin - offsety, y[j], h[i]), new Point3d(xmax + offsety, y[j], h[i])));
                     if (ylabel[0] == "default") { _ylabel.Add("Y" + j.ToString()); }
                     else { _ylabel.Add(ylabel[j]); }
+                }
+                if (angle != 0)
+                {
+                    for (int j = 0; j < z.Count; j++)
+                    {
+                        var vec1 = normal * z[j] - direction * (offsetz + d1); var vec2 = normal * z[j] + direction * (offsetz + d2);
+                        _zline.Add(new Line(new Point3d(vec1[0], vec1[1], h[i]), new Point3d(vec2[0], vec2[1], h[i])));
+                        if (zlabel[0] == "default") { _zlabel.Add("Z" + j.ToString()); }
+                        else { _zlabel.Add(zlabel[j]); }
+                    }
                 }
             }
         }
@@ -98,14 +121,18 @@ namespace Wick
         ///ここからカスタム関数群********************************************************************************
         private readonly List<Line> _xline = new List<Line>();
         private readonly List<Line> _yline = new List<Line>();
+        private readonly List<Line> _zline = new List<Line>();
         private readonly List<string> _xlabel = new List<string>();
         private readonly List<string> _ylabel = new List<string>();
+        private readonly List<string> _zlabel = new List<string>();
         protected override void BeforeSolveInstance()
         {
             _xline.Clear();
             _yline.Clear();
+            _zline.Clear();
             _xlabel.Clear();
             _ylabel.Clear();
+            _zlabel.Clear();
         }
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {
@@ -139,6 +166,20 @@ namespace Wick
                     drawText.Dispose();
                 }
             }
+            //Z軸
+            for (int i = 0; i < _zline.Count; i++)
+            {
+                if (z_guideline == 1)
+                {
+                    args.Display.DrawPatternedLine(_zline[i], Color.Black, 0x00001111, 1);
+                    double size = fontsize; Point3d point = _zline[i].From; plane.Origin = point;
+                    viewport.GetWorldToScreenScale(point, out double pixPerUnit); size /= pixPerUnit;
+                    Rhino.Display.Text3d drawText = new Rhino.Display.Text3d(_zlabel[i], plane, size);
+                    drawText.HorizontalAlignment = TextHorizontalAlignment.Right; drawText.VerticalAlignment = TextVerticalAlignment.Middle;
+                    args.Display.Draw3dText(drawText, Color.Black);
+                    drawText.Dispose();
+                }
+            }
         }///ここからGUIの作成*****************************************************************************************
         internal class CustomGUI : GH_ComponentAttributes
         {
@@ -148,6 +189,7 @@ namespace Wick
             private Rectangle radio_rec;
             private Rectangle radio_rec_1; private Rectangle text_rec_1;
             private Rectangle radio_rec_2; private Rectangle text_rec_2;
+            private Rectangle radio_rec_3; private Rectangle text_rec_3;
             protected override void Layout()
             {
                 base.Layout();
@@ -163,12 +205,14 @@ namespace Wick
                 text_rec_1 = radio_rec; text_rec_1.X += 5;
                 text_rec_1.Height = textheight; text_rec_1.Width = radi2;
                 radio_rec_1 = text_rec_1; radio_rec_1.Width = radi1; radio_rec_1.X += radi2; radio_rec_1.Height = radi1;
-                text_rec_2 = radio_rec_1; text_rec_2.Width = radi2; text_rec_2.X += radi1*3; text_rec_2.Height = textheight;
+                text_rec_2 = radio_rec_1; text_rec_2.Width = radi2; text_rec_2.X += radi1 * 2; text_rec_2.Height = textheight;
                 radio_rec_2 = text_rec_2; radio_rec_2.Width = radi1; radio_rec_2.X += radi2; radio_rec_2.Height = radi1;
-                radio_rec_1.Y += 4; radio_rec_2.Y += 4;
+                text_rec_3 = radio_rec_2; text_rec_3.Width = radi2; text_rec_3.X += radi1 * 2; text_rec_3.Height = textheight;
+                radio_rec_3 = text_rec_3; radio_rec_3.Width = radi1; radio_rec_3.X += radi2; radio_rec_3.Height = radi1;
+                radio_rec_1.Y += 4; radio_rec_2.Y += 4; radio_rec_3.Y += 4;
                 Bounds = global_rec;
             }
-            Brush c1 = Brushes.White; Brush c2 = Brushes.White;
+            Brush c1 = Brushes.White; Brush c2 = Brushes.White; Brush c3 = Brushes.White;
             protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
             {
                 base.Render(canvas, graphics, channel);
@@ -191,6 +235,11 @@ namespace Wick
                     radio_2.Render(graphics, Selected, Owner.Locked, false); radio_2.Dispose();
                     graphics.FillEllipse(c2, radio_rec_2);
                     graphics.DrawString("Y", GH_FontServer.Standard, Brushes.Black, text_rec_2);
+
+                    GH_Capsule radio_3 = GH_Capsule.CreateCapsule(radio_rec_3, GH_Palette.Black, 5, 5);
+                    radio_3.Render(graphics, Selected, Owner.Locked, false); radio_3.Dispose();
+                    graphics.FillEllipse(c3, radio_rec_3);
+                    graphics.DrawString("Z", GH_FontServer.Standard, Brushes.Black, text_rec_3);
                 }
 
             }
@@ -198,7 +247,7 @@ namespace Wick
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    RectangleF rec1 = radio_rec_1; RectangleF rec2 = radio_rec_2;
+                    RectangleF rec1 = radio_rec_1; RectangleF rec2 = radio_rec_2; RectangleF rec3 = radio_rec_3;
                     if (rec1.Contains(e.CanvasLocation))
                     {
                         if (c1 == Brushes.White) { c1 = Brushes.Black; SetButton("x", 1); }
@@ -210,6 +259,13 @@ namespace Wick
                     {
                         if (c2 == Brushes.White) { c2 = Brushes.Black; SetButton("y", 1); }
                         else { c2 = Brushes.White; SetButton("y", 0); }
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Handled;
+                    }
+                    else if (rec3.Contains(e.CanvasLocation))
+                    {
+                        if (c3 == Brushes.White) { c3 = Brushes.Black; SetButton("z", 1); }
+                        else { c3 = Brushes.White; SetButton("z", 0); }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
