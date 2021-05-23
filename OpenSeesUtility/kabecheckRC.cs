@@ -611,21 +611,32 @@ namespace kabecheckRC
                         gfx.DrawLine(pen, offset_x + text_width * 11, offset_y + pitchy * (Ax[i].Count % n + 1), offset_x + text_width * 11, offset_y + pitchy * (Ax[i].Count % n + 2));//縦線
                     }
                     var pen2 = new XPen(XColors.Gray, 2.0);
+                    var rxmin = new List<double>(); var rymin = new List<double>();
+                    for (int i = 0; i < r.Count; i++)
+                    {
+                        var xmin = 9999.0; var ymin = 9999.0;
+                        for (int j = 0; j < r[i].Count; j++)
+                        {
+                            xmin = Math.Min(xmin, Math.Min(r[i][j][0][0], r[i][j][1][0]));
+                            ymin = Math.Min(ymin, Math.Min(r[i][j][0][1], r[i][j][1][1]));
+                        }
+                        rxmin.Add(xmin); rymin.Add(ymin);
+                    }
                     for (int i = 0; i < r.Count; i++)
                     {
                         // 空白ページを作成。
                         page = document.AddPage(); gfx = XGraphics.FromPdfPage(page);
                         for (int j = 0; j < r[i].Count; j++)
                         {
-                            var r1 = new List<double>(); r1.Add(offset + r[i][j][0][0] * scale); r1.Add(842 - offset - r[i][j][0][1] * scale);
-                            var r2 = new List<double>(); r2.Add(offset + r[i][j][1][0] * scale); r2.Add(842 - offset - r[i][j][1][1] * scale);
+                            var r1 = new List<double>(); r1.Add(offset + (r[i][j][0][0] - rxmin[i]) * scale); r1.Add(842 - offset - (r[i][j][0][1] - rymin[i]) * scale);
+                            var r2 = new List<double>(); r2.Add(offset + (r[i][j][1][0] - rxmin[i]) * scale); r2.Add(842 - offset - (r[i][j][1][1] - rymin[i]) * scale);
                             var rc = new List<double> { (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0 };
                             gfx.DrawLine(pen2, r1[0], r1[1], r2[0], r2[1]);
                         }
                         for (int j = 0; j < r[i].Count; j++)
                         {
-                            var r1 = new List<double>(); r1.Add(offset + r[i][j][0][0] * scale); r1.Add(842 - offset - r[i][j][0][1] * scale);
-                            var r2 = new List<double>(); r2.Add(offset + r[i][j][1][0] * scale); r2.Add(842 - offset - r[i][j][1][1] * scale);
+                            var r1 = new List<double>(); r1.Add(offset + (r[i][j][0][0] - rxmin[i]) * scale); r1.Add(842 - offset - (r[i][j][0][1] - rymin[i]) * scale);
+                            var r2 = new List<double>(); r2.Add(offset + (r[i][j][1][0] - rxmin[i]) * scale); r2.Add(842 - offset - (r[i][j][1][1] - rymin[i]) * scale);
                             var rc = new List<double> { (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0 };
                             gfx.DrawString(floor[i] + "-" + j.ToString(), font, XBrushes.Blue, rc[0], rc[1], XStringFormats.Center);//階-番号
                         }

@@ -13,3 +13,4 @@ C:\Users\shins\Downloads\OpenSeesUtility\OpenSeesUtility\obj\Debug\OpenSeesUtili
 C:\Users\shins\Downloads\OpenSeesUtility\OpenSeesUtility\obj\Debug\OpenSeesUtility.csproj.CopyComplete
 C:\Users\shins\Downloads\OpenSeesUtility\OpenSeesUtility\obj\Debug\OpenSeesUtility.dll
 C:\Users\shins\Downloads\OpenSeesUtility\OpenSeesUtility\obj\Debug\OpenSeesUtility.pdb
+C:\Users\shins\Downloads\OpenSeesUtility\OpenSeesUtility\obj\Debug\OpenSeesUtility.csprojAssemblyReference.cache
