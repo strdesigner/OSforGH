@@ -24,7 +24,7 @@ namespace VisualizeResult
         public static int on_off_11 = 0; public static int on_off_12 = 0; public static int on_off_21 = 0; public static int on_off_22 = 0; public static int on_off_23 = 0;
         public static int on_off2_11 = 0; public static int on_off2_12 = 0; public static int on_off2_13 = 0; public static int on_off2_21 = 0; public static int on_off2_22 = 0; public static int on_off2_23 = 0;
         public static int on_off3_11 = 0; public static int on_off3_12 = 0; public static int on_off3_13 = 0; public static int on_off3_21 = 0; public static int on_off3_22 = 0; public static int on_off3_23 = 0; public static int on_off3_31 = 0;
-        public static int Value = 0;
+        public static int Value = 0; public static int Delta = 0;
         double fontsize = double.NaN;
         string unit_of_force = "kN"; string unit_of_length = "m"; int digit = 4;
         public static void SetButton(string s, int i)
@@ -104,6 +104,10 @@ namespace VisualizeResult
             else if (s == "Value")
             {
                 Value = i;
+            }
+            else if (s == "Delta")
+            {
+                Delta = i;
             }
         }
         public VisualizeResult()
@@ -282,62 +286,105 @@ namespace VisualizeResult
                             _pt1.Add(rdiv[0]); _pt1.Add(rdiv[div]); _pt1.Add(rdiv[(int)(div / 2)]);
                             var scale = 1.0;
                             if (unit_of_length == "m") { scale = 1000.0; }else if (unit_of_length == "cm") { scale = 10.0; }
-                            if (on_off_11 == 1 && Value == 1)
+                            if (on_off_11 == 1 && (Value == 1 || Delta == 1))
                             {
-                                _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[0][0], 2)+ Math.Pow(ddiv[0][1], 2)+ Math.Pow(ddiv[0][2], 2)) * scale / dscale,digit).ToString("F").Substring(0, digit) + "mm");
-                                _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[div][0], 2) + Math.Pow(ddiv[div][1], 2) + Math.Pow(ddiv[div][2], 2)) * scale / dscale,digit).ToString("F").Substring(0, digit) + "mm");
-                                _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[(int)(div / 2)][0], 2) + Math.Pow(ddiv[(int)(div / 2)][1], 2) + Math.Pow(ddiv[(int)(div / 2)][2], 2)) * scale / dscale,digit).ToString("F").Substring(0, digit) + "mm");
+                                if (Value == 1)
+                                {
+
+                                    _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[0][0], 2) + Math.Pow(ddiv[0][1], 2) + Math.Pow(ddiv[0][2], 2)) * scale / dscale, digit).ToString("F").Substring(0, digit) + "mm");
+                                    _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[div][0], 2) + Math.Pow(ddiv[div][1], 2) + Math.Pow(ddiv[div][2], 2)) * scale / dscale, digit).ToString("F").Substring(0, digit) + "mm");
+                                    _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[(int)(div / 2)][0], 2) + Math.Pow(ddiv[(int)(div / 2)][1], 2) + Math.Pow(ddiv[(int)(div / 2)][2], 2)) * scale / dscale, digit).ToString("F").Substring(0, digit) + "mm");
+                                }
+                                if (Delta == 1)
+                                {
+                                    var delta_min = Math.Min(Math.Min(Math.Sqrt(Math.Pow(ddiv[0][0], 2) + Math.Pow(ddiv[0][1], 2) + Math.Pow(ddiv[0][2], 2)), Math.Sqrt(Math.Pow(ddiv[div][0], 2) + Math.Pow(ddiv[div][1], 2) + Math.Pow(ddiv[div][2], 2))), Math.Sqrt(Math.Pow(ddiv[(int)(div / 2)][0], 2) + Math.Pow(ddiv[(int)(div / 2)][1], 2) + Math.Pow(ddiv[(int)(div / 2)][2], 2))) / dscale; var delta_max = Math.Max(Math.Max(Math.Sqrt(Math.Pow(ddiv[0][0], 2) + Math.Pow(ddiv[0][1], 2) + Math.Pow(ddiv[0][2], 2)), Math.Sqrt(Math.Pow(ddiv[div][0], 2) + Math.Pow(ddiv[div][1], 2) + Math.Pow(ddiv[div][2], 2))), Math.Sqrt(Math.Pow(ddiv[(int)(div / 2)][0], 2) + Math.Pow(ddiv[(int)(div / 2)][1], 2) + Math.Pow(ddiv[(int)(div / 2)][2], 2))) / dscale;
+                                    var rad = l / (delta_max - delta_min);
+                                    if (rad < 1000) { _rad.Add("\n" + "1/" + ((int)rad).ToString()); }//たわみ角(1/1000以上のみ描画)
+                                    else { _rad.Add(""); }
+                                    var color = new ColorHSL((1 - Math.Min(Math.Max(1.0 / rad, 1.0 / 1000.0), 1.0 / 200.0) / (1.0 / 200.0)) * 1.9 / 3.0, 1, 0.5); _crad.Add(color);
+                                    _prad.Add(rdiv[(int)(div / 2)]);
+                                }
                             }
-                            else if (on_off_21 == 1 && Value == 1)
+                            else if (on_off_21 == 1 && (Value == 1 || Delta == 1))
                             {
-                                _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[0][0], 2) + Math.Pow(ddiv[0][1], 2)) * scale / dscale,digit).ToString("F").Substring(0, digit) + "mm");
-                                _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[div][0], 2) + Math.Pow(ddiv[div][1], 2)) * scale / dscale,digit).ToString("F").Substring(0, digit) + "mm");
-                                _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[(int)(div / 2)][0], 2) + Math.Pow(ddiv[(int)(div / 2)][1], 2)) * scale / dscale,digit).ToString("F").Substring(0, digit) + "mm");
+                                if (Value == 1)
+                                {
+                                    _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[0][0], 2) + Math.Pow(ddiv[0][1], 2)) * scale / dscale, digit).ToString("F").Substring(0, digit) + "mm");
+                                    _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[div][0], 2) + Math.Pow(ddiv[div][1], 2)) * scale / dscale, digit).ToString("F").Substring(0, digit) + "mm");
+                                    _dt.Add(Math.Round(Math.Sqrt(Math.Pow(ddiv[(int)(div / 2)][0], 2) + Math.Pow(ddiv[(int)(div / 2)][1], 2)) * scale / dscale, digit).ToString("F").Substring(0, digit) + "mm");
+                                }
+                                if (Delta == 1)
+                                {
+                                    var delta_min = Math.Min(Math.Min(Math.Sqrt(Math.Pow(ddiv[0][0], 2) + Math.Pow(ddiv[0][1], 2)), Math.Sqrt(Math.Pow(ddiv[div][0], 2) + Math.Pow(ddiv[div][1], 2))), Math.Sqrt(Math.Pow(ddiv[(int)(div / 2)][0], 2) + Math.Pow(ddiv[(int)(div / 2)][1], 2))) / dscale; var delta_max = Math.Max(Math.Max(Math.Sqrt(Math.Pow(ddiv[0][0], 2) + Math.Pow(ddiv[0][1], 2)), Math.Sqrt(Math.Pow(ddiv[div][0], 2) + Math.Pow(ddiv[div][1], 2))), Math.Sqrt(Math.Pow(ddiv[(int)(div / 2)][0], 2) + Math.Pow(ddiv[(int)(div / 2)][1], 2))) / dscale;
+                                    var rad = l / (delta_max - delta_min);
+                                    if (rad < 1000) { _rad.Add("\n" + "1/" + ((int)rad).ToString()); }//たわみ角(1/1000以上のみ描画)
+                                    else { _rad.Add(""); }
+                                    var color = new ColorHSL((1 - Math.Min(Math.Max(1.0 / rad, 1.0 / 1000.0), 1.0 / 200.0) / (1.0 / 200.0)) * 1.9 / 3.0, 1, 0.5); _crad.Add(color);
+                                    _prad.Add(rdiv[(int)(div / 2)]);
+                                }
                             }
-                            else if (on_off_12 == 1 && Value == 1)
+                            else if (on_off_12 == 1 && (Value == 1 || Delta == 1))
                             {
-                                var fugou = ""; if (ddiv[0][2] < 0) { fugou = "-"; }
-                                _dt.Add(fugou + Math.Round(Math.Abs(ddiv[0][2] * scale / dscale),digit).ToString("F").Substring(0, digit) + "mm");
-                                if (ddiv[div][2] < 0) { fugou = "-"; } else { fugou = ""; }
-                                _dt.Add(fugou + Math.Round(Math.Abs(ddiv[div][2] * scale / dscale),digit).ToString("F").Substring(0, digit) + "mm");
-                                if (ddiv[(int)(div / 2)][2] < 0) { fugou = "-"; } else { fugou = ""; }
-                                _dt.Add(fugou + Math.Round(Math.Abs(ddiv[(int)(div / 2)][2] * scale / dscale),digit).ToString("F").Substring(0, digit) + "mm");
-                                var delta_min = Math.Min(Math.Min(ddiv[0][2], ddiv[div][2]), ddiv[(int)(div / 2)][2]) / dscale; var delta_max = Math.Max(Math.Max(ddiv[0][2], ddiv[div][2]), ddiv[(int)(div / 2)][2]) / dscale;
-                                var rad = l/(delta_max-delta_min);
-                                if (rad < 1000) { _rad.Add("\n" + "1/" + ((int)rad).ToString()); }//たわみ角(1/1000以上のみ描画)
-                                else { _rad.Add(""); }
-                                var color = new ColorHSL((1 - Math.Min(Math.Max(1.0/rad,1.0/1000.0),1.0/200.0) / (1.0/200.0)) * 1.9 / 3.0, 1, 0.5); _crad.Add(color);
-                                _prad.Add(rdiv[(int)(div / 2)]);
+                                if (Value == 1)
+                                {
+                                    var fugou = ""; if (ddiv[0][2] < 0) { fugou = "-"; }
+                                    _dt.Add(fugou + Math.Round(Math.Abs(ddiv[0][2] * scale / dscale), digit).ToString("F").Substring(0, digit) + "mm");
+                                    if (ddiv[div][2] < 0) { fugou = "-"; } else { fugou = ""; }
+                                    _dt.Add(fugou + Math.Round(Math.Abs(ddiv[div][2] * scale / dscale), digit).ToString("F").Substring(0, digit) + "mm");
+                                    if (ddiv[(int)(div / 2)][2] < 0) { fugou = "-"; } else { fugou = ""; }
+                                    _dt.Add(fugou + Math.Round(Math.Abs(ddiv[(int)(div / 2)][2] * scale / dscale), digit).ToString("F").Substring(0, digit) + "mm");
+                                }
+                                if (Delta == 1)
+                                {
+                                    var delta_min = Math.Min(Math.Min(ddiv[0][2], ddiv[div][2]), ddiv[(int)(div / 2)][2]) / dscale; var delta_max = Math.Max(Math.Max(ddiv[0][2], ddiv[div][2]), ddiv[(int)(div / 2)][2]) / dscale;
+                                    var rad = l / (delta_max - delta_min);
+                                    if (rad < 1000) { _rad.Add("\n" + "1/" + ((int)rad).ToString()); }//たわみ角(1/1000以上のみ描画)
+                                    else { _rad.Add(""); }
+                                    var color = new ColorHSL((1 - Math.Min(Math.Max(1.0 / rad, 1.0 / 1000.0), 1.0 / 200.0) / (1.0 / 200.0)) * 1.9 / 3.0, 1, 0.5); _crad.Add(color);
+                                    _prad.Add(rdiv[(int)(div / 2)]);
+                                }
                             }
-                            else if (on_off_22 == 1 && Value == 1)
+                            else if (on_off_22 == 1 && (Value == 1 || Delta == 1))
                             {
-                                var fugou = ""; if (ddiv[0][0] < 0) { fugou = "-"; }
-                                _dt.Add(fugou + Math.Round(Math.Abs(ddiv[0][0] * scale / dscale),digit).ToString("F").Substring(0, digit) + "mm");
-                                if (ddiv[div][0] < 0) { fugou = "-"; } else { fugou = ""; }
-                                _dt.Add(fugou + Math.Round(Math.Abs(ddiv[div][0] * scale / dscale),digit).ToString("F").Substring(0, digit) + "mm");
-                                if (ddiv[(int)(div / 2)][0] < 0) { fugou = "-"; } else { fugou = ""; }
-                                _dt.Add(fugou + Math.Round(Math.Abs(ddiv[(int)(div / 2)][0] * scale / dscale),digit).ToString("F").Substring(0, digit) + "mm");
-                                var delta_min = Math.Min(Math.Min(ddiv[0][0], ddiv[div][0]), ddiv[(int)(div / 2)][0]) / dscale; var delta_max = Math.Max(Math.Max(ddiv[0][0], ddiv[div][0]), ddiv[(int)(div / 2)][0]) / dscale;
-                                var rad = l / (delta_max - delta_min);
-                                if (rad < 1000) { _rad.Add("\n" + "1/" + ((int)rad).ToString()); }//たわみ角(1/1000以上のみ描画)
-                                else { _rad.Add(""); }
-                                var color = new ColorHSL((1 - Math.Min(Math.Max(1.0 / rad, 1.0 / 1000.0), 1.0 / 200.0) / (1.0 / 200.0)) * 1.9 / 3.0, 1, 0.5); _crad.Add(color);
-                                _prad.Add(rdiv[(int)(div / 2)]);
+                                if (Value == 1)
+                                {
+                                    var fugou = ""; if (ddiv[0][0] < 0) { fugou = "-"; }
+                                    _dt.Add(fugou + Math.Round(Math.Abs(ddiv[0][0] * scale / dscale), digit).ToString("F").Substring(0, digit) + "mm");
+                                    if (ddiv[div][0] < 0) { fugou = "-"; } else { fugou = ""; }
+                                    _dt.Add(fugou + Math.Round(Math.Abs(ddiv[div][0] * scale / dscale), digit).ToString("F").Substring(0, digit) + "mm");
+                                    if (ddiv[(int)(div / 2)][0] < 0) { fugou = "-"; } else { fugou = ""; }
+                                    _dt.Add(fugou + Math.Round(Math.Abs(ddiv[(int)(div / 2)][0] * scale / dscale), digit).ToString("F").Substring(0, digit) + "mm");
+                                }
+                                if (Delta == 1)
+                                {
+                                    var delta_min = Math.Min(Math.Min(ddiv[0][0], ddiv[div][0]), ddiv[(int)(div / 2)][0]) / dscale; var delta_max = Math.Max(Math.Max(ddiv[0][0], ddiv[div][0]), ddiv[(int)(div / 2)][0]) / dscale;
+                                    var rad = l / (delta_max - delta_min);
+                                    if (rad < 1000) { _rad.Add("\n" + "1/" + ((int)rad).ToString()); }//たわみ角(1/1000以上のみ描画)
+                                    else { _rad.Add(""); }
+                                    var color = new ColorHSL((1 - Math.Min(Math.Max(1.0 / rad, 1.0 / 1000.0), 1.0 / 200.0) / (1.0 / 200.0)) * 1.9 / 3.0, 1, 0.5); _crad.Add(color);
+                                    _prad.Add(rdiv[(int)(div / 2)]);
+                                }
                             }
-                            else if (on_off_23 == 1 && Value == 1)
+                            else if (on_off_23 == 1 && (Value == 1 || Delta == 1))
                             {
-                                var fugou = ""; if (ddiv[0][1] < 0) { fugou = "-"; }
-                                _dt.Add(fugou + Math.Round(Math.Abs(ddiv[0][1] * scale / dscale),digit).ToString("F").Substring(0, digit) + "mm");
-                                if (ddiv[div][1] < 0) { fugou = "-"; } else { fugou = ""; }
-                                _dt.Add(fugou + Math.Round(Math.Abs(ddiv[div][1] * scale / dscale),digit).ToString("F").Substring(0, digit) + "mm");
-                                if (ddiv[(int)(div / 2)][1] < 0) { fugou = "-"; } else { fugou = ""; }
-                                _dt.Add(fugou + Math.Round(Math.Abs(ddiv[(int)(div / 2)][1] * scale / dscale),digit).ToString("F").Substring(0, digit) + "mm");
-                                var delta_min = Math.Min(Math.Min(ddiv[0][1], ddiv[div][1]), ddiv[(int)(div / 2)][1]) / dscale; var delta_max = Math.Max(Math.Max(ddiv[0][1], ddiv[div][1]), ddiv[(int)(div / 2)][1]) / dscale;
-                                var rad = l / (delta_max - delta_min);
-                                if (rad < 1000) { _rad.Add("\n" + "1/" + ((int)rad).ToString()); }//たわみ角(1/1000以上のみ描画)
-                                else { _rad.Add(""); }
-                                var color = new ColorHSL((1 - Math.Min(Math.Max(1.0 / rad, 1.0 / 1000.0), 1.0 / 200.0) / (1.0 / 200.0)) * 1.9 / 3.0, 1, 0.5); _crad.Add(color);
-                                _prad.Add(rdiv[(int)(div / 2)]);
+                                if (Value == 1)
+                                {
+                                    var fugou = ""; if (ddiv[0][1] < 0) { fugou = "-"; }
+                                    _dt.Add(fugou + Math.Round(Math.Abs(ddiv[0][1] * scale / dscale), digit).ToString("F").Substring(0, digit) + "mm");
+                                    if (ddiv[div][1] < 0) { fugou = "-"; } else { fugou = ""; }
+                                    _dt.Add(fugou + Math.Round(Math.Abs(ddiv[div][1] * scale / dscale), digit).ToString("F").Substring(0, digit) + "mm");
+                                    if (ddiv[(int)(div / 2)][1] < 0) { fugou = "-"; } else { fugou = ""; }
+                                    _dt.Add(fugou + Math.Round(Math.Abs(ddiv[(int)(div / 2)][1] * scale / dscale), digit).ToString("F").Substring(0, digit) + "mm");
+                                }
+                                if (Delta == 1)
+                                {
+                                    var delta_min = Math.Min(Math.Min(ddiv[0][1], ddiv[div][1]), ddiv[(int)(div / 2)][1]) / dscale; var delta_max = Math.Max(Math.Max(ddiv[0][1], ddiv[div][1]), ddiv[(int)(div / 2)][1]) / dscale;
+                                    var rad = l / (delta_max - delta_min);
+                                    if (rad < 1000) { _rad.Add("\n" + "1/" + ((int)rad).ToString()); }//たわみ角(1/1000以上のみ描画)
+                                    else { _rad.Add(""); }
+                                    var color = new ColorHSL((1 - Math.Min(Math.Max(1.0 / rad, 1.0 / 1000.0), 1.0 / 200.0) / (1.0 / 200.0)) * 1.9 / 3.0, 1, 0.5); _crad.Add(color);
+                                    _prad.Add(rdiv[(int)(div / 2)]);
+                                }
                             }
                         }
                     }
@@ -972,7 +1019,7 @@ namespace VisualizeResult
             private Rectangle radio_rec2_21; private Rectangle text_rec2_21; private Rectangle radio_rec2_22; private Rectangle text_rec2_22; private Rectangle radio_rec2_23; private Rectangle text_rec2_23;
             private Rectangle radio_rec3_11; private Rectangle text_rec3_11; private Rectangle radio_rec3_12; private Rectangle text_rec3_12; private Rectangle radio_rec3_13; private Rectangle text_rec3_13;
             private Rectangle radio_rec3_21; private Rectangle text_rec3_21; private Rectangle radio_rec3_22; private Rectangle text_rec3_22; private Rectangle radio_rec3_23; private Rectangle text_rec3_23; private Rectangle radio_rec3_31; private Rectangle text_rec3_31;
-            private Rectangle radio_rec4_11; private Rectangle text_rec4_11;
+            private Rectangle radio_rec4_11; private Rectangle text_rec4_11; private Rectangle radio_rec4_12; private Rectangle text_rec4_12;
 
             protected override void Layout()
             {
@@ -1164,13 +1211,19 @@ namespace VisualizeResult
                 text_rec4_11.X += pitchx; text_rec4_11.Y -= radi2;
                 text_rec4_11.Height = textheight; text_rec4_11.Width = subwidth + 30;
 
+                radio_rec4_12 = radio_rec4_11; radio_rec4_12.X = text_rec4_11.X + text_rec4_11.Width + 5;
+
+                text_rec4_12 = radio_rec4_12;
+                text_rec4_12.X += pitchx; text_rec4_12.Y -= radi2;
+                text_rec4_12.Height = textheight; text_rec4_12.Width = subwidth + 30;
+
                 Bounds = global_rec;
             }
             Brush c11 = Brushes.White; Brush c12 = Brushes.White; Brush c21 = Brushes.White; Brush c22 = Brushes.White; Brush c23 = Brushes.White;
             Brush c211 = Brushes.White; Brush c212 = Brushes.White; Brush c213 = Brushes.White; Brush c221 = Brushes.White; Brush c222 = Brushes.White; Brush c223 = Brushes.White;
             Brush c311 = Brushes.White; Brush c312 = Brushes.White; Brush c313 = Brushes.White; Brush c321 = Brushes.White; Brush c322 = Brushes.White; Brush c323 = Brushes.White;
             Brush c331 = Brushes.White;
-            Brush c411 = Brushes.White;
+            Brush c411 = Brushes.White; Brush c412 = Brushes.White;
             protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
             {
                 base.Render(canvas, graphics, channel);
@@ -1324,6 +1377,11 @@ namespace VisualizeResult
                     radio4_11.Render(graphics, Selected, Owner.Locked, false); radio4_11.Dispose();
                     graphics.FillEllipse(c411, radio_rec4_11);
                     graphics.DrawString("Value", GH_FontServer.Standard, Brushes.Black, text_rec4_11);
+
+                    GH_Capsule radio4_12 = GH_Capsule.CreateCapsule(radio_rec4_12, GH_Palette.Black, 5, 5);
+                    radio4_12.Render(graphics, Selected, Owner.Locked, false); radio4_12.Dispose();
+                    graphics.FillEllipse(c412, radio_rec4_12);
+                    graphics.DrawString("D/H", GH_FontServer.Standard, Brushes.Black, text_rec4_12);
                 }
 
             }
@@ -1338,7 +1396,7 @@ namespace VisualizeResult
                     RectangleF rec311 = radio_rec3_11; RectangleF rec312 = radio_rec3_12; RectangleF rec313 = radio_rec3_13;
                     RectangleF rec321 = radio_rec3_21; RectangleF rec322 = radio_rec3_22; RectangleF rec323 = radio_rec3_23;
                     RectangleF rec331 = radio_rec3_31;
-                    RectangleF rec411 = radio_rec4_11;
+                    RectangleF rec411 = radio_rec4_11; RectangleF rec412 = radio_rec4_12;
                     if (rec11.Contains(e.CanvasLocation))
                     {
                         if (c11 == Brushes.Black) { c11 = Brushes.White; SetButton("c11", 0); }
@@ -1477,6 +1535,13 @@ namespace VisualizeResult
                     {
                         if (c411 == Brushes.Black) { c411 = Brushes.White; SetButton("Value", 0); }
                         else { c411 = Brushes.Black; SetButton("Value", 1); }
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Handled;
+                    }
+                    if (rec412.Contains(e.CanvasLocation))
+                    {
+                        if (c412 == Brushes.Black) { c412 = Brushes.White; SetButton("Delta", 0); }
+                        else { c412 = Brushes.Black; SetButton("Delta", 1); }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
