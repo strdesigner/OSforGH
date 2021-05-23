@@ -161,7 +161,7 @@ namespace ElasticAnalysis
                         var x1 = r[i][0].Value; var y1 = r[i][1].Value; var z1 = r[i][2].Value; var x2 = r[j][0].Value; var y2 = r[j][1].Value; var z2 = r[j][2].Value;
                         var local_x = new VectorWrapper(new double[] { x2 - x1, y2 - y1, z2 - z1 });
                         var l_vec2 = rotation(l_vec[e], new Vector3d(x2 - x1, y2 - y1, z2 - z1), 90.0);
-                        var local_z = new VectorWrapper(new double[] { l_vec2[0], l_vec2[1], 0.0 });
+                        var local_z = new VectorWrapper(new double[] { l_vec2[0], l_vec2[1], l_vec2[2] });
                         if ((int)joint[k][1].Value == 0)
                         {
                             nc += 1;
