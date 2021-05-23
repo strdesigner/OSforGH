@@ -2063,7 +2063,6 @@ namespace OpenSeesUtility
                             var MaiB = MB_aL[ind][0]; var MacB = MB_aL[ind][1]; var MajB = MB_aL[ind][2];
                             var MaiR = MR_aL[ind][0]; var MacR = MR_aL[ind][1]; var MajR = MR_aL[ind][2];
                             var MaiL = ML_aL[ind][0]; var MacL = ML_aL[ind][1]; var MajL = ML_aL[ind][2];
-                            Rhino.RhinoApp.WriteLine("test2b");
                             var MaiT_text = MaiT.ToString("F10").Substring(0, Math.Max(5, Digit((int)MaiT)));
                             var MacT_text = MacT.ToString("F10").Substring(0, Math.Max(5, Digit((int)MacT)));
                             var MajT_text = MajT.ToString("F10").Substring(0, Math.Max(5, Digit((int)MajT)));
@@ -2076,7 +2075,6 @@ namespace OpenSeesUtility
                             var MaiL_text = MaiL.ToString("F10").Substring(0, Math.Max(5, Digit((int)MaiL)));
                             var MacL_text = MacL.ToString("F10").Substring(0, Math.Max(5, Digit((int)MacL)));
                             var MajL_text = MajL.ToString("F10").Substring(0, Math.Max(5, Digit((int)MajL)));
-                            Rhino.RhinoApp.WriteLine("test3");
                             var ki = Math.Max(MiT / MaiT, MiB / MaiB) + Math.Max(MiR / MaiR, MiL / MaiL); var kc = Math.Max(McT / MacT, McB / MacB) + Math.Max(McR / MacR, McL / MacL); var kj = Math.Max(MjT / MajT, MjT / MajT) + Math.Max(MjR / MajR, MjL / MajL);
                             var Qi = Math.Abs(QzL[ind][0]); var Qc = Math.Abs(QzL[ind][1]); var Qj = Math.Abs(QzL[ind][2]);
                             var Qi_text = Qi.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qi)));
@@ -2095,7 +2093,6 @@ namespace OpenSeesUtility
                             var Qac2_text = Qac2.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qac2)));
                             var Qaj2_text = Qaj2.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qaj2)));
                             var ki2 = Math.Abs(Qi / Qai) + Math.Abs(Qi2 / Qai2); var kc2 = Math.Abs(Qc / Qac) + Math.Abs(Qc2 / Qac2); var kj2 = Math.Abs(Qj / Qaj) + Math.Abs(Qj2 / Qaj2);
-                            Rhino.RhinoApp.WriteLine("test4");
                             values.Add(new List<string> { MiT_text, McT_text, MjT_text }); values.Add(new List<string> { MiB_text, McB_text, MjB_text });
                             values.Add(new List<string> { MiR_text, McR_text, MjR_text }); values.Add(new List<string> { MiL_text, McL_text, MjL_text });
                             values.Add(new List<string> { MaiT_text, MacT_text, MajT_text }); values.Add(new List<string> { MaiB_text, MacB_text, MajB_text });
@@ -2106,7 +2103,6 @@ namespace OpenSeesUtility
                             values.Add(new List<string> { Qi2_text, Qc2_text, Qj2_text });
                             values.Add(new List<string> { Qai2_text, Qac2_text, Qaj2_text });
                             values.Add(new List<string> { ki2.ToString("F10").Substring(0, 4), kc2.ToString("F10").Substring(0, 4), kj2.ToString("F10").Substring(0, 4) });
-                            Rhino.RhinoApp.WriteLine("test5");
                             var k_color = new List<XSolidBrush>(); var k2_color = new List<XSolidBrush>();
                             k_color.Add(new XSolidBrush(RGB((1 - Math.Min(ki, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k_color.Add(new XSolidBrush(RGB((1 - Math.Min(kc, 1.0)) * 1.9 / 3.0, 1, 0.5)));
@@ -2119,7 +2115,6 @@ namespace OpenSeesUtility
                                 values.Add(new List<string> { "O.K.", "O.K.", "O.K." });
                             }
                             else { values.Add(new List<string> { "N.G.", "N.G.", "N.G." }); }
-                            Rhino.RhinoApp.WriteLine("test2");
                             if (ind % 3 == 0)
                             {
                                 // 空白ページを作成。

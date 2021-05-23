@@ -540,7 +540,7 @@ namespace ElasticAnalysis
                     for (int i = 0; i < fe.Length; i++) { flist.Add(new GH_Number(fe[i])); }
                     var K = theDomain.GetElement(m + mc + e + 1).GetTangentStiff();
                     int ni = (int)ijkl[e][0].Value; int nj = (int)ijkl[e][1].Value; int nk = (int)ijkl[e][2].Value; int nl = (int)ijkl[e][3].Value;
-                    if (K.Length == 144) { Rhino.RhinoApp.WriteLine(" e=" + e.ToString() + " " + ni.ToString() + " " + nj.ToString() + " " + nk.ToString() + " " + nl.ToString()); }
+                    //if (K.Length == 144) { Rhino.RhinoApp.WriteLine(" e=" + e.ToString() + " " + ni.ToString() + " " + nj.ToString() + " " + nk.ToString() + " " + nl.ToString()); }
                     //var v = new VectorWrapper(); theDomain.GetElement(m + mc + e + 1).GetVectorResponse(1, ref v);
                     //for (int i = 0; i < v.Size(); i++) { flist.Add(new GH_Number(v[i])); }
                     shell_f.AppendRange(flist, new GH_Path(e));
