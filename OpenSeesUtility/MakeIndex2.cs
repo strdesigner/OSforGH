@@ -41,6 +41,7 @@ namespace MakeIndex2
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddIntegerParameter("index", "index", "[int,int,...](Datalist)", GH_ParamAccess.list);
+            pManager.AddCurveParameter("line", "line", "Line of elements", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -142,7 +143,7 @@ namespace MakeIndex2
                 }
                 for (int e = 0; e < lines2.Count; e++)//節点生成(spring)
                 {
-                    var r1 = lines2[e].PointAt(0); var r2 = lines2[e].PointAtEnd; var l1 = 10.0; var l2 = 10.0;
+                    var r1 = lines2[e].PointAtStart; var r2 = lines2[e].PointAtEnd; var l1 = 10.0; var l2 = 10.0;
                     for (int i = 0; i < xyz.Count; i++) { l1 = Math.Min(l1, (xyz[i] - r1).Length); }
                     if (l1 > acc) { xyz.Add(r1); }
                     for (int i = 0; i < xyz.Count; i++) { l2 = Math.Min(l2, (xyz[i] - r2).Length); }
@@ -151,7 +152,7 @@ namespace MakeIndex2
                 k = -1;
                 for (int e = 0; e < lines.Count; e++)//交差判定を行い交差部で要素分割する
                 {
-                    var r1 = lines[e].PointAt(0); var r2 = lines[e].PointAtEnd; var l0 = r2 - r1; var rc = new List<Point3d>(); 
+                    var r1 = lines[e].PointAtStart; var r2 = lines[e].PointAtEnd; var l0 = r2 - r1; var rc = new List<Point3d>(); 
                     for (int i = 0; i < xyz.Count; i++)
                     {
                         var l1 = xyz[i] - r1;
@@ -172,19 +173,20 @@ namespace MakeIndex2
                         }
                         int[] idx = Enumerable.Range(0, rc.Count).ToArray<int>();//r1とr2の間の点のソート
                         Array.Sort<int>(idx, (a, b) => llist[a].CompareTo(llist[b]));
-                        lines_new.Add(new Line(r1, rc[idx[0]])); k += 1; if (index.Contains(e)) { index_new.Add(k); }
+                        lines_new.Add(new Line(r1, rc[idx[0]])); k += 1;
+                        if (index.Contains(e)) { index_new.Add(k); }
                         for (int i = 0; i < idx.Length - 1; i++)
                         {
-                            lines_new.Add(new Line(rc[idx[i]], rc[idx[i + 1]])); k += 1; if (index.Contains(e)) { index_new.Add(k); }
+                            k += 1; if (index.Contains(e)) { index_new.Add(k); lines_new.Add(new Line(rc[idx[i]], rc[idx[i + 1]])); }
                         }
-                        lines_new.Add(new Line(rc[idx[idx.Length - 1]], r2)); k += 1; if (index.Contains(e)) { index_new.Add(k); }
+                        k += 1; if (index.Contains(e)) { index_new.Add(k); lines_new.Add(new Line(rc[idx[idx.Length - 1]], r2)); }
                     }
                     else
                     {
-                        lines_new.Add(new Line(r1, r2)); k += 1; if (index.Contains(e)) { index_new.Add(k); }
+                        k += 1; if (index.Contains(e)) { index_new.Add(k); lines_new.Add(new Line(r1, r2)); }
                     }
                 }
-                DA.SetDataList("index", index_new);
+                DA.SetDataList("index", index_new); DA.SetDataList("line", lines_new);
             }
             if(index_new.Count == 0 && index2.Count != 0){ DA.SetDataList("index", index2); }
         }
