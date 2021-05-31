@@ -292,6 +292,9 @@
   <data name="surfaceload" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\surfaceload.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="surfaceload2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\surfaceload2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="surfautocreation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\surfautocreation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

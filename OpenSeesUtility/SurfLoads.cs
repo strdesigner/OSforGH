@@ -15,7 +15,7 @@ namespace SurfLoads
         /// Initializes a new instance of the MyComponent1 class.
         /// </summary>
         public SurfLoads()
-          : base("SetSurfLoads(old)", "SurfLoad",
+          : base("SetSurfLoads", "SurfLoad",
               "Set surface or floor load for OpenSees",
               "OpenSees", "PreProcess")
         {

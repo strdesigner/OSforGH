@@ -16,7 +16,7 @@ namespace OpenSeesUtility
         /// Initializes a new instance of the MyComponent2 class.
         /// </summary>
         public SurfLoad()
-          : base("SetSurfLoads", "SurfLoad",
+          : base("SetSurfLoads2", "SurfLoad2",
               "Set surface or floor load for OpenSees",
               "OpenSees", "PreProcess")
         {
@@ -128,7 +128,7 @@ namespace OpenSeesUtility
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return OpenSeesUtility.Properties.Resources.surfaceload;
+                return OpenSeesUtility.Properties.Resources.surfaceload2;
             }
         }
 
