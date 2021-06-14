@@ -217,10 +217,20 @@ namespace OpenSeesUtility
                     int e = (int)index[ind]; int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value; Nod.Add(new List<string> { ni.ToString() + "(i端)", "中央", nj.ToString() + "(j端)" }); Ele.Add(new List<string> { e.ToString() });
                     var f = sec_f[e]; var Mi = f[4].Value; var Mj = f[10].Value; var Mc = f[16].Value; var Qi = f[2].Value; var Qj = f[8].Value; var Qc = f[14].Value;
                     var Mi_x = 0.0; var Mj_x = 0.0; var Mc_x = 0.0; var Qi_x = 0.0; var Qj_x = 0.0; var Qc_x = 0.0; var Mi_y = 0.0; var Mj_y = 0.0; var Mc_y = 0.0; var Qi_y = 0.0; var Qj_y = 0.0; var Qc_y = 0.0;
+                    var Mi_x2 = 0.0; var Mj_x2 = 0.0; var Mc_x2 = 0.0; var Qi_x2 = 0.0; var Qj_x2 = 0.0; var Qc_x2 = 0.0; var Mi_y2 = 0.0; var Mj_y2 = 0.0; var Mc_y2 = 0.0; var Qi_y2 = 0.0; var Qj_y2 = 0.0; var Qc_y2 = 0.0;
                     if (sec_f[0].Count / 18 == 3)
                     {
                         Mi_x = f[18 + 4].Value; Mj_x = f[18 + 10].Value; Mc_x = f[18 + 16].Value; Qi_x = f[18 + 2].Value; Qj_x = f[18 + 8].Value; Qc_x = f[18 + 14].Value;
                         Mi_y = f[36 + 4].Value; Mj_y = f[36 + 10].Value; Mc_y = f[36 + 16].Value; Qi_y = f[36 + 2].Value; Qj_y = f[36 + 8].Value; Qc_y = f[36 + 14].Value;
+                        Mi_x2 = -f[18 + 4].Value; Mj_x2 = -f[18 + 10].Value; Mc_x2 = -f[18 + 16].Value; Qi_x2 = -f[18 + 2].Value; Qj_x2 = -f[18 + 8].Value; Qc_x2 = -f[18 + 14].Value;
+                        Mi_y2 = -f[36 + 4].Value; Mj_y2 = -f[36 + 10].Value; Mc_y2 = -f[36 + 16].Value; Qi_y2 = -f[36 + 2].Value; Qj_y2 = -f[36 + 8].Value; Qc_y2 = -f[36 + 14].Value;
+                    }
+                    else if (sec_f[0].Count / 18 == 5)
+                    {
+                        Mi_x = f[18 + 4].Value; Mj_x = f[18 + 10].Value; Mc_x = f[18 + 16].Value; Qi_x = f[18 + 2].Value; Qj_x = f[18 + 8].Value; Qc_x = f[18 + 14].Value;
+                        Mi_y = f[36 + 4].Value; Mj_y = f[36 + 10].Value; Mc_y = f[36 + 16].Value; Qi_y = f[36 + 2].Value; Qj_y = f[36 + 8].Value; Qc_y = f[36 + 14].Value;
+                        Mi_x2 = f[54 + 4].Value; Mj_x2 = f[54 + 10].Value; Mc_x2 = f[54 + 16].Value; Qi_x2 = f[54 + 2].Value; Qj_x2 = f[54 + 8].Value; Qc_x2 = f[54 + 14].Value;
+                        Mi_y2 = f[72 + 4].Value; Mj_y2 = f[72 + 10].Value; Mc_y2 = f[72 + 16].Value; Qi_y2 = f[72 + 2].Value; Qj_y2 = f[72 + 8].Value; Qc_y2 = f[72 + 14].Value;
                     }
                     int mat = (int)ij[e][2].Value; int bar = (int)barNo[e]; var T1 = barT1[bar]; var T2 = barT2[bar]; var B1 = barB1[bar]; var B2 = barB2[bar];
                     Name.Add(new List<string> { barname[bar] });
@@ -448,8 +458,8 @@ namespace OpenSeesUtility
                     var alpha_iL = Math.Max(Math.Min(4.0 / (Math.Abs(Mi * 1e+6) / (Math.Abs(Qi * 1e+3) * d_i) + 1.0), 2), 1);
                     var alpha_iLpX = Math.Max(Math.Min(4.0 / (Math.Abs((Mi + Mi_x) * 1e+6) / (Math.Abs((Qi + Qi_x) * 1e+3) * d_i) + 1.0), 2), 1);
                     var alpha_iLpY = Math.Max(Math.Min(4.0 / (Math.Abs((Mi + Mi_y) * 1e+6) / (Math.Abs((Qi + Qi_y) * 1e+3) * d_i) + 1.0), 2), 1);
-                    var alpha_iLmX = Math.Max(Math.Min(4.0 / (Math.Abs((Mi - Mi_x) * 1e+6) / (Math.Abs((Qi - Qi_x) * 1e+3) * d_i) + 1.0), 2), 1);
-                    var alpha_iLmY = Math.Max(Math.Min(4.0 / (Math.Abs((Mi - Mi_y) * 1e+6) / (Math.Abs((Qi - Qi_y) * 1e+3) * d_i) + 1.0), 2), 1);
+                    var alpha_iLmX = Math.Max(Math.Min(4.0 / (Math.Abs((Mi + Mi_x2) * 1e+6) / (Math.Abs((Qi + Qi_x2) * 1e+3) * d_i) + 1.0), 2), 1);
+                    var alpha_iLmY = Math.Max(Math.Min(4.0 / (Math.Abs((Mi + Mi_y2) * 1e+6) / (Math.Abs((Qi + Qi_y2) * 1e+3) * d_i) + 1.0), 2), 1);
                     var wft_iL = 195.0; var wft_iS = 295.0;
                     if (S_i > 18.9 && S_i < 28.9) { wft_iL = 215.0; }
                     if (S_i > 18.9 && S_i < 28.9) { wft_iS = 345.0; }
@@ -469,8 +479,8 @@ namespace OpenSeesUtility
                     var alpha_cL = Math.Max(Math.Min(4.0 / (Math.Abs(Mc * 1e+6) / (Math.Abs(Qc * 1e+3) * d_c) + 1.0), 2), 1);
                     var alpha_cLpX = Math.Max(Math.Min(4.0 / (Math.Abs((Mc + Mc_x) * 1e+6) / (Math.Abs((Qc + Qc_x) * 1e+3) * d_c) + 1.0), 2), 1);
                     var alpha_cLpY = Math.Max(Math.Min(4.0 / (Math.Abs((Mc + Mc_y) * 1e+6) / (Math.Abs((Qc + Qc_y) * 1e+3) * d_c) + 1.0), 2), 1);
-                    var alpha_cLmX = Math.Max(Math.Min(4.0 / (Math.Abs((Mc - Mc_x) * 1e+6) / (Math.Abs((Qc - Qc_x) * 1e+3) * d_c) + 1.0), 2), 1);
-                    var alpha_cLmY = Math.Max(Math.Min(4.0 / (Math.Abs((Mc - Mc_y) * 1e+6) / (Math.Abs((Qc - Qc_y) * 1e+3) * d_c) + 1.0), 2), 1);
+                    var alpha_cLmX = Math.Max(Math.Min(4.0 / (Math.Abs((Mc + Mc_x2) * 1e+6) / (Math.Abs((Qc + Qc_x2) * 1e+3) * d_c) + 1.0), 2), 1);
+                    var alpha_cLmY = Math.Max(Math.Min(4.0 / (Math.Abs((Mc + Mc_y2) * 1e+6) / (Math.Abs((Qc + Qc_y2) * 1e+3) * d_c) + 1.0), 2), 1);
                     var wft_cL = 195.0; var wft_cS = 295.0;
                     if (S_c > 18.9 && S_c < 28.9) { wft_cL = 215.0; }
                     if (S_c > 18.9 && S_c < 28.9) { wft_cS = 345.0; }
@@ -490,8 +500,8 @@ namespace OpenSeesUtility
                     var alpha_jL = Math.Max(Math.Min(4.0 / (Math.Abs(Mj * 1e+6) / (Math.Abs(Qj * 1e+3) * d_j) + 1.0), 2), 1);
                     var alpha_jLpX = Math.Max(Math.Min(4.0 / (Math.Abs((Mj + Mj_x) * 1e+6) / (Math.Abs((Qj + Qj_x) * 1e+3) * d_j) + 1.0), 2), 1);
                     var alpha_jLpY = Math.Max(Math.Min(4.0 / (Math.Abs((Mj + Mj_y) * 1e+6) / (Math.Abs((Qj + Qj_y) * 1e+3) * d_j) + 1.0), 2), 1);
-                    var alpha_jLmX = Math.Max(Math.Min(4.0 / (Math.Abs((Mj - Mj_x) * 1e+6) / (Math.Abs((Qj - Qj_x) * 1e+3) * d_j) + 1.0), 2), 1);
-                    var alpha_jLmY = Math.Max(Math.Min(4.0 / (Math.Abs((Mj - Mj_y) * 1e+6) / (Math.Abs((Qj - Qj_y) * 1e+3) * d_j) + 1.0), 2), 1);
+                    var alpha_jLmX = Math.Max(Math.Min(4.0 / (Math.Abs((Mj + Mj_x2) * 1e+6) / (Math.Abs((Qj + Qj_x2) * 1e+3) * d_j) + 1.0), 2), 1);
+                    var alpha_jLmY = Math.Max(Math.Min(4.0 / (Math.Abs((Mj + Mj_y2) * 1e+6) / (Math.Abs((Qj + Qj_y2) * 1e+3) * d_j) + 1.0), 2), 1);
                     var wft_jL = 195.0; var wft_jS = 295.0;
                     if (S_j > 18.9 && S_j < 28.9) { wft_jL = 215.0; }
                     if (S_j > 18.9 && S_j < 28.9) { wft_jS = 345.0; }
@@ -537,40 +547,40 @@ namespace OpenSeesUtility
                     if (Mc < 0) { klist.Add(new GH_Number(Math.Abs(Mc) / Ma_ctL)); }
                     else { klist.Add(new GH_Number(Math.Abs(Mc) / Ma_cbL)); }
                     klist.Add(new GH_Number(Math.Abs(Qi) / Qa_iL)); klist.Add(new GH_Number(Math.Abs(Qj) / Qa_jL)); klist.Add(new GH_Number(Math.Abs(Qc) / Qa_cL));
-                    kentei.AppendRange(klist, new GH_Path(e));
+                    kentei.AppendRange(klist, new GH_Path(e,0));
 
                     var ki = new List<double>(); var kj = new List<double>(); var kc = new List<double>();
                     if (Mi + Mi_x < 0) { ki.Add(Math.Abs(Mi + Mi_x) / Ma_itS); }
                     else { ki.Add(Math.Abs(Mi + Mi_x) / Ma_ibS); }
-                    if (Mi - Mi_x < 0) { ki.Add(Math.Abs(Mi - Mi_x) / Ma_itS); }
-                    else { ki.Add(Math.Abs(Mi - Mi_x) / Ma_ibS); }
+                    if (Mi - Mi_x < 0) { ki.Add(Math.Abs(Mi + Mi_x2) / Ma_itS); }
+                    else { ki.Add(Math.Abs(Mi + Mi_x2) / Ma_ibS); }
                     if (Mi + Mi_y < 0) { ki.Add(Math.Abs(Mi + Mi_y) / Ma_itS); }
                     else { ki.Add(Math.Abs(Mi + Mi_y) / Ma_ibS); }
-                    if (Mi - Mi_y < 0) { ki.Add(Math.Abs(Mi - Mi_y) / Ma_itS); }
-                    else { ki.Add(Math.Abs(Mi - Mi_y) / Ma_ibS); }
+                    if (Mi - Mi_y < 0) { ki.Add(Math.Abs(Mi + Mi_y2) / Ma_itS); }
+                    else { ki.Add(Math.Abs(Mi + Mi_y2) / Ma_ibS); }
                     if (Mj + Mj_x < 0) { kj.Add(Math.Abs(Mj + Mj_x) / Ma_jtS); }
                     else { kj.Add(Math.Abs(Mj + Mj_x) / Ma_jbS); }
-                    if (Mj - Mj_x < 0) { kj.Add(Math.Abs(Mj - Mj_x) / Ma_jtS); }
-                    else { kj.Add(Math.Abs(Mj - Mj_x) / Ma_jbS); }
+                    if (Mj - Mj_x < 0) { kj.Add(Math.Abs(Mj + Mj_x2) / Ma_jtS); }
+                    else { kj.Add(Math.Abs(Mj + Mj_x2) / Ma_jbS); }
                     if (Mj + Mj_y < 0) { kj.Add(Math.Abs(Mj + Mj_y) / Ma_jtS); }
                     else { kj.Add(Math.Abs(Mj + Mj_y) / Ma_jbS); }
-                    if (Mj - Mj_y < 0) { kj.Add(Math.Abs(Mj - Mj_y) / Ma_jtS); }
-                    else { kj.Add(Math.Abs(Mj - Mj_y) / Ma_jbS); }
+                    if (Mj - Mj_y < 0) { kj.Add(Math.Abs(Mj + Mj_y2) / Ma_jtS); }
+                    else { kj.Add(Math.Abs(Mj + Mj_y2) / Ma_jbS); }
                     if (Mc + Mc_x < 0) { kc.Add(Math.Abs(Mc + Mc_x) / Ma_ctS); }
                     else { kc.Add(Math.Abs(Mc + Mc_x) / Ma_cbS); }
-                    if (Mc - Mc_x < 0) { kc.Add(Math.Abs(Mc - Mc_x) / Ma_ctS); }
-                    else { kc.Add(Math.Abs(Mc - Mc_x) / Ma_cbS); }
+                    if (Mc - Mc_x < 0) { kc.Add(Math.Abs(Mc + Mc_x2) / Ma_ctS); }
+                    else { kc.Add(Math.Abs(Mc + Mc_x2) / Ma_cbS); }
                     if (Mc + Mc_y < 0) { kc.Add(Math.Abs(Mc + Mc_y) / Ma_ctS); }
                     else { kc.Add(Math.Abs(Mc + Mc_y) / Ma_cbS); }
-                    if (Mc - Mc_y < 0) { kc.Add(Math.Abs(Mc - Mc_y) / Ma_ctS); }
-                    else { kc.Add(Math.Abs(Mc - Mc_y) / Ma_cbS); }
+                    if (Mc - Mc_y < 0) { kc.Add(Math.Abs(Mc + Mc_y2) / Ma_ctS); }
+                    else { kc.Add(Math.Abs(Mc + Mc_y2) / Ma_cbS); }
                     k2list.Add(new GH_Number(Math.Max(Math.Max(ki[0],ki[1]),Math.Max(ki[2],ki[3]))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(kj[0], kj[1]), Math.Max(kj[2], kj[3]))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(kc[0], kc[1]), Math.Max(kc[2], kc[3]))));
-                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qi+Qi_x * N) / Qa_iLpX, Math.Abs(Qi - Qi_x * N) / Qa_iLmX), Math.Max(Math.Abs(Qi + Qi_y * N) / Qa_iLpY, Math.Abs(Qi - Qi_y * N) / Qa_iLpY))));
-                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qj + Qj_x * N) / Qa_jLpX, Math.Abs(Qj - Qj_x * N) / Qa_jLmX), Math.Max(Math.Abs(Qj + Qj_y * N) / Qa_jLpY, Math.Abs(Qj - Qj_y * N) / Qa_jLpY))));
-                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qc + Qc_x * N) / Qa_cLpX, Math.Abs(Qc - Qc_x * N) / Qa_cLmX), Math.Max(Math.Abs(Qc + Qc_y * N) / Qa_cLpY, Math.Abs(Qc - Qc_y * N) / Qa_cLpY))));
-
+                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qi+Qi_x * N) / Qa_iLpX, Math.Abs(Qi + Qi_x2 * N) / Qa_iLmX), Math.Max(Math.Abs(Qi + Qi_y * N) / Qa_iLpY, Math.Abs(Qi + Qi_y2 * N) / Qa_iLpY))));
+                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qj + Qj_x * N) / Qa_jLpX, Math.Abs(Qj + Qj_x2 * N) / Qa_jLmX), Math.Max(Math.Abs(Qj + Qj_y * N) / Qa_jLpY, Math.Abs(Qj + Qj_y2 * N) / Qa_jLpY))));
+                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qc + Qc_x * N) / Qa_cLpX, Math.Abs(Qc + Qc_x2 * N) / Qa_cLmX), Math.Max(Math.Abs(Qc + Qc_y * N) / Qa_cLpY, Math.Abs(Qc + Qc_y2 * N) / Qa_cLpY))));
+                    kentei.AppendRange(k2list, new GH_Path(e, 1));
 
                     var r1 = new Point3d(r[ni][0].Value, r[ni][1].Value, r[ni][2].Value); var r2 = new Point3d(r[nj][0].Value, r[nj][1].Value, r[nj][2].Value);
                     var rc = (r1 + r2) / 2.0; var ri = (r1 + rc) / 2.0; var rj = (r2 + rc) / 2.0;
@@ -689,6 +699,12 @@ namespace OpenSeesUtility
                         }
                     }
                 }
+
+                DA.SetDataTree(0, MaL); DA.SetDataTree(1, QaL);
+                DA.SetDataTree(2, MaS);
+                DA.SetDataTree(3, QaLpX); DA.SetDataTree(4, QaLpY); DA.SetDataTree(5, QaLmX); DA.SetDataTree(6, QaLmY);
+                DA.SetDataTree(7, kentei);
+
                 if (on_off == 1)
                 {
                     var pdfname = "RcBeamCheck"; DA.GetData("outputname", ref pdfname);
@@ -807,7 +823,7 @@ namespace OpenSeesUtility
                             }
                         }
                     }
-                    else if (sec_f[0].Count == 18 * 3)
+                    else if (sec_f[0].Count == 18 * 3 || sec_f[0].Count == 18 * 5)
                     {
                         var labels = new List<string>
                         {
