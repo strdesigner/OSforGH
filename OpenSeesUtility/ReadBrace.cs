@@ -28,7 +28,7 @@ namespace OpenSeesUtility
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("layer", "layer", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
-            pManager.AddTextParameter("name E,A,F", "name E,A,F", "usertextname for section-area[mm2], young's modulus[kN/m2], and F value[N/mm2]", GH_ParamAccess.list, new List<string> { "E", "A"});
+            pManager.AddTextParameter("name E,A,F", "name E,A,F", "usertextname for section-area[mm2], young's modulus[kN/m2], and F value[N/mm2]", GH_ParamAccess.list, new List<string> { "E", "A", "F"});
             pManager.AddTextParameter("name wick", "name wick", "usertextname for wick1 and wick2", GH_ParamAccess.list, new List<string> { "wickX", "wickY", "wickZ" });
         }
 
