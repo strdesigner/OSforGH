@@ -107,7 +107,22 @@ namespace SectionPerformance
                     if (k != 0)
                     {
                         string[] values = line.Split(',');// 読み込んだ一行をカンマ毎に分けて配列に格納する
-                        if (values[1] != "") { sec.Add(values[1]); P1.Add(double.Parse(values[2])); P2.Add(double.Parse(values[3])); P3.Add(double.Parse(values[4])); P4.Add(double.Parse(values[5])); }
+                        if (values[1] != "")
+                        {
+                            sec.Add(values[1]);
+                            if (values[1]== "■" || values[1] == "1" || values[1] == "〇" || values[1] == "4" || values[1] == "○")
+                            {
+                                P1.Add(double.Parse(values[2])); P2.Add(double.Parse(values[3])); P3.Add(0); P4.Add(0);
+                            }
+                            else if (values[1]== "●" || values[1] == "2")
+                            {
+                                P1.Add(double.Parse(values[2])); P2.Add(0); P3.Add(0); P4.Add(0);
+                            }
+                            else
+                            {
+                                P1.Add(double.Parse(values[2])); P2.Add(double.Parse(values[3])); P3.Add(double.Parse(values[4])); P4.Add(double.Parse(values[5]));
+                            }
+                        }
                         else { sec.Add("none"); P1.Add(0); P2.Add(0); P3.Add(0); P4.Add(0); }
                     }
                     k += 1;
