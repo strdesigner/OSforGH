@@ -42,7 +42,7 @@ namespace ReadBeam2
             pManager.AddTextParameter("name joint", "name joint", "usertextname for pin-joint", GH_ParamAccess.item, "joint");
             pManager.AddTextParameter("name lb", "name lb", "usertextname for buckling length(local-y and z axis)", GH_ParamAccess.list, new List<string> { "lby","lbz" });
             pManager.AddTextParameter("name bar", "name bar", "usertextname for reinforcement number", GH_ParamAccess.item, "bar");
-            pManager.AddTextParameter("name wick", "name wick", "usertextname for wick1 and wick2", GH_ParamAccess.list, new List<string> { "wickX","wickY", "wickZ" });
+            pManager.AddTextParameter("name wick", "name wick", "usertextname for wick1 and wick2", GH_ParamAccess.list, new List<string> { "wickX","wickY", "wickZ", "wickW" });
             pManager.AddTextParameter("name ele_w", "name ele_w", "element force Wx", GH_ParamAccess.list, new List<string> { "ele_wx", "ele_wy", "ele_wz" });
             pManager.AddTextParameter("layer(spring)", "layer(spring)", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
             pManager.AddTextParameter("name K", "name K", "[kx+,kx-,ky+,ky-,kz+,kz-,mx,my,mz](Datalist)", GH_ParamAccess.list, new List<string> { "kxt", "kxc", "kyt", "kyc", "kzt", "kzc", "mx", "my", "mz" });
@@ -82,11 +82,11 @@ namespace ReadBeam2
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            List<string> layer = new List<string>(); string name_mat = "mat"; string name_sec = "sec"; string name_angle = "angle"; string name_joint = "joint"; string name_lby = "lby"; string name_lbz = "lbz"; string name_bar = "bar"; string name_ele_wx = "ele_wx"; string name_ele_wy = "ele_wy"; string name_ele_wz = "ele_wz"; string name_x = "wickX"; string name_y = "wickY"; string name_z = "wickZ";
+            List<string> layer = new List<string>(); string name_mat = "mat"; string name_sec = "sec"; string name_angle = "angle"; string name_joint = "joint"; string name_lby = "lby"; string name_lbz = "lbz"; string name_bar = "bar"; string name_ele_wx = "ele_wx"; string name_ele_wy = "ele_wy"; string name_ele_wz = "ele_wz"; string name_x = "wickX"; string name_y = "wickY"; string name_z = "wickZ"; string name_w = "wickW";
             DA.GetDataList("layer(beam)", layer); DA.GetData("name mat", ref name_mat); DA.GetData("name sec", ref name_sec); DA.GetData("name angle", ref name_angle); DA.GetData("name joint", ref name_joint); var name_lb = new List<string> {"lby","lbz" }; DA.GetDataList("name lb", name_lb); name_lby = name_lb[0]; name_lbz = name_lb[1]; var acc = 5e-3; DA.GetData("accuracy", ref acc);
             DA.GetData("name bar", ref name_bar);
             var name_ele_w = new List<string>(); DA.GetDataList("name ele_w", name_ele_w); name_ele_wx = name_ele_w[0]; name_ele_wy = name_ele_w[1]; name_ele_wz = name_ele_w[2];
-            var name_xyz = new List<string>(); DA.GetDataList("name wick", name_xyz); name_x = name_xyz[0]; name_y = name_xyz[1]; name_z = name_xyz[2];
+            var name_xyz = new List<string>(); DA.GetDataList("name wick", name_xyz); name_x = name_xyz[0]; name_y = name_xyz[1]; name_z = name_xyz[2]; name_w = name_xyz[3];
             var layer2 = new List<string>(); DA.GetDataList("layer(spring)", layer2);
             List<string> Ename = new List<string>(); DA.GetDataList("name K", Ename);
             string name_angle2 = ""; DA.GetData("name angle(spring)", ref name_angle2);
@@ -156,11 +156,12 @@ namespace ReadBeam2
                             e_load.AppendRange(flist, new GH_Path(kk));
                             kk += 1;
                         }
-                        string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y); string text3 = obj.Attributes.GetUserString(name_z);//軸ラベル
+                        string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y); string text3 = obj.Attributes.GetUserString(name_z); string text4 = obj.Attributes.GetUserString(name_w);//軸ラベル
                         var namelist = new List<GH_String>(); namelist.Add(new GH_String(layer[i]));
                         if (text1 != null) { namelist.Add(new GH_String(text1)); }
                         if (text2 != null) { namelist.Add(new GH_String(text2)); }
                         if (text3 != null) { namelist.Add(new GH_String(text3)); }
+                        if (text4 != null) { namelist.Add(new GH_String(text4)); }
                         names.AppendRange(namelist, new GH_Path(e));
                         e += 1;
                     }
@@ -214,10 +215,12 @@ namespace ReadBeam2
                         else { Alist.Add(new GH_Number(float.Parse(text))); }
                     }
                     A.AppendRange(Alist, new GH_Path(e2));
-                    string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y);//軸ラベル
+                    string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y); string text3 = obj.Attributes.GetUserString(name_z); string text4 = obj.Attributes.GetUserString(name_w);//軸ラベル
                     var namelist = new List<GH_String>(); namelist.Add(new GH_String(layer2[i]));
                     if (text1 != null) { namelist.Add(new GH_String(text1)); }
                     if (text2 != null) { namelist.Add(new GH_String(text2)); }
+                    if (text3 != null) { namelist.Add(new GH_String(text3)); }
+                    if (text4 != null) { namelist.Add(new GH_String(text4)); }
                     names2.AppendRange(namelist, new GH_Path(e2));
                     index2.Add(e2);
                     e2 += 1;

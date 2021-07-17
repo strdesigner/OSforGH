@@ -320,10 +320,21 @@ namespace OpenSeesUtility
                             ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value); ymin = Math.Min(ymin, R[nj][1].Value); ymax = Math.Max(ymax, R[nj][1].Value);
                             zmin = Math.Min(zmin, R[ni][2].Value); zmax = Math.Max(zmax, R[ni][2].Value); zmin = Math.Min(zmin, R[nj][2].Value); zmax = Math.Max(zmax, R[nj][2].Value);
                         }
-                        var vec = new Vector3d(xmax - xmin, ymax - ymin, 0.0);
+                        var flag = 1;//軸が右肩上がりなら0，右肩下がりなら1とする
+                        for (int e = 0; e < ij_new.Count; e++)
+                        {
+                            int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2];
+                            if (Math.Abs(R[ni][0].Value - xmin) < 1e-2 && Math.Abs(R[ni][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                            if (Math.Abs(R[nj][0].Value - xmin) < 1e-2 && Math.Abs(R[nj][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                        }
+                        var r0 = new Vector3d(xmin, ymin, Zmin);//左下
                         var cos = (xmax - xmin) / Math.Sqrt(Math.Pow(xmax - xmin, 2) + Math.Pow(ymax - ymin, 2));//(1,0,0)との角度
                         var theta = -Math.Acos(cos) / Math.PI * 180.0;
-                        var r0 = new Vector3d(xmin, ymin, Zmin);//左下
+                        if (flag == 1)
+                        {
+                            theta = -theta;
+                            r0 = new Vector3d(xmin, ymax, Zmin);//左上
+                        }
                         var r_ij = new List<List<List<double>>>(); var zvec = new Vector3d(0, 0, 1);
                         r0 = rotation(r0, zvec, theta);//回転後の左下
                         if (names2[0][0].Value != "")
@@ -524,10 +535,21 @@ namespace OpenSeesUtility
                                 ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value); ymin = Math.Min(ymin, R[nj][1].Value); ymax = Math.Max(ymax, R[nj][1].Value);
                                 zmin = Math.Min(zmin, R[ni][2].Value); zmax = Math.Max(zmax, R[ni][2].Value); zmin = Math.Min(zmin, R[nj][2].Value); zmax = Math.Max(zmax, R[nj][2].Value);
                             }
-                            var vec = new Vector3d(xmax - xmin, ymax - ymin, 0.0);
+                            var flag = 1;//軸が右肩上がりなら0，右肩下がりなら1とする
+                            for (int e = 0; e < ij_new.Count; e++)
+                            {
+                                int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2];
+                                if (Math.Abs(R[ni][0].Value - xmin) < 1e-2 && Math.Abs(R[ni][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                                if (Math.Abs(R[nj][0].Value - xmin) < 1e-2 && Math.Abs(R[nj][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                            }
+                            var r0 = new Vector3d(xmin, ymin, Zmin);//左下
                             var cos = (xmax - xmin) / Math.Sqrt(Math.Pow(xmax - xmin, 2) + Math.Pow(ymax - ymin, 2));//(1,0,0)との角度
                             var theta = -Math.Acos(cos) / Math.PI * 180.0;
-                            var r0 = new Vector3d(xmin, ymin, Zmin);//左下
+                            if (flag == 1)
+                            {
+                                theta = -theta;
+                                r0 = new Vector3d(xmin, ymax, Zmin);//左上
+                            }
                             var r_ij = new List<List<List<double>>>(); var zvec = new Vector3d(0, 0, 1);
                             r0 = rotation(r0, zvec, theta);//回転後の左下
                             if (names2[0][0].Value != "")
@@ -745,10 +767,21 @@ namespace OpenSeesUtility
                                 ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value); ymin = Math.Min(ymin, R[nj][1].Value); ymax = Math.Max(ymax, R[nj][1].Value);
                                 zmin = Math.Min(zmin, R[ni][2].Value); zmax = Math.Max(zmax, R[ni][2].Value); zmin = Math.Min(zmin, R[nj][2].Value); zmax = Math.Max(zmax, R[nj][2].Value);
                             }
-                            var vec = new Vector3d(xmax - xmin, ymax - ymin, 0.0);
+                            var flag = 1;//軸が右肩上がりなら0，右肩下がりなら1とする
+                            for (int e = 0; e < ij_new.Count; e++)
+                            {
+                                int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2];
+                                if (Math.Abs(R[ni][0].Value - xmin) < 1e-2 && Math.Abs(R[ni][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                                if (Math.Abs(R[nj][0].Value - xmin) < 1e-2 && Math.Abs(R[nj][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                            }
+                            var r0 = new Vector3d(xmin, ymin, Zmin);//左下
                             var cos = (xmax - xmin) / Math.Sqrt(Math.Pow(xmax - xmin, 2) + Math.Pow(ymax - ymin, 2));//(1,0,0)との角度
                             var theta = -Math.Acos(cos) / Math.PI * 180.0;
-                            var r0 = new Vector3d(xmin, ymin, Zmin);//左下
+                            if (flag == 1)
+                            {
+                                theta = -theta;
+                                r0 = new Vector3d(xmin, ymax, Zmin);//左上
+                            }
                             var r_ij = new List<List<List<double>>>(); var zvec = new Vector3d(0, 0, 1);
                             r0 = rotation(r0, zvec, theta);//回転後の左下
                             if (names2[0][0].Value != "")
@@ -986,10 +1019,21 @@ namespace OpenSeesUtility
                                 ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value); ymin = Math.Min(ymin, R[nj][1].Value); ymax = Math.Max(ymax, R[nj][1].Value);
                                 zmin = Math.Min(zmin, R[ni][2].Value); zmax = Math.Max(zmax, R[ni][2].Value); zmin = Math.Min(zmin, R[nj][2].Value); zmax = Math.Max(zmax, R[nj][2].Value);
                             }
-                            var vec = new Vector3d(xmax - xmin, ymax - ymin, 0.0);
+                            var flag = 1;//軸が右肩上がりなら0，右肩下がりなら1とする
+                            for (int e = 0; e < ij_new.Count; e++)
+                            {
+                                int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2];
+                                if (Math.Abs(R[ni][0].Value - xmin) < 1e-2 && Math.Abs(R[ni][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                                if (Math.Abs(R[nj][0].Value - xmin) < 1e-2 && Math.Abs(R[nj][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                            }
+                            var r0 = new Vector3d(xmin, ymin, Zmin);//左下
                             var cos = (xmax - xmin) / Math.Sqrt(Math.Pow(xmax - xmin, 2) + Math.Pow(ymax - ymin, 2));//(1,0,0)との角度
                             var theta = -Math.Acos(cos) / Math.PI * 180.0;
-                            var r0 = new Vector3d(xmin, ymin, Zmin);//左下
+                            if (flag == 1)
+                            {
+                                theta = -theta;
+                                r0 = new Vector3d(xmin, ymax, Zmin);//左上
+                            }
                             var r_ij = new List<List<List<double>>>(); var zvec = new Vector3d(0, 0, 1);
                             r0 = rotation(r0, zvec, theta);//回転後の左下
                             if (names2[0][0].Value != "")
