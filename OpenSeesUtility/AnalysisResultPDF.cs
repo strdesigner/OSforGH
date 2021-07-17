@@ -363,7 +363,7 @@ namespace OpenSeesUtility
                                     gfx.DrawEllipse(pengray, XBrushes.White, rp2[0] - js / 2.0, rp2[1] - js / 2.0, js, js);//ピン記号
                                     gfx.DrawEllipse(pengray, XBrushes.White, rp3[0] - js / 2.0, rp3[1] - js / 2.0, js, js);//ピン記号
                                     gfx.DrawEllipse(pengray, XBrushes.White, rp4[0] - js / 2.0, rp4[1] - js / 2.0, js, js);//ピン記号
-                                    var color = new XSolidBrush(RGB((1 - Math.Min(alpha / 5.0, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                                    var color = new XSolidBrush(RGB(Math.Max(0, (1 - Math.Min(alpha / 5.0, 1.0)) * 1.9 / 3.0), 1, 0.5));
                                     if (k == 0) { gfx.DrawString(Math.Round(alpha, 2).ToString().Substring(0, Math.Min(4, Math.Round(alpha, 2).ToString().Length)) + "倍", font, color, rc[0], rc[1], XStringFormats.TopCenter); }//壁倍率
                                     if (k == 0) { gfx.DrawString(nel.ToString(), font, XBrushes.Black, rc[0], rc[1], XStringFormats.BottomCenter); }//壁番号
                                 }
@@ -582,7 +582,7 @@ namespace OpenSeesUtility
                                         {
                                             gfx.DrawString(shear_w_new[e].ToString().Substring(0, Math.Min(shear_w_new[e].ToString().Length, 4)), font, XBrushes.Black, rc[0], rc[1], XStringFormats.BottomCenter);//壁せん断力
                                             var val = shear_w_new[e] * qscale * 100 / 2.0;
-                                            var color = RGB((1 - val / Math.Max(1e-10, Qwmax)) * 1.9 / 3.0, 1, 0.5);
+                                            var color = RGB(Math.Max(0, (1 - val / Math.Max(1e-10, Qwmax)) * 1.9 / 3.0), 1, 0.5);
                                             var pens = new XPen(color, lw*0.5);
                                             gfx.DrawLine(pens, rc[0] - val, rc[1], rc[0] + val, rc[1]);//せん断力矢印線の描画
                                             gfx.DrawLine(pens, rc[0] - val, rc[1], rc[0] - val + fontsize, rc[1] + fontsize);//せん断力矢印線のarrowの描画
@@ -626,7 +626,7 @@ namespace OpenSeesUtility
                                 for (int i = 0; i < Qy_2D.Count; i++)//せん断力の描画(カラー分布)
                                 {
                                     var v = Qy[i] - Qy0[i]; var val = v.Length;
-                                    var color = RGB((1 - val / Math.Max(1e-10, Qmax)) * 1.9 / 3.0, 1, 0.5);
+                                    var color = RGB(Math.Max(0, (1 - val / Math.Max(1e-10, Qmax)) * 1.9 / 3.0), 1, 0.5);
                                     var pens = new XPen(color, lw*0.25);
                                     gfx.DrawLine(pens, Qy_2D[i].X, Qy_2D[i].Y, Qy0_2D[i].X, Qy0_2D[i].Y);
                                     if (i == 0 && Math.Abs(Qyi) > 0.1)
@@ -658,7 +658,7 @@ namespace OpenSeesUtility
                                 for (int i = 0; i < Qz_2D.Count; i++)//せん断力の描画(カラー分布)
                                 {
                                     var v = Qz[i] - Qz0[i]; var val = v.Length;
-                                    var color = RGB((1 - val / Math.Max(1e-10, Qmax)) * 1.9 / 3.0, 1, 0.5);
+                                    var color = RGB(Math.Max(0, (1 - val / Math.Max(1e-10, Qmax)) * 1.9 / 3.0), 1, 0.5);
                                     var pens = new XPen(color, lw*0.25);
                                     gfx.DrawLine(pens, Qz_2D[i].X, Qz_2D[i].Y, Qz0_2D[i].X, Qz0_2D[i].Y);
                                     if (i == 0 && Math.Abs(Qzi)>0.1)
@@ -848,7 +848,7 @@ namespace OpenSeesUtility
                                 {
                                     var v = My[i] - My0[i]; var val = v.Length;
                                     //if ((v / v.Length - l_ve).Length < 1e-5) { val = -val; }
-                                    var color = RGB((1 - val / Math.Max(1e-10, Mymax)) * 1.9 / 3.0, 1, 0.5);
+                                    var color = RGB(Math.Max(0, (1 - val / Math.Max(1e-10, Mymax)) * 1.9 / 3.0), 1, 0.5);
                                     var pens = new XPen(color, lw*0.25);
                                     gfx.DrawLine(pens, My_2D[i].X, My_2D[i].Y, My0_2D[i].X, My0_2D[i].Y);
                                     if (i == 0 && Math.Abs(Myi) > 0.1)
@@ -889,7 +889,7 @@ namespace OpenSeesUtility
                                 {
                                     var v = Mz[i] - Mz0[i]; var val = v.Length;
                                     //if ((v / v.Length - l_ve).Length < 1e-5) { val = -val; }
-                                    var color = RGB((1 - val / Math.Max(1e-10, Mzmax)) * 1.9 / 3.0, 1, 0.5);
+                                    var color = RGB(Math.Max(0, Math.Max(0, (1 - val / Math.Max(1e-10, Mzmax)) * 1.9 / 3.0)), 1, 0.5);
                                     var pens = new XPen(color, lw*0.25);
                                     gfx.DrawLine(pens, Mz_2D[i].X, Mz_2D[i].Y, Mz0_2D[i].X, Mz0_2D[i].Y);
                                     if (i == 0 && Math.Abs(Mzi) > 0.1)
@@ -1085,7 +1085,7 @@ namespace OpenSeesUtility
                                 var l_ve = rotation(l_vec[nel], rj - ri, angle);
                                 var Ni = sec_f_new[e][0] * nscale; var Nj = -sec_f_new[e][6] * nscale; var Nc = sec_f_new[e][12] * nscale;
                                 var p1 = new Vector2d(r1[0], r1[1]); var p4 = new Vector2d(r2[0], r2[1]); var p2 = p1 + (p4 - p1) / 3.0; var p3 = p1 + (p4 - p1) / 3.0 * 2.0;
-                                var c1 = RGB((1 - (Ni - Nmin) / Math.Max(1e-10, Nmax - Nmin)) * 1.9 / 3.0, 1, 0.5); var c2 = RGB((1 - (Nc - Nmin) / Math.Max(1e-10, Nmax - Nmin)) * 1.9 / 3.0, 1, 0.5); var c3 = RGB((1 - (Nj - Nmin) / Math.Max(1e-10, Nmax - Nmin)) * 1.9 / 3.0, 1, 0.5);
+                                var c1 = RGB(Math.Max(0, (1 - (Ni - Nmin) / Math.Max(1e-10, Nmax - Nmin)) * 1.9 / 3.0), 1, 0.5); var c2 = RGB(Math.Max(0, (1 - (Nc - Nmin) / Math.Max(1e-10, Nmax - Nmin)) * 1.9 / 3.0), 1, 0.5); var c3 = RGB(Math.Max(0, (1 - (Nj - Nmin) / Math.Max(1e-10, Nmax - Nmin)) * 1.9 / 3.0), 1, 0.5);
                                 var pen1 = new XPen(c1, Math.Abs(Ni) / Nmax * 20); var pen2 = new XPen(c2, Math.Abs(Nc) / Nmax * 20); var pen3 = new XPen(c3, Math.Abs(Nj) / Nmax * 20);
                                 gfx.DrawLine(pen1, p1.X, p1.Y, p2.X, p2.Y); gfx.DrawLine(pen2, p2.X, p2.Y, p3.X, p3.Y); gfx.DrawLine(pen3, p3.X, p3.Y, p4.X, p4.Y);//
                                 Ni = Math.Round(sec_f_new[e][0], 3); Nc = Math.Round(sec_f_new[e][12], 3); Nj = Math.Round(-sec_f_new[e][6], 3);
