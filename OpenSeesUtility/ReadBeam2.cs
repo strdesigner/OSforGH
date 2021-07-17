@@ -86,7 +86,9 @@ namespace ReadBeam2
             DA.GetDataList("layer(beam)", layer); DA.GetData("name mat", ref name_mat); DA.GetData("name sec", ref name_sec); DA.GetData("name angle", ref name_angle); DA.GetData("name joint", ref name_joint); var name_lb = new List<string> {"lby","lbz" }; DA.GetDataList("name lb", name_lb); name_lby = name_lb[0]; name_lbz = name_lb[1]; var acc = 5e-3; DA.GetData("accuracy", ref acc);
             DA.GetData("name bar", ref name_bar);
             var name_ele_w = new List<string>(); DA.GetDataList("name ele_w", name_ele_w); name_ele_wx = name_ele_w[0]; name_ele_wy = name_ele_w[1]; name_ele_wz = name_ele_w[2];
-            var name_xyz = new List<string>(); DA.GetDataList("name wick", name_xyz); name_x = name_xyz[0]; name_y = name_xyz[1]; name_z = name_xyz[2]; name_w = name_xyz[3];
+            var name_xyz = new List<string>(); DA.GetDataList("name wick", name_xyz); name_x = name_xyz[0]; name_y = name_xyz[1];
+            if (name_xyz.Count >= 3) { name_z = name_xyz[2]; }
+            if (name_xyz.Count >= 3) { name_w = name_xyz[3]; }
             var layer2 = new List<string>(); DA.GetDataList("layer(spring)", layer2);
             List<string> Ename = new List<string>(); DA.GetDataList("name K", Ename);
             string name_angle2 = ""; DA.GetData("name angle(spring)", ref name_angle2);
