@@ -83,6 +83,7 @@
     <Compile Include="ElasticAnalysis2.cs" />
     <Compile Include="CLTCheckPDF.cs" />
     <Compile Include="kabecheckRC.cs" />
+    <Compile Include="Eccentricity.cs" />
     <Compile Include="ReadBrace.cs" />
     <Compile Include="SteelBase.cs" />
     <Compile Include="rigidF.cs" />
@@ -353,6 +354,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\readbrace.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\eccentric.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
