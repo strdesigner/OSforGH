@@ -37,7 +37,7 @@ namespace ReadShell
             pManager.AddTextParameter("name Sz(for E)", "name Sz(for E)", "usertextname for pressure/floor load(for seismic load)", GH_ParamAccess.item, "Sz2");
             pManager.AddTextParameter("name K", "name K", "usertextname for kabe/yuka bairitsu", GH_ParamAccess.item, "K");
             pManager.AddTextParameter("name rad", "name rad", "usertextname for layer angle", GH_ParamAccess.item, "rad");
-            pManager.AddTextParameter("name wick", "name wick", "usertextname for wick1 and wick2", GH_ParamAccess.list, new List<string> { "wickX", "wickY" });
+            pManager.AddTextParameter("name wick", "name wick", "usertextname for wick1 and wick2", GH_ParamAccess.list, new List<string> { "wickX", "wickY", "wickZ", "wickW" });
         }
 
         /// <summary>
@@ -62,9 +62,10 @@ namespace ReadShell
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            List<string> layer = new List<string>(); string name_mat = "mat"; string name_t = "thick"; string name_Sz = "Sz"; string name_Sz2 = "Sz(for E)"; string name_K = "K"; string name_rad = "rad"; string name_x = "wickX"; string name_y = "wickY"; 
+            List<string> layer = new List<string>(); string name_mat = "mat"; string name_t = "thick"; string name_Sz = "Sz"; string name_Sz2 = "Sz(for E)"; string name_K = "K"; string name_rad = "rad"; string name_x = "wickX"; string name_y = "wickY"; string name_z = "wickZ"; string name_w = "wickW";
             DA.GetDataList("layer", layer); DA.GetData("name mat", ref name_mat); DA.GetData("name t", ref name_t); DA.GetData("name Sz", ref name_Sz); DA.GetData("name Sz(for E)", ref name_Sz2); DA.GetData("name K", ref name_K); DA.GetData("name rad", ref name_rad);
             var name_xy = new List<string>(); DA.GetDataList("name wick", name_xy); name_x = name_xy[0]; name_y = name_xy[1];
+            if (name_xy.Count >= 3) { name_z = name_xy[2]; } if (name_xy.Count >= 4) { name_w = name_xy[3]; }
             List<Brep> shells = new List<Brep>(); List<int> mat = new List<int>(); List<double> t = new List<double>(); List<double> K = new List<double>(); List<double> rad = new List<double>();
             GH_Structure<GH_Number> Sz = new GH_Structure<GH_Number>(); GH_Structure<GH_Number> Sz2 = new GH_Structure<GH_Number>(); List<int> index = new List<int>();
             var names = new GH_Structure<GH_String>();
@@ -104,11 +105,13 @@ namespace ReadShell
                         Sz2.AppendRange(slist, new GH_Path(kk));
                         kk += 1;
                     }
-                    string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y);//軸ラベル
+                    string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y); string text3 = obj.Attributes.GetUserString(name_z); string text4 = obj.Attributes.GetUserString(name_w);//軸ラベル
                     index.Add(e);
                     var namelist = new List<GH_String>(); namelist.Add(new GH_String(layer[i]));
                     if (text1 != null) { namelist.Add(new GH_String(text1)); }
                     if (text2 != null) { namelist.Add(new GH_String(text2)); }
+                    if (text3 != null) { namelist.Add(new GH_String(text3)); }
+                    if (text4 != null) { namelist.Add(new GH_String(text4)); }
                     names.AppendRange(namelist, new GH_Path(e));
                     e += 1;
                 }
