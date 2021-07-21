@@ -29,7 +29,7 @@ namespace OpenSeesUtility
         {
             pManager.AddTextParameter("layer", "layer", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
             pManager.AddTextParameter("name E,A,F", "name E,A,F", "usertextname for section-area[mm2], young's modulus[kN/m2], and F value[N/mm2]", GH_ParamAccess.list, new List<string> { "E", "A", "F"});
-            pManager.AddTextParameter("name wick", "name wick", "usertextname for wick1 and wick2", GH_ParamAccess.list, new List<string> { "wickX", "wickY", "wickZ" });
+            pManager.AddTextParameter("name wick", "name wick", "usertextname for wick1 and wick2", GH_ParamAccess.list, new List<string> { "wickX", "wickY", "wickZ", "wickW" });
         }
 
         /// <summary>
@@ -50,8 +50,8 @@ namespace OpenSeesUtility
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            string name_x = "wickX"; string name_y = "wickY"; string name_z = "wickZ";
-            var name_xyz = new List<string>(); DA.GetDataList("name wick", name_xyz); name_x = name_xyz[0]; name_y = name_xyz[1]; name_z = name_xyz[2];
+            string name_x = "wickX"; string name_y = "wickY"; string name_z = "wickZ"; string name_w = "wickW";
+            var name_xyz = new List<string>(); DA.GetDataList("name wick", name_xyz); name_x = name_xyz[0]; name_y = name_xyz[1]; if (name_xyz.Count >= 3) { name_z = name_xyz[2]; } if (name_xyz.Count >= 4) { name_w = name_xyz[3]; }
             List<int> index_new = new List<int>();
             List<string> layer = new List<string>(); DA.GetDataList("layer", layer);
             List<string> EAFname = new List<string>(); DA.GetDataList("name E,A,F", EAFname);
@@ -87,11 +87,12 @@ namespace OpenSeesUtility
                         Alist.Add(new GH_Number(Ai*Fi*1e-3));
                         for (int k = 0; k < 8; k++) { Alist.Add(new GH_Number(0)); }
                         A.AppendRange(Alist, new GH_Path(e));
-                        string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y); string text3 = obj.Attributes.GetUserString(name_z);//軸ラベル
+                        string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y); string text3 = obj.Attributes.GetUserString(name_z); string text4 = obj.Attributes.GetUserString(name_w);//軸ラベル
                         var namelist = new List<GH_String>(); namelist.Add(new GH_String(layer[i]));
                         if (text1 != null) { namelist.Add(new GH_String(text1)); }
                         if (text2 != null) { namelist.Add(new GH_String(text2)); }
                         if (text3 != null) { namelist.Add(new GH_String(text3)); }
+                        if (text4 != null) { namelist.Add(new GH_String(text4)); }
                         names.AppendRange(namelist, new GH_Path(e));
                         index.Add(e);
                         e += 1;
