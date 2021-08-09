@@ -74,9 +74,9 @@ namespace StripFooting
             pManager.AddNumberParameter("element_node_relationship", "IJ", "[[No.i,No.j,material No.,section No.,angle],...](DataTree)", GH_ParamAccess.tree, -9999);///
             pManager.AddNumberParameter("reac_f", "reac_f", "[[Node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddTextParameter("layer", "layer", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list,"布基礎");
-            pManager.AddTextParameter("name B", "name B", "name of base width", GH_ParamAccess.item,"幅");
-            pManager.AddTextParameter("name t", "name t", "name of base thickness", GH_ParamAccess.item,"t");
-            pManager.AddTextParameter("name rho", "name rho", "name of unit volume weight", GH_ParamAccess.item,"ρ");
+            pManager.AddTextParameter("name B", "name B", "name of base width[m]", GH_ParamAccess.item,"幅");
+            pManager.AddTextParameter("name t", "name t", "name of base thickness[m]", GH_ParamAccess.item,"t");
+            pManager.AddTextParameter("name rho", "name rho", "name of unit volume weight[kN/m3]", GH_ParamAccess.item,"ρ");
             pManager.AddTextParameter("name bar", "name bar", "name of bar size [mm]", GH_ParamAccess.item, "D");
             pManager.AddTextParameter("name pitch", "name pitch", "name of bar pitch [mm]", GH_ParamAccess.item, "@");
             pManager.AddTextParameter("name w", "name w", "name of base beam width [m]", GH_ParamAccess.item, "w");

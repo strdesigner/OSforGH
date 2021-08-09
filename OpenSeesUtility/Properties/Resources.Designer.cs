@@ -283,6 +283,16 @@ namespace OpenSeesUtility.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap Indivisualfooting {
+            get {
+                object obj = ResourceManager.GetObject("Indivisualfooting", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap kabecheck {
             get {
                 object obj = ResourceManager.GetObject("kabecheck", resourceCulture);
