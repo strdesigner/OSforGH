@@ -306,13 +306,13 @@ namespace OpenSeesUtility
                 {
                     _pt.Add(new Point3d(rc));
                     _text.Add(PS[i].ToString("F6").Substring(0, digit) + "kN/m2");
-                    _c2.Add(Color.Blue);
+                    _c2.Add(Color.Purple);
                 }
                 if (BaseBar == 1)
                 {
                     _pt.Add(new Point3d(rc));
-                    _text.Add("X:"+barx + "\r\n" + "Y:" + bary);
-                    _c2.Add(Color.Purple);
+                    _text.Add("X:"+barx[i] + Environment.NewLine + "Y:" + bary[i]);
+                    _c2.Add(Color.Blue);
                 }
             }
             DA.SetDataList("X", B); DA.SetDataList("Y", D); DA.SetDataList("A", A); DA.SetDataList("PL", PL); DA.SetDataList("PS", PS); DA.SetDataList("Shape", _s);
@@ -519,8 +519,10 @@ namespace OpenSeesUtility
             public CustomGUI(GH_Component owner) : base(owner)
             {
             }
-            private Rectangle title_rec;
+            private Rectangle title_rec; private Rectangle title_rec0; private Rectangle radio_rec0; private Rectangle title_rec1; private Rectangle radio_rec1;
             private Rectangle radio_rec; private Rectangle radio_rec2;
+            private Rectangle radio_rec_1; private Rectangle radio_rec_2; private Rectangle text_rec_1; private Rectangle text_rec_2;
+            private Rectangle radio_rec_3; private Rectangle text_rec_3; private Rectangle radio_rec_4; private Rectangle text_rec_4; private Rectangle radio_rec_5; private Rectangle text_rec_5;
             private Rectangle radio_rec_11; private Rectangle text_rec_11; private Rectangle radio_rec_13; private Rectangle text_rec_13;
             private Rectangle radio_rec_21; private Rectangle text_rec_21; private Rectangle radio_rec_22; private Rectangle text_rec_22; private Rectangle radio_rec_23; private Rectangle text_rec_23;
             private Rectangle radio_rec2_1; private Rectangle text_rec2_1;
@@ -529,14 +531,76 @@ namespace OpenSeesUtility
             {
                 base.Layout();
                 Rectangle global_rec = GH_Convert.ToRectangle(Bounds);
-                int height = 71; int subwidth = 44; int radi1 = 7; int radi2 = 4;
-                int pitchx = 6; int textheight = 20;
-                global_rec.Height += height;
-                title_rec = global_rec;
-                title_rec.Y = title_rec.Bottom - height;
-                title_rec.Height = 22;
+                int subwidth = 44; int radi1 = 7; int radi2 = 4;
+                int pitchx = 6; int textheight = 20; int titleheight = 22;
 
-                radio_rec = title_rec;
+                //////////////////////////////////////////////////////////////////////////////////////
+                title_rec0 = global_rec;//StressDesign
+                title_rec0.Y = title_rec0.Bottom;
+                title_rec0.Height = titleheight;
+
+                radio_rec0 = title_rec0;//StressDesign
+                radio_rec0.Y += title_rec0.Height;
+
+                radio_rec_1 = radio_rec0;
+                radio_rec_1.X += radi2 - 1; radio_rec_1.Y = title_rec0.Bottom + radi2;
+                radio_rec_1.Height = radi1; radio_rec_1.Width = radi1;
+
+                text_rec_1 = radio_rec_1;
+                text_rec_1.X += pitchx; text_rec_1.Y -= radi2;
+                text_rec_1.Height = textheight; text_rec_1.Width = subwidth * 2;
+
+                radio_rec_2 = radio_rec_1;
+                radio_rec_2.Y += text_rec_1.Height - radi1;
+                radio_rec_2.Height = radi1; radio_rec_2.Width = radi1;
+
+                text_rec_2 = radio_rec_2;
+                text_rec_2.X += pitchx; text_rec_2.Y -= radi2;
+                text_rec_2.Height = textheight; text_rec_2.Width = subwidth * 2;
+
+                radio_rec0.Height = text_rec_2.Bottom - title_rec0.Bottom -radi2;
+                //////////////////////////////////////////////////////////////////////////////////////
+
+                //////////////////////////////////////////////////////////////////////////////////////
+                title_rec1 = global_rec;//DisplayOption
+                title_rec1.Y = radio_rec0.Bottom;
+                title_rec1.Height = titleheight;
+
+                radio_rec1 = title_rec1;//DisplayOption
+                radio_rec1.Y += title_rec1.Height;
+
+                radio_rec_3 = radio_rec1;
+                radio_rec_3.X += radi2 - 1; radio_rec_3.Y = title_rec1.Bottom + radi2;
+                radio_rec_3.Height = radi1; radio_rec_3.Width = radi1;
+
+                text_rec_3 = radio_rec_3;
+                text_rec_3.X += pitchx; text_rec_3.Y -= radi2;
+                text_rec_3.Height = textheight; text_rec_3.Width = subwidth * 2;
+
+                radio_rec_4 = radio_rec_3;
+                radio_rec_4.Y += text_rec_3.Height - radi1;
+                radio_rec_4.Height = radi1; radio_rec_4.Width = radi1;
+
+                text_rec_4 = radio_rec_4;
+                text_rec_4.X += pitchx; text_rec_4.Y -= radi2;
+                text_rec_4.Height = textheight; text_rec_4.Width = subwidth * 2;
+
+                radio_rec_5 = radio_rec_4;
+                radio_rec_5.Y += text_rec_4.Height - radi1;
+                radio_rec_5.Height = radi1; radio_rec_5.Width = radi1;
+
+                text_rec_5 = radio_rec_5;
+                text_rec_5.X += pitchx; text_rec_5.Y -= radi2;
+                text_rec_5.Height = textheight; text_rec_5.Width = subwidth * 2;
+
+                radio_rec1.Height = text_rec_5.Bottom - title_rec1.Bottom - radi2;
+                //////////////////////////////////////////////////////////////////////////////////////
+
+                title_rec = global_rec;//DisplayOption
+                title_rec.Y = radio_rec1.Bottom;
+                title_rec.Height = titleheight;
+
+                radio_rec = title_rec;//DisplayOption
                 radio_rec.Y += title_rec.Height;
 
                 radio_rec_11 = radio_rec;
@@ -592,11 +656,13 @@ namespace OpenSeesUtility
                 text_rec2_1 = radio_rec2_1;
                 text_rec2_1.X += pitchx; text_rec2_1.Y -= radi2;
                 text_rec2_1.Height = textheight; text_rec2_1.Width = subwidth * 2;
+
+                global_rec.Height = text_rec2_1.Bottom - global_rec.Y;
                 ///******************************************************************************************
 
                 Bounds = global_rec;
             }
-            Brush c11 = Brushes.White; Brush c13 = Brushes.White; Brush c21 = Brushes.White; Brush c22 = Brushes.White; Brush c23 = Brushes.White; Brush c2 = Brushes.White;
+            Brush c11 = Brushes.White; Brush c13 = Brushes.White; Brush c21 = Brushes.White; Brush c22 = Brushes.White; Brush c23 = Brushes.White; Brush c2 = Brushes.White; Brush c0 = Brushes.White; Brush c1 = Brushes.White; Brush c3 = Brushes.White; Brush c4 = Brushes.White; Brush c5 = Brushes.White;
             protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
             {
                 base.Render(canvas, graphics, channel);
@@ -607,13 +673,65 @@ namespace OpenSeesUtility
                     format.LineAlignment = StringAlignment.Center;
                     format.Trimming = StringTrimming.EllipsisCharacter;
 
+
+                    //////////////////////////////////////////////////////////////////////////////////////
+                    GH_Capsule title0 = GH_Capsule.CreateCapsule(title_rec0, GH_Palette.Pink, 2, 0);
+                    title0.Render(graphics, Selected, Owner.Locked, false);
+                    title0.Dispose();
+
+                    RectangleF textRectangle0 = title_rec0;
+                    textRectangle0.Height = 20;
+                    graphics.DrawString("Stress design", GH_FontServer.Standard, Brushes.White, textRectangle0, format);
+
+                    GH_Capsule radio0 = GH_Capsule.CreateCapsule(radio_rec0, GH_Palette.White, 2, 0);
+                    radio0.Render(graphics, Selected, Owner.Locked, false); radio0.Dispose();
+
+                    GH_Capsule radio_1 = GH_Capsule.CreateCapsule(radio_rec_1, GH_Palette.Black, 5, 5);
+                    radio_1.Render(graphics, Selected, Owner.Locked, false); radio_1.Dispose();
+                    graphics.FillEllipse(c0, radio_rec_1);
+                    graphics.DrawString("Long-term", GH_FontServer.Standard, Brushes.Black, text_rec_1);
+
+                    GH_Capsule radio_2 = GH_Capsule.CreateCapsule(radio_rec_2, GH_Palette.Black, 5, 5);
+                    radio_2.Render(graphics, Selected, Owner.Locked, false); radio_2.Dispose();
+                    graphics.FillEllipse(c1, radio_rec_2);
+                    graphics.DrawString("Short-term", GH_FontServer.Standard, Brushes.Black, text_rec_2);
+                    //////////////////////////////////////////////////////////////////////////////////////
+
+                    //////////////////////////////////////////////////////////////////////////////////////
+                    GH_Capsule title1 = GH_Capsule.CreateCapsule(title_rec1, GH_Palette.Pink, 2, 0);
+                    title1.Render(graphics, Selected, Owner.Locked, false);
+                    title1.Dispose();
+
+                    RectangleF textRectangle1 = title_rec1;
+                    textRectangle1.Height = 20;
+                    graphics.DrawString("Display option", GH_FontServer.Standard, Brushes.White, textRectangle1, format);
+
+                    GH_Capsule radio1 = GH_Capsule.CreateCapsule(radio_rec1, GH_Palette.White, 2, 0);
+                    radio1.Render(graphics, Selected, Owner.Locked, false); radio1.Dispose();
+
+                    GH_Capsule radio_3 = GH_Capsule.CreateCapsule(radio_rec_3, GH_Palette.Black, 5, 5);
+                    radio_3.Render(graphics, Selected, Owner.Locked, false); radio_3.Dispose();
+                    graphics.FillEllipse(c3, radio_rec_3);
+                    graphics.DrawString("P kentei", GH_FontServer.Standard, Brushes.Black, text_rec_3);
+
+                    GH_Capsule radio_4 = GH_Capsule.CreateCapsule(radio_rec_4, GH_Palette.Black, 5, 5);
+                    radio_4.Render(graphics, Selected, Owner.Locked, false); radio_4.Dispose();
+                    graphics.FillEllipse(c4, radio_rec_4);
+                    graphics.DrawString("Q kentei", GH_FontServer.Standard, Brushes.Black, text_rec_4);
+
+                    GH_Capsule radio_5 = GH_Capsule.CreateCapsule(radio_rec_5, GH_Palette.Black, 5, 5);
+                    radio_5.Render(graphics, Selected, Owner.Locked, false); radio_5.Dispose();
+                    graphics.FillEllipse(c5, radio_rec_5);
+                    graphics.DrawString("M kentei", GH_FontServer.Standard, Brushes.Black, text_rec_5);
+                    //////////////////////////////////////////////////////////////////////////////////////
+
                     GH_Capsule title = GH_Capsule.CreateCapsule(title_rec, GH_Palette.Pink, 2, 0);
                     title.Render(graphics, Selected, Owner.Locked, false);
                     title.Dispose();
 
                     RectangleF textRectangle = title_rec;
                     textRectangle.Height = 20;
-                    graphics.DrawString("Display Option", GH_FontServer.Standard, Brushes.White, textRectangle, format);
+                    graphics.DrawString("Base Data", GH_FontServer.Standard, Brushes.White, textRectangle, format);
 
                     GH_Capsule radio = GH_Capsule.CreateCapsule(radio_rec, GH_Palette.White, 2, 0);
                     radio.Render(graphics, Selected, Owner.Locked, false); radio.Dispose();
