@@ -26,7 +26,8 @@ namespace OpenSeesUtility
 {
     public class IndividualFooting : GH_Component
     {
-        static int BaseShape = 0; static int BaseXxYxt = 0; static int BaseBar = 0; static int BasePL = 0; static int BasePS = 0;
+        static int BaseShape = 0; static int BaseXxYxt = 0; static int BaseBar = 0; static int BaseP = 0;
+        static int LongTerm = 1; static int ShortTerm = 0; static int Pkentei = 0; static int Qkentei = 0; static int Mkentei = 0;
         double fontsize = 10.0; int digit = 4; static int on_off = 0;
         public static PdfCreate.JapaneseFontResolver fontresolver = new PdfCreate.JapaneseFontResolver();
         public static XGraphics gfx;
@@ -46,15 +47,31 @@ namespace OpenSeesUtility
             }
             else if (s == "c22")
             {
-                BasePL = i;
-            }
-            else if (s == "c23")
-            {
-                BasePS = i;
+                BaseP = i;
             }
             else if (s == "1")
             {
                 on_off = i;
+            }
+            else if (s == "c0")
+            {
+                LongTerm = i;
+            }
+            else if (s == "c1")
+            {
+                ShortTerm = i;
+            }
+            else if (s == "c3")
+            {
+                Pkentei = i;
+            }
+            else if (s == "c4")
+            {
+                Qkentei = i;
+            }
+            else if (s == "c5")
+            {
+                Mkentei = i;
             }
         }
         public IndividualFooting()
@@ -296,13 +313,13 @@ namespace OpenSeesUtility
                     _text.Add(Math.Round(B[i],0).ToString()+"x"+ Math.Round(D[i], 0).ToString()+"x"+ Math.Round(t[i], 0).ToString());
                     _c2.Add(Color.Black);
                 }
-                if (BasePL == 1)
+                if (BaseP == 1 && LongTerm == 1)
                 {
                     _pt.Add(new Point3d(rc));
                     _text.Add(PL[i].ToString("F6").Substring(0, digit) + "kN/m2");
                     _c2.Add(Color.Red);
                 }
-                if (BasePS == 1)
+                if (BaseP == 1 && ShortTerm == 1)
                 {
                     _pt.Add(new Point3d(rc));
                     _text.Add(PS[i].ToString("F6").Substring(0, digit) + "kN/m2");
@@ -311,8 +328,50 @@ namespace OpenSeesUtility
                 if (BaseBar == 1)
                 {
                     _pt.Add(new Point3d(rc));
-                    _text.Add("X:"+barx[i] + Environment.NewLine + "Y:" + bary[i]);
+                    _text.Add(" X:"+barx[i] + " \r \n Y:" + bary[i]);
                     _c2.Add(Color.Blue);
+                }
+                if (LongTerm == 1 && Pkentei == 1)
+                {
+                    _pt.Add(new Point3d(rc));
+                    var k = PL[i] / PaL[i];
+                    _text.Add(k.ToString("F6").Substring(0, digit));
+                    _c2.Add(new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                }
+                if (ShortTerm == 1 && Pkentei == 1)
+                {
+                    _pt.Add(new Point3d(rc));
+                    var k = PS[i] / PaS[i];
+                    _text.Add(k.ToString("F6").Substring(0, digit));
+                    _c2.Add(new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                }
+                if (LongTerm == 1 && Qkentei == 1)
+                {
+                    _pt.Add(new Point3d(rc));
+                    var k = Math.Max(QxL[i] / QaxL[i], QyL[i] / QayL[i]);
+                    _text.Add(k.ToString("F6").Substring(0, digit));
+                    _c2.Add(new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                }
+                if (ShortTerm == 1 && Qkentei == 1)
+                {
+                    _pt.Add(new Point3d(rc));
+                    var k = Math.Max(QxS[i] / QaxS[i], QyS[i] / QayS[i]);
+                    _text.Add(k.ToString("F6").Substring(0, digit));
+                    _c2.Add(new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                }
+                if (LongTerm == 1 && Mkentei == 1)
+                {
+                    _pt.Add(new Point3d(rc));
+                    var k = Math.Max(MxL[i] / MaxL[i], MyL[i] / MayL[i]);
+                    _text.Add(k.ToString("F6").Substring(0, digit));
+                    _c2.Add(new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                }
+                if (ShortTerm == 1 && Mkentei == 1)
+                {
+                    _pt.Add(new Point3d(rc));
+                    var k = Math.Max(MxS[i] / MaxS[i], MyS[i] / MayS[i]);
+                    _text.Add(k.ToString("F6").Substring(0, digit));
+                    _c2.Add(new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5));
                 }
             }
             DA.SetDataList("X", B); DA.SetDataList("Y", D); DA.SetDataList("A", A); DA.SetDataList("PL", PL); DA.SetDataList("PS", PS); DA.SetDataList("Shape", _s);
@@ -505,10 +564,10 @@ namespace OpenSeesUtility
                 pln.Origin = point;
                 viewp.GetWorldToScreenScale(point, out double pixPerUnit); size /= pixPerUnit;
                 var tt = _text[i];
-                var H = TextHorizontalAlignment.Right; var V = TextVerticalAlignment.Top;
-                if (_c2[i] == Color.Black) { V = TextVerticalAlignment.Bottom; }
-                if (_c2[i] == Color.Blue) { H = TextHorizontalAlignment.Left; V = TextVerticalAlignment.Bottom; }
-                if (_c2[i] == Color.Purple) { H = TextHorizontalAlignment.Left; }
+                var H = TextHorizontalAlignment.Left; var V = TextVerticalAlignment.Bottom;
+                if (_c2[i] == Color.Black) { H = TextHorizontalAlignment.Right; }
+                if (_c2[i] == Color.Blue) { H = TextHorizontalAlignment.Right; V = TextVerticalAlignment.Top; }
+                if (_c2[i] == Color.Red || _c2[i] == Color.Purple) { V = TextVerticalAlignment.Top; }
                 argments.Display.Draw3dText(tt, _c2[i], pln, size, "", false, false, H, V);
             }
 
@@ -524,7 +583,7 @@ namespace OpenSeesUtility
             private Rectangle radio_rec_1; private Rectangle radio_rec_2; private Rectangle text_rec_1; private Rectangle text_rec_2;
             private Rectangle radio_rec_3; private Rectangle text_rec_3; private Rectangle radio_rec_4; private Rectangle text_rec_4; private Rectangle radio_rec_5; private Rectangle text_rec_5;
             private Rectangle radio_rec_11; private Rectangle text_rec_11; private Rectangle radio_rec_13; private Rectangle text_rec_13;
-            private Rectangle radio_rec_21; private Rectangle text_rec_21; private Rectangle radio_rec_22; private Rectangle text_rec_22; private Rectangle radio_rec_23; private Rectangle text_rec_23;
+            private Rectangle radio_rec_21; private Rectangle text_rec_21; private Rectangle radio_rec_22; private Rectangle text_rec_22;
             private Rectangle radio_rec2_1; private Rectangle text_rec2_1;
 
             protected override void Layout()
@@ -633,17 +692,9 @@ namespace OpenSeesUtility
 
                 text_rec_22 = radio_rec_22;
                 text_rec_22.X += pitchx; text_rec_22.Y -= radi2;
-                text_rec_22.Height = textheight; text_rec_22.Width = subwidth;
+                text_rec_22.Height = textheight; text_rec_22.Width = subwidth * 2;
 
-                radio_rec_23 = text_rec_22;
-                radio_rec_23.X += text_rec_22.Width - radi2; radio_rec_23.Y = radio_rec_22.Y;
-                radio_rec_23.Height = radi1; radio_rec_23.Width = radi1;
-
-                text_rec_23 = radio_rec_23;
-                text_rec_23.X += pitchx; text_rec_23.Y -= radi2;
-                text_rec_23.Height = textheight; text_rec_23.Width = subwidth + 30;
-
-                radio_rec.Height = text_rec_23.Y + textheight - radio_rec.Y - radi2;
+                radio_rec.Height = text_rec_22.Y + textheight - radio_rec.Y - radi2;
 
                 radio_rec2 = radio_rec;
                 radio_rec2.Y = radio_rec.Y + radio_rec.Height;
@@ -662,7 +713,7 @@ namespace OpenSeesUtility
 
                 Bounds = global_rec;
             }
-            Brush c11 = Brushes.White; Brush c13 = Brushes.White; Brush c21 = Brushes.White; Brush c22 = Brushes.White; Brush c23 = Brushes.White; Brush c2 = Brushes.White; Brush c0 = Brushes.White; Brush c1 = Brushes.White; Brush c3 = Brushes.White; Brush c4 = Brushes.White; Brush c5 = Brushes.White;
+            Brush c11 = Brushes.White; Brush c13 = Brushes.White; Brush c21 = Brushes.White; Brush c22 = Brushes.White; Brush c2 = Brushes.White; Brush c0 = Brushes.Black; Brush c1 = Brushes.White; Brush c3 = Brushes.White; Brush c4 = Brushes.White; Brush c5 = Brushes.White;
             protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
             {
                 base.Render(canvas, graphics, channel);
@@ -754,12 +805,7 @@ namespace OpenSeesUtility
                     GH_Capsule radio_22 = GH_Capsule.CreateCapsule(radio_rec_22, GH_Palette.Black, 5, 5);
                     radio_22.Render(graphics, Selected, Owner.Locked, false); radio_22.Dispose();
                     graphics.FillEllipse(c22, radio_rec_22);
-                    graphics.DrawString("PL", GH_FontServer.Standard, Brushes.Black, text_rec_22);
-
-                    GH_Capsule radio_23 = GH_Capsule.CreateCapsule(radio_rec_23, GH_Palette.Black, 5, 5);
-                    radio_23.Render(graphics, Selected, Owner.Locked, false); radio_23.Dispose();
-                    graphics.FillEllipse(c23, radio_rec_23);
-                    graphics.DrawString("PS", GH_FontServer.Standard, Brushes.Black, text_rec_23);
+                    graphics.DrawString("Pressure", GH_FontServer.Standard, Brushes.Black, text_rec_22);
 
                     GH_Capsule radio2 = GH_Capsule.CreateCapsule(radio_rec2, GH_Palette.White, 2, 0);
                     radio2.Render(graphics, Selected, Owner.Locked, false); radio2.Dispose();
@@ -777,7 +823,48 @@ namespace OpenSeesUtility
                 if (e.Button == MouseButtons.Left)
                 {
                     RectangleF rec11 = radio_rec_11; RectangleF rec13 = radio_rec_13;
-                    RectangleF rec21 = radio_rec_21; RectangleF rec22 = radio_rec_22; RectangleF rec23 = radio_rec_23; RectangleF rec2 = radio_rec2_1;
+                    RectangleF rec21 = radio_rec_21; RectangleF rec22 = radio_rec_22; RectangleF rec2 = radio_rec2_1;
+                    RectangleF rec0 = radio_rec_1; RectangleF rec1 = radio_rec_2; RectangleF rec3 = radio_rec_3; RectangleF rec4 = radio_rec_4; RectangleF rec5 = radio_rec_5;
+                    if (rec0.Contains(e.CanvasLocation))
+                    {
+                        if (c0 == Brushes.Black) { c0 = Brushes.White; SetButton_for_IndividualFooting("c0", 0); c1 = Brushes.Black; SetButton_for_IndividualFooting("c1", 1); }
+                        else
+                        { c0 = Brushes.Black; SetButton_for_IndividualFooting("c0", 1); c1 = Brushes.White; SetButton_for_IndividualFooting("c1", 0); }
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Handled;
+                    }
+                    if (rec1.Contains(e.CanvasLocation))
+                    {
+                        if (c1 == Brushes.Black) { c1 = Brushes.White; SetButton_for_IndividualFooting("c1", 0); c0 = Brushes.Black; SetButton_for_IndividualFooting("c0", 1); }
+                        else
+                        { c1 = Brushes.Black; SetButton_for_IndividualFooting("c1", 1); c0 = Brushes.White; SetButton_for_IndividualFooting("c0", 0); }
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Handled;
+                    }
+                    if (rec3.Contains(e.CanvasLocation))
+                    {
+                        if (c3 == Brushes.Black) { c3 = Brushes.White; SetButton_for_IndividualFooting("c3", 0);}
+                        else
+                        { c3 = Brushes.Black; SetButton_for_IndividualFooting("c3", 1); c4 = Brushes.White; SetButton_for_IndividualFooting("c4", 0); c5 = Brushes.White; SetButton_for_IndividualFooting("c5", 0); }
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Handled;
+                    }
+                    if (rec4.Contains(e.CanvasLocation))
+                    {
+                        if (c4 == Brushes.Black) { c4 = Brushes.White; SetButton_for_IndividualFooting("c4", 0); }
+                        else
+                        { c4 = Brushes.Black; SetButton_for_IndividualFooting("c4", 1); c3 = Brushes.White; SetButton_for_IndividualFooting("c3", 0); c5 = Brushes.White; SetButton_for_IndividualFooting("c5", 0); }
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Handled;
+                    }
+                    if (rec5.Contains(e.CanvasLocation))
+                    {
+                        if (c5 == Brushes.Black) { c5 = Brushes.White; SetButton_for_IndividualFooting("c5", 0); }
+                        else
+                        { c5 = Brushes.Black; SetButton_for_IndividualFooting("c5", 1); c4 = Brushes.White; SetButton_for_IndividualFooting("c4", 0); c3 = Brushes.White; SetButton_for_IndividualFooting("c3", 0); }
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Handled;
+                    }
                     if (rec11.Contains(e.CanvasLocation))
                     {
                         if (c11 == Brushes.Black) { c11 = Brushes.White; SetButton_for_IndividualFooting("c11", 0); }
@@ -807,14 +894,6 @@ namespace OpenSeesUtility
                         if (c22 == Brushes.Black) { c22 = Brushes.White; SetButton_for_IndividualFooting("c22", 0); }
                         else
                         { c22 = Brushes.Black; SetButton_for_IndividualFooting("c22", 1); }
-                        Owner.ExpireSolution(true);
-                        return GH_ObjectResponse.Handled;
-                    }
-                    if (rec23.Contains(e.CanvasLocation))
-                    {
-                        if (c23 == Brushes.Black) { c23 = Brushes.White; SetButton_for_IndividualFooting("c23", 0); }
-                        else
-                        { c23 = Brushes.Black; SetButton_for_IndividualFooting("c23", 1); }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
