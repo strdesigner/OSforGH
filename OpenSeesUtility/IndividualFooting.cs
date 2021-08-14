@@ -195,7 +195,7 @@ namespace OpenSeesUtility
             List<string> layer = new List<string>(); var nameXxYxt = new List<string> { "X", "Y", "t" }; var namebxd = new List<string> { "b", "d" }; var namerho = "ρ"; var namee = new List<string> { "ex", "ey" }; var namebar = new List<string> { "barx", "bary" }; var nameFc = "Fc"; var nameac = "as";
             DA.GetDataList("layer", layer); DA.GetDataList("name X x Y x t", nameXxYxt); DA.GetDataList("name b x d", namebxd); DA.GetData("name rho", ref namerho); DA.GetDataList("name ex&ey", namee); DA.GetDataList("name bar", namebar); DA.GetData("name as", ref nameac); DA.GetData("name Fc", ref nameFc);
             DA.GetData("FS", ref fontsize);
-            var pdfname = "StripBase"; DA.GetData("outputname", ref pdfname);
+            var pdfname = "IndividualBase"; DA.GetData("outputname", ref pdfname);
 
             var PL = new List<double>(); var PS = new List<double>(); 
             var B = new List<double>(); var D = new List<double>(); var t = new List<double>(); var b = new List<double>(); var d = new List<double>(); var ex = new List<double>(); var ey = new List<double>(); var Rz = new List<List<double>>(); var Sz = new List<double>(); var A = new List<double>(); var rho = new List<double>(); var Fc = new List<double>(); var PaL = new List<double>(); var PaS = new List<double>(); var barx = new List<string>(); var bary = new List<string>(); var number = new List<int>(); var RMx = new List<List<double>>(); var RMy = new List<List<double>>(); var Zx = new List<double>(); var Zy = new List<double>(); var Lx = new List<double>(); var Ly = new List<double>(); var nx = new List<double>(); var ny = new List<double>(); var Dx = new List<double>(); var Dy = new List<double>(); var ftLx = new List<double>(); var ftLy = new List<double>(); var ftSx = new List<double>(); var ftSy = new List<double>(); var QxL = new List<double>(); var QxS = new List<double>(); var QyL = new List<double>(); var QyS = new List<double>(); var J = new List<double>(); var QaxL = new List<double>(); var QaxS = new List<double>(); var QayL = new List<double>(); var QayS = new List<double>(); var fsL = new List<double>(); var fsS = new List<double>(); var MxL = new List<double>(); var MxS = new List<double>(); var MyL = new List<double>(); var MyS = new List<double>(); var MaxL = new List<double>(); var MaxS = new List<double>(); var MayL = new List<double>(); var MayS = new List<double>();
@@ -474,7 +474,6 @@ namespace OpenSeesUtility
                         page = document.AddPage(); gfx = XGraphics.FromPdfPage(page);
                         for (int i = 0; i < labels.Count; i++)
                         {
-                            RhinoApp.WriteLine(i.ToString());
                             gfx.DrawLine(pen, offset_x, offset_y + pitchy * i, offset_x + label_width, offset_y + pitchy * i);//横線
                             gfx.DrawLine(pen, offset_x + label_width, offset_y + pitchy * i, offset_x + label_width, offset_y + pitchy * (i + 1));//縦線
                             gfx.DrawString(labels[i], font, XBrushes.Black, new XRect(offset_x, offset_y + pitchy * i, label_width, offset_y + pitchy * (i + 1)), XStringFormats.TopCenter);
