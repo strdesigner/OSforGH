@@ -173,8 +173,8 @@ namespace MakeIndex2
                         }
                         int[] idx = Enumerable.Range(0, rc.Count).ToArray<int>();//r1とr2の間の点のソート
                         Array.Sort<int>(idx, (a, b) => llist[a].CompareTo(llist[b]));
-                        lines_new.Add(new Line(r1, rc[idx[0]])); k += 1;
-                        if (index.Contains(e)) { index_new.Add(k); }
+                        k += 1;
+                        if (index.Contains(e)) { index_new.Add(k); lines_new.Add(new Line(r1, rc[idx[0]])); }
                         for (int i = 0; i < idx.Length - 1; i++)
                         {
                             k += 1; if (index.Contains(e)) { index_new.Add(k); lines_new.Add(new Line(rc[idx[i]], rc[idx[i + 1]])); }

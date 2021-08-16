@@ -186,12 +186,12 @@ namespace VisualizeModel
             {
                 r = _r.Branches; int n = r.Count;DA.SetDataTree(0, _r);
                 ///節点の描画****************************************************************************************
-                for (int i = 0; i < n; i++)
-                {
-                    r1 = new Point3d(r[i][0].Value, r[i][1].Value, r[i][2].Value);
-                    _point.Add(r1);
-                    _node_No.Add(i.ToString());
-                }
+                //for (int i = 0; i < n; i++)
+                //{
+                //    r1 = new Point3d(r[i][0].Value, r[i][1].Value, r[i][2].Value);
+                //    _point.Add(r1);
+                //    _node_No.Add(i.ToString());
+                //}
                 ///*************************************************************************************************
                 ///要素の描画****************************************************************************************
                 if (!DA.GetDataTree("element_node_relationship", out GH_Structure<GH_Number> _ij)) { }
@@ -219,6 +219,11 @@ namespace VisualizeModel
                                 _sec_No.Add(sec.ToString());
                                 _mat_No.Add(mat.ToString());
                             }
+                            //2021.08.17 節点は表示index要素のみ表示するように訂正
+                            int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
+                            r1 = new Point3d(r[ni][0].Value, r[ni][1].Value, r[ni][2].Value);
+                            r2 = new Point3d(r[nj][0].Value, r[nj][1].Value, r[nj][2].Value);
+                            _point.Add(r1); _point.Add(r2); _node_No.Add(ni.ToString()); _node_No.Add(nj.ToString());
                         }
                     }
                     if (!DA.GetDataTree("joint condition", out GH_Structure<GH_Number> _joint)) { }
