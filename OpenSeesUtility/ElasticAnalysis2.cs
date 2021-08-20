@@ -43,7 +43,7 @@ namespace ElasticAnalysis2
             pManager.AddNumberParameter("Second moment of area around z-axis", "Iz", "[...](DataList)", GH_ParamAccess.list, new List<double> { Math.Pow(0.1, 4) / 12.0 });///
             pManager.AddNumberParameter("St Venant's torsion constant", "J", "[...](DataList)", GH_ParamAccess.list, Math.Pow(0.1, 4) / 16.0 * (16.0 / 3.0 - 3.360 * (1.0 - 1.0 / 12.0)));///
             pManager.AddNumberParameter("nodal_force(local coordinate system)", "f", "[[element No.,Pxi,Pyi,Pzi,Mxi,Myi,Mzi,Pxj,Pyj,Pzj,Mxj,Myj,Mzj,Pxc,Pyc,Pzc,Mxc,Myc,Mzc],...](DataTree)", GH_ParamAccess.tree, -9999);///
-            pManager.AddIntegerParameter("step", "step", "normal elastic:1 times, but when you use nonlinear spring, step must be larger than 2", GH_ParamAccess.item, 1);///
+            pManager.AddNumberParameter("rigid", "rigid", "rigidDiaphragm nodes", GH_ParamAccess.tree, -9999);///
             pManager.AddIntegerParameter("option", "option", "[0 or 1, 0 or 1](DataList) when 1, sec_f and str_e is calculated ", GH_ParamAccess.list, new List<int> { 1, 1 });///
         }
 
@@ -73,12 +73,12 @@ namespace ElasticAnalysis2
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            IList<List<GH_Number>> r; IList<List<GH_Number>> ij; IList<List<GH_Number>> ijkl; IList<List<GH_Number>> f_v; List<Vector3d> l_vec = new List<Vector3d>();
+            IList<List<GH_Number>> r; IList<List<GH_Number>> ij; IList<List<GH_Number>> ijkl; IList<List<GH_Number>> f_v; List<Vector3d> l_vec = new List<Vector3d>(); IList<List<GH_Number>> rigid;
             IList<List<GH_Number>> E; IList<List<GH_Number>> poi; List<double> A = new List<double>(); List<double> A1 = new List<double>(); List<double> A2 = new List<double>(); List<double> Cos1 = new List<double>(); List<double> Cos2 = new List<double>();
             List<double> Iy = new List<double>(); List<double> Iz = new List<double>(); List<double> J = new List<double>();
             GH_Structure<GH_Number> disp = new GH_Structure<GH_Number>(); GH_Structure<GH_Number> reac_f = new GH_Structure<GH_Number>(); GH_Structure<GH_Number> sec_f = new GH_Structure<GH_Number>(); IList<List<GH_Number>> joint = new List<List<GH_Number>>(); GH_Structure<GH_Number> dispshell = new GH_Structure<GH_Number>(); GH_Structure<GH_Number> spring_f = new GH_Structure<GH_Number>();
             GH_Structure<GH_Number> shell_f = new GH_Structure<GH_Number>(); var qvec = new Vector3d(1, 0, 0);
-            int n; int m = 0; int m2 = 0; int m3 = 0; int m4 = 0; int nf; int nc = 0; int mc = 0; int step = 1; int mc2 = 0; int e2 = 0;
+            int n; int m = 0; int m2 = 0; int m3 = 0; int m4 = 0; int nf; int nc = 0; int mc = 0; int mc2 = 0; int e2 = 0;
             var theDomain = new OpenSees.Components.DomainWrapper();
             DA.GetDataList("local coordinates vector", l_vec); if (l_vec[0][0] != -9999 && l_vec[0][1] != -9999 && l_vec[0][2] != -9999) { DA.SetDataList("local coordinates vector", l_vec); }
             DA.GetDataTree("Young's mudulus", out GH_Structure<GH_Number> _E); E = _E.Branches; DA.GetDataTree("Shear modulus", out GH_Structure<GH_Number> _poi); poi = _poi.Branches;
@@ -86,7 +86,7 @@ namespace ElasticAnalysis2
             DA.GetDataList("Second moment of area around y-axis", Iy); DA.GetDataList("Second moment of area around z-axis", Iz); DA.GetDataList("St Venant's torsion constant", J);
             DA.GetDataTree("joint condition", out GH_Structure<GH_Number> _joint);
             DA.GetDataTree("nodal_coordinates", out GH_Structure<GH_Number> _r);
-            DA.GetData("step", ref step);
+            DA.GetDataTree("rigid", out GH_Structure<GH_Number> _rigid);
             var shell_elements = new List<OpenSees.Elements.ElementWrapper>(); List<int> option = new List<int>(); DA.GetDataList("option", option);
             Vector3d rotation(Vector3d a, Vector3d b, double theta)
             {
@@ -134,7 +134,7 @@ namespace ElasticAnalysis2
             DA.GetDataTree("spring element", out GH_Structure<GH_Number> _spring);
             var spring = _spring.Branches;
             var new_ij = new List<List<int>>();
-            if (_ij.Branches[0][0].Value != -9999){ m = ij.Count; }
+            if (_ij.Branches[0][0].Value != -9999) { m = ij.Count; }
             if (_ijkl.Branches[0][0].Value != -9999) { m2 = ijkl.Count; }
             if (_kabe_w.Branches[0][0].Value != -9999) { m3 = kabe_w.Count; }
             if (_spring.Branches[0][0].Value != -9999) { m4 = spring.Count; }
@@ -364,7 +364,7 @@ namespace ElasticAnalysis2
             }
             if (_kabe_w.Branches[0][0].Value != -9999)
             {
-                int ee = 1;
+                int ee = 0;
                 for (int e = 0; e < m3; e++)
                 {
                     int i = (int)kabe_w[e][0].Value; int j = (int)kabe_w[e][1].Value; int k = (int)kabe_w[e][2].Value; int l = (int)kabe_w[e][3].Value;
@@ -378,8 +378,11 @@ namespace ElasticAnalysis2
                         var cos1 = width / l1; var cos2 = width / l2;
                         var a1 = 1.96 * rad * alpha * width * l1 / (2.0 * h1 * Math.Pow(cos1, 2)); var a2 = 1.96 * rad * alpha * width * l2 / (2.0 * h2 * Math.Pow(cos2, 2));
                         A1.Add(a1); A2.Add(a2); Cos1.Add(cos1); Cos2.Add(cos2);
-                        var ele = new OpenSees.Elements.TrussWrapper(m + mc + m2 + ee, 3, i + 1, k + 1, material, a1, 0.0, 0, 0); ee += 1; theDomain.AddElement(ele);
-                        ele = new OpenSees.Elements.TrussWrapper(m + mc + m2 + ee, 3, j + 1, l + 1, material, a2, 0.0, 0, 0); ee += 1; theDomain.AddElement(ele);
+                        ee += 1;
+                        var ele = new OpenSees.Elements.TrussWrapper(m + mc + m2 + ee, 3, i + 1, k + 1, material, a1, 0.0, 0, 0);
+                        theDomain.AddElement(ele);
+                        ee += 1;
+                        ele = new OpenSees.Elements.TrussWrapper(m + mc + m2 + ee, 3, j + 1, l + 1, material, a2, 0.0, 0, 0); theDomain.AddElement(ele);
                     }
                 }
             }
@@ -458,11 +461,63 @@ namespace ElasticAnalysis2
                     qvec[0] += fx; qvec[1] += fy;
                 }
             }
+            rigid = _rigid.Branches;//剛床
+            if (rigid[0][0].Value != -9999)
+            {
+                var k = 0; var mrigid = 0;
+                for (int i = 0; i < rigid.Count; i++)
+                {
+                    var nodes = new int[rigid[i].Count]; var xave = 0.0; var yave = 0.0; var zave = 0.0;
+                    for (int j = 0; j < rigid[i].Count; j++)
+                    {
+                        nodes[j] = (int)(rigid[i][j].Value + 1);
+                        xave += r[(int)rigid[i][j].Value][0].Value; yave += r[(int)rigid[i][j].Value][1].Value; zave += r[(int)rigid[i][j].Value][2].Value;
+                    }
+                    xave /= (double)rigid[i].Count; yave /= (double)rigid[i].Count; zave /= (double)rigid[i].Count;
+                    int ii = theDomain.GetNumNodes();
+                    var node = new OpenSees.Components.NodeWrapper(ii + 1, 6, xave, yave, zave);
+                    theDomain.AddNode(node);
+                    mrigid += 1; var mat1 = new ElasticMaterialWrapper(mc + mc2 + e2 + mrigid, 1e+12, 0.0, 1e+12);
+                    mrigid += 1; var mat2 = new ElasticMaterialWrapper(mc + mc2 + e2 + mrigid, 1e-12, 0.0, 1e-12);
+                    mrigid += 1; var mat3 = new ElasticMaterialWrapper(mc + mc2 + e2 + mrigid, 1e-12, 0.0, 1e-12);
+                    mrigid += 1; var mat4 = new ElasticMaterialWrapper(mc + mc2 + e2 + mrigid, 1e-12, 0.0, 1e-12);
+                    mrigid += 1; var mat5 = new ElasticMaterialWrapper(mc + mc2 + e2 + mrigid, 1e-12, 0.0, 1e-12);
+                    mrigid += 1; var mat6 = new ElasticMaterialWrapper(mc + mc2 + e2 + mrigid, 1e-12, 0.0, 1e-12);
+                    var direction = new IDWrapper(new int[] { 0, 1, 2, 3, 4, 5 });
+                    var springmaterial = new UniaxialMaterialWrapper[] { mat1, mat2, mat3, mat4, mat5, mat6 };
+                    for (int j = 0; j < nodes.Length; j++)
+                    {
+                        Vector3d x = new Vector3d(r[nodes[j] - 1][0].Value - xave, r[nodes[j] - 1][1].Value - yave, r[nodes[j] - 1][2].Value - zave);
+                        Vector3d y = new Vector3d(0, 1, 0);
+                        Vector3d z = new Vector3d(0, 0, 1);
+                        if (Math.Abs(x[0]) <= 5e-3 && Math.Abs(x[1]) <= 5e-3)
+                        {
+                            y = rotation(x, new Vector3d(0, 1, 0), 90);
+                            z = rotation(y, x, 90);
+                            y = rotation(z, x, -90);
+                        }
+                        else
+                        {
+                            y = rotation(x, new Vector3d(0, 0, 1), 90);
+                            y[2] = 0.0;
+                            z = rotation(y, x, 90);
+                            y = rotation(z, x, -90);
+                        }
+                        var local_x = new VectorWrapper(new double[] { x[0], x[1], x[2] });
+                        var local_y = new VectorWrapper(new double[] { y[0], y[1], y[2] });
+                        k += 1; theDomain.AddElement(new OpenSees.Elements.TwoNodeLinkWrapper(m + mc + m2 + m3 * 2 + k, 3, ii + 1, nodes[j], direction, springmaterial, local_y, local_x, new VectorWrapper(0), new VectorWrapper(0), 0, 0));
+                    }
+                    //theDomain.CreateRigidDiaphragm(ii + 1, new IDWrapper(nodes), 2);
+                    theDomain.AddSP_Constraint(new OpenSees.Components.Constraints.SP_ConstraintWrapper(ii + 1, 2, 0.0, true));
+                    //theDomain.AddSP_Constraint(new OpenSees.Components.Constraints.SP_ConstraintWrapper(ii + 1, 3, 0.0, true));
+                    //theDomain.AddSP_Constraint(new OpenSees.Components.Constraints.SP_ConstraintWrapper(ii + 1, 4, 0.0, true));
+                }
+            }
             qvec = qvec / qvec.Length;
             var theModel = new AnalysisModelWrapper();
-            var theSolnAlgo = new OpenSees.Algorithms.LinearWrapper();
+            var theSolnAlgo = new OpenSees.Algorithms.LinearWrapper();//var step = 10;
             //var theIntegrator = new OpenSees.Integrators.Static.LoadControlWrapper(1.0 / (double)step, step, 1.0 / (double)step, 1.0 / (double)step);
-            var theIntegrator = new OpenSees.Integrators.Static.LoadControlWrapper(1.0 / step, step, 1.0 / step, 1.0 / step);
+            var theIntegrator = new OpenSees.Integrators.Static.LoadControlWrapper(1.0, 1, 1.0, 1.0);
             var theHandler = new OpenSees.Handlers.PlainHandlerWrapper();
             var theRCM = new OpenSees.GraphNumberers.RCMWrapper(false);
             var theNumberer = new OpenSees.Numberers.DOF_NumbererWrapper(theRCM);
@@ -470,7 +525,7 @@ namespace ElasticAnalysis2
             var theSOE = new OpenSees.Systems.Linears.BandSPDLinSOEWrapper(theSolver);
             var theTest = new OpenSees.ConvergenceTests.CTestNormDispIncrWrapper(1e-8, 6, 2, 2, 1.0e10);
             var theAnalysis = new OpenSees.Analysis.StaticAnalysisWrapper(theDomain, theHandler, theNumberer, theModel, theSolnAlgo, theSOE, theIntegrator, theTest);
-            theAnalysis.Analyze(step);
+            theAnalysis.Analyze(1);
             if (_ij.Branches[0][0].Value != -9999)
             {
                 for (int e = 0; e < m; e++)

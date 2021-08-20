@@ -79,6 +79,7 @@ namespace SeismicLoads
             pManager.AddNumberParameter("Rt", "Rt", "Vibration characteristic coefficient", GH_ParamAccess.item, 1.0);///
             pManager.AddNumberParameter("C0", "C0", "Base shear", GH_ParamAccess.list, new List<double> { 0.2 });///
             pManager.AddNumberParameter("T", "T", "Natural period h(0.02+0.01α) default=0.2", GH_ParamAccess.item, 0.2);///
+            pManager.AddColourParameter("C", "C", "Display color", GH_ParamAccess.item, Color.MintCream);///
         }
 
         /// <summary>
@@ -112,7 +113,7 @@ namespace SeismicLoads
         {
             DA.GetDataTree("R", out GH_Structure<GH_Number> _r); DA.GetDataTree("F", out GH_Structure<GH_Number> _f_v); DA.GetDataTree("layer", out GH_Structure<GH_Number> _layer);
             var r= _r.Branches; var f_v = _f_v.Branches; var layer = _layer.Branches; int n = layer.Count;
-            var Z = 0.0; DA.GetData("Z", ref Z); var Rt = 0.0; DA.GetData("Rt", ref Rt); var C0 = new List<double>(); DA.GetDataList("C0", C0); var T = 0.0; DA.GetData("T", ref T);
+            var Z = 0.0; DA.GetData("Z", ref Z); var Rt = 0.0; DA.GetData("Rt", ref Rt); var C0 = new List<double>(); DA.GetDataList("C0", C0); var T = 0.0; DA.GetData("T", ref T); var color = Color.MintCream; DA.GetData("C", ref color);
             if (C0.Count != n)
             {
                 for (int i = 1; i < n; i++) { C0.Add(C0[0]); }
@@ -208,6 +209,7 @@ namespace SeismicLoads
                             var r1 = new Point3d(r[fi][0].Value, r[fi][1].Value, r[fi][2].Value); var r2 = new Point3d(r[fi][0].Value - VisualizeModel.VisualizeModel.arrowsize * fx, r[fi][1].Value, r[fi][2].Value);
                             _arrow.Add(new Line(r2, r1)); arrow.Add(new Line(r2, r1));
                             _text.Add(Math.Round(fx, 2).ToString());
+                            _c.Add(color);
                         }
                         k += 1;
                     }
@@ -230,6 +232,7 @@ namespace SeismicLoads
                             var r1 = new Point3d(r[fi][0].Value, r[fi][1].Value, r[fi][2].Value); var r2 = new Point3d(r[fi][0].Value, r[fi][1].Value - VisualizeModel.VisualizeModel.arrowsize * fy, r[fi][2].Value);
                             _arrow.Add(new Line(r2, r1)); arrow.Add(new Line(r2, r1));
                             _text.Add(Math.Round(fy, 2).ToString());
+                            _c.Add(color);
                         }
                         k += 1;
                     }
@@ -252,6 +255,7 @@ namespace SeismicLoads
                             var r1 = new Point3d(r[fi][0].Value, r[fi][1].Value, r[fi][2].Value); var r2 = new Point3d(r[fi][0].Value - VisualizeModel.VisualizeModel.arrowsize * fx, r[fi][1].Value - VisualizeModel.VisualizeModel.arrowsize * fy, r[fi][2].Value);
                             _arrow.Add(new Line(r2, r1)); arrow.Add(new Line(r2, r1));
                             _text.Add(Math.Round(Math.Sqrt(Math.Pow(fx,2)+ Math.Pow(fy, 2)), 2).ToString());
+                            _c.Add(color);
                         }
                         k += 1;
                     }
@@ -274,6 +278,7 @@ namespace SeismicLoads
                             var r1 = new Point3d(r[fi][0].Value, r[fi][1].Value, r[fi][2].Value); var r2 = new Point3d(r[fi][0].Value - VisualizeModel.VisualizeModel.arrowsize * fx, r[fi][1].Value - VisualizeModel.VisualizeModel.arrowsize * fy, r[fi][2].Value);
                             _arrow.Add(new Line(r2, r1)); arrow.Add(new Line(r2, r1));
                             _text.Add(Math.Round(Math.Sqrt(Math.Pow(fx, 2) + Math.Pow(fy, 2)), 2).ToString());
+                            _c.Add(color);
                         }
                         k += 1;
                     }
@@ -296,6 +301,7 @@ namespace SeismicLoads
                             var r1 = new Point3d(r[fi][0].Value, r[fi][1].Value, r[fi][2].Value); var r2 = new Point3d(r[fi][0].Value - VisualizeModel.VisualizeModel.arrowsize * fx, r[fi][1].Value, r[fi][2].Value);
                             _arrow.Add(new Line(r2, r1)); arrow.Add(new Line(r2, r1));
                             _text.Add(Math.Round(fx, 2).ToString());
+                            _c.Add(color);
                         }
                         k += 1;
                     }
@@ -318,6 +324,7 @@ namespace SeismicLoads
                             var r1 = new Point3d(r[fi][0].Value, r[fi][1].Value, r[fi][2].Value); var r2 = new Point3d(r[fi][0].Value, r[fi][1].Value - VisualizeModel.VisualizeModel.arrowsize * fy, r[fi][2].Value);
                             _arrow.Add(new Line(r2, r1)); arrow.Add(new Line(r2, r1));
                             _text.Add(Math.Round(fy, 2).ToString());
+                            _c.Add(color);
                         }
                         k += 1;
                     }
@@ -340,6 +347,7 @@ namespace SeismicLoads
                             var r1 = new Point3d(r[fi][0].Value, r[fi][1].Value, r[fi][2].Value); var r2 = new Point3d(r[fi][0].Value - VisualizeModel.VisualizeModel.arrowsize * fx, r[fi][1].Value - VisualizeModel.VisualizeModel.arrowsize * fy, r[fi][2].Value);
                             _arrow.Add(new Line(r2, r1)); arrow.Add(new Line(r2, r1));
                             _text.Add(Math.Round(Math.Sqrt(Math.Pow(fx, 2) + Math.Pow(fy, 2)), 2).ToString());
+                            _c.Add(color);
                         }
                         k += 1;
                     }
@@ -362,6 +370,7 @@ namespace SeismicLoads
                             var r1 = new Point3d(r[fi][0].Value, r[fi][1].Value, r[fi][2].Value); var r2 = new Point3d(r[fi][0].Value - VisualizeModel.VisualizeModel.arrowsize * fx, r[fi][1].Value - VisualizeModel.VisualizeModel.arrowsize * fy, r[fi][2].Value);
                             _arrow.Add(new Line(r2, r1)); arrow.Add(new Line(r2, r1));
                             _text.Add(Math.Round(Math.Sqrt(Math.Pow(fx, 2) + Math.Pow(fy, 2)), 2).ToString());
+                            _c.Add(color);
                         }
                         k += 1;
                     }
@@ -379,8 +388,9 @@ namespace SeismicLoads
         ///ここからカスタム関数群********************************************************************************
         private readonly List<Line> _arrow = new List<Line>();
         private readonly List<String> _text = new List<String>();
+        private readonly List<Color> _c = new List<Color>();
         protected override void BeforeSolveInstance()
-        { _arrow.Clear(); _text.Clear(); }
+        { _arrow.Clear(); _text.Clear(); _c.Clear(); }
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {
             args.Viewport.GetFrustumFarPlane(out Plane plane);
@@ -393,11 +403,11 @@ namespace SeismicLoads
                     var size = VisualizeModel.VisualizeModel.fontsize; Point3d point = _arrow[i].From; plane.Origin = point;
                     viewport.GetWorldToScreenScale(point, out double pixPerUnit); size /= pixPerUnit;
                     Text3d drawText = new Text3d(_text[i] + "kN", plane, size);
-                    args.Display.Draw3dText(drawText, Color.MintCream); drawText.Dispose();
+                    args.Display.Draw3dText(drawText, _c[i]); drawText.Dispose();
                 }
                 Line arrow = _arrow[i];
-                args.Display.DrawLine(arrow, Color.MintCream, 2);
-                args.Display.DrawArrowHead(arrow.To, arrow.Direction, Color.MintCream, 25, 0);
+                args.Display.DrawLine(arrow, _c[i], 2);
+                args.Display.DrawArrowHead(arrow.To, arrow.Direction, _c[i], 25, 0);
             }
         }
         ///ここからGUIの作成*****************************************************************************************
