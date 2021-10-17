@@ -532,13 +532,13 @@ namespace SectionPerformance
                     Zy.Add((b * Math.Pow(h, 3) - (b - tw) * Math.Pow((h - 2 * tf), 3)) / 6.0 / h);
                     J.Add((2.0 * b * Math.Pow(tf, 3) + (h - 2 * tf) * Math.Pow(tw, 3)) / 3.0);
                     double a = tf / 2.0; double H = b; double B = h; b = B - tf * 2; double t = tw;
-                    double e1 = (a * Math.Pow(H, 2) + b * Math.Pow(t, 2)) / (2 * (a * H + b * t)); double e2 = H - e1; var h2 = H - e2 - t;
-                    Iz.Add((B * Math.Pow(e1, 3) - b * Math.Pow(h2, 3) + a * Math.Pow(e2, 3)) / 3.0);
-                    Zz.Add((B * Math.Pow(e1, 3) - b * Math.Pow(h2, 3) + a * Math.Pow(e2, 3)) / 3.0 / e1);////////////////////////////////////////////
-                    var hh = ((int)(h * 1000)).ToString(); var bb = ((int)(b * 1000)).ToString();
+                    double e1 = (a * Math.Pow(H, 2) + b * Math.Pow(t, 2)) / (2 * (a * H + b * t)); double e2 = H - e1; var h = H - e2 - t;
+                    Iz.Add((B * Math.Pow(e1, 3) - b * Math.Pow(h, 3) + a * Math.Pow(e2, 3)) / 3.0);
+                    Zz.Add((B * Math.Pow(e1, 3) - b * Math.Pow(h, 3) + a * Math.Pow(e2, 3)) / 3.0 / e1);////////////////////////////////////////////
+                    var hh = ((int)(p1 * 1000)).ToString(); var bb = ((int)(p2 * 1000)).ToString();
                     var ttw = ((int)(tw * 1000)).ToString(); var ttf = ((int)(tf * 1000)).ToString();
-                    if (Math.Abs(Math.Round(h * 1000, 0) - h * 1000) > 0.05) { hh = (Math.Round((h * 1000), 1)).ToString(); }
-                    if (Math.Abs(Math.Round(b * 1000, 0) - b * 1000) > 0.05) { bb = (Math.Round((b * 1000), 1)).ToString(); }
+                    if (Math.Abs(Math.Round(h * 1000, 0) - h * 1000) > 0.05) { hh = (Math.Round((p1 * 1000), 1)).ToString(); }
+                    if (Math.Abs(Math.Round(b * 1000, 0) - b * 1000) > 0.05) { bb = (Math.Round((p2 * 1000), 1)).ToString(); }
                     if (Math.Abs(Math.Round(tw * 1000, 0) - tw * 1000) > 0.05) { ttw = (Math.Round((tw * 1000), 1)).ToString(); }
                     if (Math.Abs(Math.Round(tf * 1000, 0) - tf * 1000) > 0.05) { ttf = (Math.Round((tf * 1000), 1)).ToString(); }
                     secname.Add("[-" + hh + "x" + bb + "x" + ttw + "x" + ttf);
