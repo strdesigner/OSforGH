@@ -363,6 +363,16 @@ namespace SectionPerformance
                                     ren.Add(solid);
                                 }
                             }
+                            if (name == 1)
+                            {
+                                double scale = 1;
+                                if (unit_of_length == "mm") { scale = 1000; }
+                                if (unit_of_length == "cm") { scale = 100; }
+                                double t1 = P1[sec_e] * scale; double t2 = P2[sec_e] * scale; double t3 = P3[sec_e] * scale; double t4 = P4[sec_e] * scale;
+                                _text.Add("L-" + t1.ToString() + "x" + t2.ToString() + "x" + t3.ToString() + "x" + t4.ToString());
+                                _point.Add(rc);
+                                _size.Add(fontsize);
+                            }
                         }
                         else if (sec[sec_e] == "[" || sec[sec_e] == "7" || sec[sec_e] == "コ")
                         {
@@ -388,6 +398,16 @@ namespace SectionPerformance
                                     var solid = face.CreateExtrusion(new Line(r1, r2).ToNurbsCurve(), true);
                                     ren.Add(solid);
                                 }
+                            }
+                            if (name == 1)
+                            {
+                                double scale = 1;
+                                if (unit_of_length == "mm") { scale = 1000; }
+                                if (unit_of_length == "cm") { scale = 100; }
+                                double t1 = P1[sec_e] * scale; double t2 = P2[sec_e] * scale; double t3 = P3[sec_e] * scale; double t4 = P4[sec_e] * scale;
+                                _text.Add("[-" + t1.ToString() + "x" + t2.ToString() + "x" + t3.ToString() + "x" + t4.ToString());
+                                _point.Add(rc);
+                                _size.Add(fontsize);
                             }
                         }
                     }
@@ -512,9 +532,9 @@ namespace SectionPerformance
                     Zy.Add((b * Math.Pow(h, 3) - (b - tw) * Math.Pow((h - 2 * tf), 3)) / 6.0 / h);
                     J.Add((2.0 * b * Math.Pow(tf, 3) + (h - 2 * tf) * Math.Pow(tw, 3)) / 3.0);
                     double a = tf / 2.0; double H = b; double B = h; b = B - tf * 2; double t = tw;
-                    double e1 = (a * Math.Pow(H, 2) + b * Math.Pow(t, 2)) / (2 * (a * H + b * t)); double e2 = H - e1; h = H - e2 - t;
-                    Iz.Add((B * Math.Pow(e1, 3) - b * Math.Pow(h, 3) + a * Math.Pow(e2, 3)) / 3.0);
-                    Zz.Add((B * Math.Pow(e1, 3) - b * Math.Pow(h, 3) + a * Math.Pow(e2, 3)) / 3.0 / e1);////////////////////////////////////////////
+                    double e1 = (a * Math.Pow(H, 2) + b * Math.Pow(t, 2)) / (2 * (a * H + b * t)); double e2 = H - e1; var h2 = H - e2 - t;
+                    Iz.Add((B * Math.Pow(e1, 3) - b * Math.Pow(h2, 3) + a * Math.Pow(e2, 3)) / 3.0);
+                    Zz.Add((B * Math.Pow(e1, 3) - b * Math.Pow(h2, 3) + a * Math.Pow(e2, 3)) / 3.0 / e1);////////////////////////////////////////////
                     var hh = ((int)(h * 1000)).ToString(); var bb = ((int)(b * 1000)).ToString();
                     var ttw = ((int)(tw * 1000)).ToString(); var ttf = ((int)(tf * 1000)).ToString();
                     if (Math.Abs(Math.Round(h * 1000, 0) - h * 1000) > 0.05) { hh = (Math.Round((h * 1000), 1)).ToString(); }
