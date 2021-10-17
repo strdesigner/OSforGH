@@ -532,7 +532,7 @@ namespace SectionPerformance
                     Zy.Add((b * Math.Pow(h, 3) - (b - tw) * Math.Pow((h - 2 * tf), 3)) / 6.0 / h);
                     J.Add((2.0 * b * Math.Pow(tf, 3) + (h - 2 * tf) * Math.Pow(tw, 3)) / 3.0);
                     double a = tf / 2.0; double H = b; double B = h; b = B - tf * 2; double t = tw;
-                    double e1 = (a * Math.Pow(H, 2) + b * Math.Pow(t, 2)) / (2 * (a * H + b * t)); double e2 = H - e1; var h = H - e2 - t;
+                    double e1 = (a * Math.Pow(H, 2) + b * Math.Pow(t, 2)) / (2 * (a * H + b * t)); double e2 = H - e1; h = H - e2 - t;
                     Iz.Add((B * Math.Pow(e1, 3) - b * Math.Pow(h, 3) + a * Math.Pow(e2, 3)) / 3.0);
                     Zz.Add((B * Math.Pow(e1, 3) - b * Math.Pow(h, 3) + a * Math.Pow(e2, 3)) / 3.0 / e1);////////////////////////////////////////////
                     var hh = ((int)(p1 * 1000)).ToString(); var bb = ((int)(p2 * 1000)).ToString();
