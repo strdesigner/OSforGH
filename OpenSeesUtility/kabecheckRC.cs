@@ -185,6 +185,7 @@ namespace kabecheckRC
                 var a = 0.0;
                 for (int i = 0; i < flayer1.Count; i++)//1F床
                 {
+                    RhinoApp.WriteLine(flayer1[i].ToString());
                     var shell = doc.Objects.FindByLayer(flayer1[i]);
                     for (int j = 0; j < shell.Length; j++)
                     {
@@ -268,7 +269,8 @@ namespace kabecheckRC
                         sumFc += Fc[int.Parse(text)];
                         var lx = lj * Math.Pow(Math.Cos(t1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(t2 / 180.0 * Math.PI));//X方向壁量
                         var ly = lj * Math.Pow(Math.Sin(t1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(t2 / 180.0 * Math.PI));//Y方向壁量
-                        var ra = new Point3d(r1[0] - lx / 2.0, r1[1] - ly / 2.0, r1[2]); var rb = new Point3d(r1[0] + lx / 2.0, r1[1] + ly / 2.0, r1[2]);
+                        var ra = new Point3d(r1[0] - lj / 2.0 * Math.Cos(t1 / 180.0 * Math.PI), r1[1] + lj / 2.0 * Math.Sin(t1 / 180.0 * Math.PI), r1[2]);
+                        var rb = new Point3d(r1[0] + lj / 2.0 * Math.Cos(t1 / 180.0 * Math.PI), r1[1] - lj / 2.0 * Math.Sin(t1 / 180.0 * Math.PI), r1[2]);
                         ri.Add(new List<Point3d> { ra, rb }); Xmin = Math.Min(Math.Min(Xmin, ra[0]), rb[0]); Xmax = Math.Max(Math.Max(Xmax, ra[0]), rb[0]); Ymin = Math.Min(Math.Min(Ymin, ra[1]), rb[1]); Ymax = Math.Max(Math.Max(Ymax, ra[1]), rb[1]);
                         if (P1[sec] <= h * 0.3) { lx = 0.0; ly = 0.0; }
                         Lx_1.Add(lx); Ly_1.Add(ly); Ax_1.Add(lx * tj); Ay_1.Add(ly * tj);
@@ -300,7 +302,8 @@ namespace kabecheckRC
                         sumFc += Fc[int.Parse(text)];
                         var lx = lj * Math.Pow(Math.Cos(t1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(t2 / 180.0 * Math.PI));//X方向壁量
                         var ly = lj * Math.Pow(Math.Sin(t1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(t2 / 180.0 * Math.PI));//Y方向壁量
-                        var ra = new Point3d(r1[0] - lx / 2.0, r1[1] - ly / 2.0, r1[2]); var rb = new Point3d(r1[0] + lx / 2.0, r1[1] + ly / 2.0, r1[2]);
+                        var ra = new Point3d(r1[0] - lj / 2.0 * Math.Cos(t1 / 180.0 * Math.PI), r1[1] + lj / 2.0 * Math.Sin(t1 / 180.0 * Math.PI), r1[2]);
+                        var rb = new Point3d(r1[0] + lj / 2.0 * Math.Cos(t1 / 180.0 * Math.PI), r1[1] - lj / 2.0 * Math.Sin(t1 / 180.0 * Math.PI), r1[2]);
                         ri.Add(new List<Point3d> { ra, rb }); Xmin = Math.Min(Math.Min(Xmin, ra[0]), rb[0]); Xmax = Math.Max(Math.Max(Xmax, ra[0]), rb[0]); Ymin = Math.Min(Math.Min(Ymin, ra[1]), rb[1]); Ymax = Math.Max(Math.Max(Ymax, ra[1]), rb[1]);
                         if (P1[sec] <= h * 0.3) { lx = 0.0; ly = 0.0; }
                         Lx_2.Add(lx); Ly_2.Add(ly); Ax_2.Add(lx * tj); Ay_2.Add(ly * tj);
@@ -336,7 +339,8 @@ namespace kabecheckRC
                         sumFc += Fc[int.Parse(text)];
                         var lx = lj * Math.Pow(Math.Cos(t1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(t2 / 180.0 * Math.PI));//X方向壁量
                         var ly = lj * Math.Pow(Math.Sin(t1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(t2 / 180.0 * Math.PI));//Y方向壁量
-                        var ra = new Point3d(r1[0] - lx / 2.0, r1[1] - ly / 2.0, r1[2]); var rb = new Point3d(r1[0] + lx / 2.0, r1[1] + ly / 2.0, r1[2]);
+                        var ra = new Point3d(r1[0] - lj / 2.0 * Math.Cos(t1 / 180.0 * Math.PI), r1[1] + lj / 2.0 * Math.Sin(t1 / 180.0 * Math.PI), r1[2]);
+                        var rb = new Point3d(r1[0] + lj / 2.0 * Math.Cos(t1 / 180.0 * Math.PI), r1[1] - lj / 2.0 * Math.Sin(t1 / 180.0 * Math.PI), r1[2]);
                         ri.Add(new List<Point3d> { ra, rb }); Xmin = Math.Min(Math.Min(Xmin, ra[0]), rb[0]); Xmax = Math.Max(Math.Max(Xmax, ra[0]), rb[0]); Ymin = Math.Min(Math.Min(Ymin, ra[1]), rb[1]); Ymax = Math.Max(Math.Max(Ymax, ra[1]), rb[1]);
                         if (P1[sec] <= h * 0.3) { lx = 0.0; ly = 0.0; }
                         Lx_3.Add(lx); Ly_3.Add(ly); Ax_3.Add(lx * tj); Ay_3.Add(ly * tj);
@@ -372,7 +376,8 @@ namespace kabecheckRC
                         sumFc += Fc[int.Parse(text)];
                         var lx = lj * Math.Pow(Math.Cos(t1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(t2 / 180.0 * Math.PI));//X方向壁量
                         var ly = lj * Math.Pow(Math.Sin(t1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(t2 / 180.0 * Math.PI));//Y方向壁量
-                        var ra = new Point3d(r1[0] - lx / 2.0, r1[1] - ly / 2.0, r1[2]); var rb = new Point3d(r1[0] + lx / 2.0, r1[1] + ly / 2.0, r1[2]);
+                        var ra = new Point3d(r1[0] - lj / 2.0 * Math.Cos(t1 / 180.0 * Math.PI), r1[1] + lj / 2.0 * Math.Sin(t1 / 180.0 * Math.PI), r1[2]);
+                        var rb = new Point3d(r1[0] + lj / 2.0 * Math.Cos(t1 / 180.0 * Math.PI), r1[1] - lj / 2.0 * Math.Sin(t1 / 180.0 * Math.PI), r1[2]);
                         ri.Add(new List<Point3d> { ra, rb }); Xmin = Math.Min(Math.Min(Xmin, ra[0]), rb[0]); Xmax = Math.Max(Math.Max(Xmax, ra[0]), rb[0]); Ymin = Math.Min(Math.Min(Ymin, ra[1]), rb[1]); Ymax = Math.Max(Math.Max(Ymax, ra[1]), rb[1]);
                         if (P1[sec] <= h * 0.3) { lx = 0.0; ly = 0.0; }
                         Lx_4.Add(lx); Ly_4.Add(ly); Ax_4.Add(lx * tj); Ay_4.Add(ly * tj);
@@ -408,7 +413,8 @@ namespace kabecheckRC
                         sumFc += Fc[int.Parse(text)];
                         var lx = lj * Math.Pow(Math.Cos(t1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(t2 / 180.0 * Math.PI));//X方向壁量
                         var ly = lj * Math.Pow(Math.Sin(t1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(t2 / 180.0 * Math.PI));//Y方向壁量
-                        var ra = new Point3d(r1[0] - lx / 2.0, r1[1] - ly / 2.0, r1[2]); var rb = new Point3d(r1[0] + lx / 2.0, r1[1] + ly / 2.0, r1[2]);
+                        var ra = new Point3d(r1[0] - lj / 2.0 * Math.Cos(t1 / 180.0 * Math.PI), r1[1] + lj / 2.0 * Math.Sin(t1 / 180.0 * Math.PI), r1[2]);
+                        var rb = new Point3d(r1[0] + lj / 2.0 * Math.Cos(t1 / 180.0 * Math.PI), r1[1] - lj / 2.0 * Math.Sin(t1 / 180.0 * Math.PI), r1[2]);
                         ri.Add(new List<Point3d> { ra, rb }); Xmin = Math.Min(Math.Min(Xmin, ra[0]), rb[0]); Xmax = Math.Max(Math.Max(Xmax, ra[0]), rb[0]); Ymin = Math.Min(Math.Min(Ymin, ra[1]), rb[1]); Ymax = Math.Max(Math.Max(Ymax, ra[1]), rb[1]);
                         if (P1[sec] <= h * 0.3) { lx = 0.0; ly = 0.0; }
                         Lx_5.Add(lx); Ly_5.Add(ly); Ax_5.Add(lx * tj); Ay_5.Add(ly * tj);
@@ -610,6 +616,7 @@ namespace kabecheckRC
                         gfx.DrawString(Math.Round(sumAy[i], 3).ToString(), font, XBrushes.Black, new XRect(offset_x + text_width * 10, offset_y + pitchy * (Ax[i].Count % n + 1), text_width, offset_y + pitchy * (Ax[i].Count % n + 1)), XStringFormats.TopCenter);
                         gfx.DrawLine(pen, offset_x + text_width * 11, offset_y + pitchy * (Ax[i].Count % n + 1), offset_x + text_width * 11, offset_y + pitchy * (Ax[i].Count % n + 2));//縦線
                     }
+                    ///壁配置図の描画///
                     var pen2 = new XPen(XColors.Gray, 2.0);
                     var rxmin = new List<double>(); var rymin = new List<double>();
                     for (int i = 0; i < r.Count; i++)
