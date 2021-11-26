@@ -185,7 +185,6 @@ namespace kabecheckRC
                 var a = 0.0;
                 for (int i = 0; i < flayer1.Count; i++)//1F床
                 {
-                    RhinoApp.WriteLine(flayer1[i].ToString());
                     var shell = doc.Objects.FindByLayer(flayer1[i]);
                     for (int j = 0; j < shell.Length; j++)
                     {
