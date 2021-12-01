@@ -84,6 +84,7 @@ namespace StripFooting
             pManager.AddTextParameter("name as", "name as", "name of long-term arrowable pressure [kN/m2]", GH_ParamAccess.item, "as");
             pManager.AddNumberParameter("FS", "FS", "font size for display texts", GH_ParamAccess.item, 10.0);///
             pManager.AddTextParameter("outputname", "outputname", "output file name", GH_ParamAccess.item, "StripBase");///
+            pManager.AddNumberParameter("offset", "offset", "boundary level from base line", GH_ParamAccess.item, 0.0);
         }
 
         /// <summary>
@@ -273,11 +274,13 @@ namespace StripFooting
             DA.SetDataList("N/A", pressure);
             DA.GetDataTree("element_node_relationship", out GH_Structure<GH_Number> _ij);
             var ij = _ij.Branches; GH_Structure<GH_Number> e_load = new GH_Structure<GH_Number>(); int kk = 0;
+            var offset = 0.0; DA.GetData("offset", ref offset);
             if (_ij.Branches[0][0].Value != -9999)
             {
                 for (int k = 0; k < pressure.Count; k++)
                 {
                     var ri = baseline[k][0]; var rj = baseline[k][1];//布基礎の両端の座標
+                    ri[2] += offset; rj[2] += offset;
                     var xi = ri[0]; var yi = ri[1]; var zi = ri[2]; var xj = rj[0]; var yj = rj[1]; var zj = rj[2];
                     var xmin = Math.Min(xi, xj)-0.1; var xmax = Math.Max(xi, xj)+0.1; var ymin = Math.Min(yi, yj)-0.1; var ymax = Math.Max(yi, yj)+0.1; var zmin = Math.Min(zi, zj)-0.1; var zmax = Math.Max(zi, zj)+0.1;
                     var v1 = rj - ri;

@@ -199,6 +199,7 @@ namespace OpenSeesUtility
 
             var PL = new List<double>(); var PS = new List<double>(); 
             var B = new List<double>(); var D = new List<double>(); var t = new List<double>(); var b = new List<double>(); var d = new List<double>(); var ex = new List<double>(); var ey = new List<double>(); var Rz = new List<List<double>>(); var Sz = new List<double>(); var A = new List<double>(); var rho = new List<double>(); var Fc = new List<double>(); var PaL = new List<double>(); var PaS = new List<double>(); var barx = new List<string>(); var bary = new List<string>(); var number = new List<int>(); var RMx = new List<List<double>>(); var RMy = new List<List<double>>(); var Zx = new List<double>(); var Zy = new List<double>(); var Lx = new List<double>(); var Ly = new List<double>(); var nx = new List<double>(); var ny = new List<double>(); var Dx = new List<double>(); var Dy = new List<double>(); var ftLx = new List<double>(); var ftLy = new List<double>(); var ftSx = new List<double>(); var ftSy = new List<double>(); var QxL = new List<double>(); var QxS = new List<double>(); var QyL = new List<double>(); var QyS = new List<double>(); var J = new List<double>(); var QaxL = new List<double>(); var QaxS = new List<double>(); var QayL = new List<double>(); var QayS = new List<double>(); var fsL = new List<double>(); var fsS = new List<double>(); var MxL = new List<double>(); var MxS = new List<double>(); var MyL = new List<double>(); var MyS = new List<double>(); var MaxL = new List<double>(); var MaxS = new List<double>(); var MayL = new List<double>(); var MayS = new List<double>();
+            var angle = new List<double>();
             for (int i = 0; i < layer.Count; i++)
             {
                 var point = doc.Objects.FindByLayer(layer[i]);
@@ -256,6 +257,9 @@ namespace OpenSeesUtility
 
                         if (obj.Attributes.GetUserString(namebar[1]) == null) { bary.Add(""); }
                         else { bary.Add(obj.Attributes.GetUserString(namebar[1])); }
+
+                        if (obj.Attributes.GetUserString("angle") == null) { angle.Add(0); }
+                        else { angle.Add(float.Parse(obj.Attributes.GetUserString("angle"))); }
                     }
                 }
             }
@@ -304,6 +308,13 @@ namespace OpenSeesUtility
                     var p2 = rc + new Vector3d(B[i] / 2e+3, D[i] / 2e+3, 0);
                     var p3 = rc + new Vector3d(B[i] / 2e+3, -D[i] / 2e+3, 0);
                     var p4 = rc + new Vector3d(-B[i] / 2e+3, -D[i] / 2e+3, 0);
+                    if (angle[i] != 0)
+                    {
+                        p1 = rc + rotation(p1 - rc, new Vector3d(0, 0, 1), angle[i]);
+                        p2 = rc + rotation(p2 - rc, new Vector3d(0, 0, 1), angle[i]);
+                        p3 = rc + rotation(p3 - rc, new Vector3d(0, 0, 1), angle[i]);
+                        p4 = rc + rotation(p4 - rc, new Vector3d(0, 0, 1), angle[i]);
+                    }
                     var brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { p1, p2, p3, p4, p1 }).ToNurbsCurve(), 0.001)[0];
                     _s.Add(brep);
                 }
