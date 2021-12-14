@@ -485,7 +485,7 @@ namespace ElasticAnalysis
                         }
                         var local_x = new VectorWrapper(new double[] { x[0], x[1], x[2] });
                         var local_y = new VectorWrapper(new double[] { y[0], y[1], y[2] });
-                        k += 1; theDomain.AddElement(new OpenSees.Elements.TwoNodeLinkWrapper(m + mc + m2 + m3 * 2 + k, 3, ii + 1, nodes[j], direction, springmaterial, local_y, local_x, new VectorWrapper(0), new VectorWrapper(0), 0, 0));
+                        k += 1; theDomain.AddElement(new OpenSees.Elements.TwoNodeLinkWrapper(m + mc + m2 + m3 * 2 + m4 + k, 3, ii + 1, nodes[j], direction, springmaterial, local_y, local_x, new VectorWrapper(0), new VectorWrapper(0), 0, 0));
                     }
                     //theDomain.CreateRigidDiaphragm(ii + 1, new IDWrapper(nodes), 2);
                     theDomain.AddSP_Constraint(new OpenSees.Components.Constraints.SP_ConstraintWrapper(ii + 1, 2, 0.0, true));
