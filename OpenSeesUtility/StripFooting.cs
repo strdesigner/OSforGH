@@ -264,7 +264,7 @@ namespace StripFooting
                     var at = Math.PI * Math.Pow(D, 2) / 4.0 * 1000.0 / pitch;//[mm2]
                     var dj = (t * 1000 - 60) * 7 / 8;//[mm]
                     J.Add(dj); At.Add(at);
-                    var span = b / 2.0 - w; LL.Add(span);
+                    var span = (b - w) / 2.0; LL.Add(span);
                     M.Add(prs * Math.Pow(span, 2) / 2.0);//[kNm]
                     Ma.Add(at * ft * dj / 1e+6);//[kNm]
                     bar.Add("D" + ((int)D).ToString() + "@" + ((int)pitch).ToString()); Ft.Add(ft);
