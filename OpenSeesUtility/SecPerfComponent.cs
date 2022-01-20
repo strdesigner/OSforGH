@@ -203,12 +203,12 @@ namespace SectionPerformance
                             VA[0] += Math.Pow(P1[sec_e],2) * Math.PI/4.0 * (r2 - r1).Length; VA[1] += P1[sec_e] * Math.PI * (r2 - r1).Length;
                             if (shape == 1)
                             {
-                                Brep brep = Brep.CreatePlanarBreps(new Circle(rc, P1[sec_e] / 2.0).ToNurbsCurve(), 0.001)[0];
+                                Brep brep = Brep.CreatePlanarBreps(new Circle(new Arc(rc + l2 * P1[sec_e] / 2.0, rc + l1 * P1[sec_e] / 2.0, rc - l2 * P1[sec_e] / 2.0)).ToNurbsCurve(), 0.001)[0];
                                 _rc.Add(brep);
                             }
                             if (render == 1)
                             {
-                                Brep brep = Brep.CreatePlanarBreps(new Circle(r1, P1[sec_e] / 2.0).ToNurbsCurve(), 0.001)[0];
+                                Brep brep = Brep.CreatePlanarBreps(new Circle(new Arc(r1 + l2 * P1[sec_e] / 2.0, r1 + l1 * P1[sec_e] / 2.0, r1 - l2 * P1[sec_e] / 2.0)).ToNurbsCurve(), 0.001)[0];
                                 var face = brep.Faces[0];
                                 var solid = face.CreateExtrusion(new Line(r1, r2).ToNurbsCurve(), true);
                                 ren.Add(solid);
