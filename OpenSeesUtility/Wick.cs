@@ -73,6 +73,7 @@ namespace Wick
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+            pManager.AddLineParameter("l", "l", "wick line", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -89,31 +90,39 @@ namespace Wick
             var direction = new Vector3d(Math.Cos((angle + 90) / 180 * Math.PI), Math.Sin((angle + 90) / 180 * Math.PI), 0);
             var vecmin = new Vector3d(xmin, ymin, 0); var vecmax = new Vector3d(xmax, ymax, 0);
             var d1 = (vecmin + Vector3d.Multiply(-vecmin, normal) * normal).Length; var d2 = (vecmax + Vector3d.Multiply(-vecmax, normal) * normal).Length;
+            var wicklines = new List<Line>();
             for (int i = 0; i < h.Count; i++)
             {
                 for (int j = 0; j < x.Count; j++)
                 {
-                    _xline.Add(new Line(new Point3d(x[j], ymin - offsetx, h[i]), new Point3d(x[j], ymax + offsetx, h[i])));
+                    var l = new Line(new Point3d(x[j], ymin - offsetx, h[i]), new Point3d(x[j], ymax + offsetx, h[i]));
+                    _xline.Add(l);
                     if (xlabel[0] == "default") { _xlabel.Add("X" + j.ToString()); }
                     else { _xlabel.Add(xlabel[j]); }
+                    wicklines.Add(l);
                 }
                 for (int j = 0; j < y.Count; j++)
                 {
-                    _yline.Add(new Line(new Point3d(xmin - offsety, y[j], h[i]), new Point3d(xmax + offsety, y[j], h[i])));
+                    var l = new Line(new Point3d(xmin - offsety, y[j], h[i]), new Point3d(xmax + offsety, y[j], h[i]));
+                    _yline.Add(l);
                     if (ylabel[0] == "default") { _ylabel.Add("Y" + j.ToString()); }
                     else { _ylabel.Add(ylabel[j]); }
+                    wicklines.Add(l);
                 }
                 if (angle != 0)
                 {
                     for (int j = 0; j < z.Count; j++)
                     {
                         var vec1 = normal * z[j] - direction * (offsetz + d1); var vec2 = normal * z[j] + direction * (offsetz + d2);
-                        _zline.Add(new Line(new Point3d(vec1[0], vec1[1], h[i]), new Point3d(vec2[0], vec2[1], h[i])));
+                        var l = new Line(new Point3d(vec1[0], vec1[1], h[i]), new Point3d(vec2[0], vec2[1], h[i]));
+                        _zline.Add(l);
                         if (zlabel[0] == "default") { _zlabel.Add("Z" + j.ToString()); }
                         else { _zlabel.Add(zlabel[j]); }
+                        wicklines.Add(l);
                     }
                 }
             }
+            DA.SetDataList("l",wicklines);
         }
 
         protected override System.Drawing.Bitmap Icon { get { return OpenSeesUtility.Properties.Resources.wick; } }

@@ -156,66 +156,67 @@ namespace OpenSeesUtility
                 for (int i = 0; i<label1.Count; i++)
                 {
                     var color1 = XBrushes.Black; var color2 = XBrushes.Black; var color3 = XBrushes.Black; var color4 = XBrushes.Black;
-                    if (i % 50 == 0)
+                    int ii = i % 60;
+                    if (i % 60 == 0)
                     {
                         page = document.AddPage();// 空白ページを作成。
                         gfx = XGraphics.FromPdfPage(page);// 描画するためにXGraphicsオブジェクトを取得。
                         if (i > reac_f.Count && i < reac_f.Count + 4)
                         {
-                            gfx.DrawLine(pen, offset_x, offset_y + pitchy * i, offset_x + label_width * 4, offset_y + pitchy * i);//横線
-                            gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * i, offset_x + label_width * 0, offset_y + pitchy * (i + 1));//縦線
-                            gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * i, offset_x + label_width * 1, offset_y + pitchy * (i + 1));//縦線
-                            gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * i, offset_x + label_width * 4, offset_y + pitchy * (i + 1));//縦線
+                            gfx.DrawLine(pen, offset_x, offset_y + pitchy * ii, offset_x + label_width * 4, offset_y + pitchy * ii);//横線
+                            gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * ii, offset_x + label_width * 0, offset_y + pitchy * (ii + 1));//縦線
+                            gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * ii, offset_x + label_width * 1, offset_y + pitchy * (ii + 1));//縦線
+                            gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * ii, offset_x + label_width * 4, offset_y + pitchy * (ii + 1));//縦線
                         }
                         else if (i > 1 && i < reac_f.Count + 1)
                         {
-                            gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * i, offset_x + label_width * 0, offset_y + pitchy * (i + 1));//縦線
-                            gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * i, offset_x + label_width * 1, offset_y + pitchy * (i + 1));//縦線
-                            gfx.DrawLine(pen, offset_x + label_width * 2, offset_y + pitchy * i, offset_x + label_width * 2, offset_y + pitchy * (i + 1));//縦線
-                            gfx.DrawLine(pen, offset_x + label_width * 3, offset_y + pitchy * i, offset_x + label_width * 3, offset_y + pitchy * (i + 1));//縦線
-                            gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * i, offset_x + label_width * 4, offset_y + pitchy * (i + 1));//縦線
+                            gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * ii, offset_x + label_width * 0, offset_y + pitchy * (ii + 1));//縦線
+                            gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * ii, offset_x + label_width * 1, offset_y + pitchy * (ii + 1));//縦線
+                            gfx.DrawLine(pen, offset_x + label_width * 2, offset_y + pitchy * ii, offset_x + label_width * 2, offset_y + pitchy * (ii + 1));//縦線
+                            gfx.DrawLine(pen, offset_x + label_width * 3, offset_y + pitchy * ii, offset_x + label_width * 3, offset_y + pitchy * (ii + 1));//縦線
+                            gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * ii, offset_x + label_width * 4, offset_y + pitchy * (ii + 1));//縦線
                         }
                         else
                         {
-                            gfx.DrawLine(pen, offset_x, offset_y + pitchy * i, offset_x + label_width * 4, offset_y + pitchy * i);//横線
-                            gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * i, offset_x + label_width * 0, offset_y + pitchy * (i + 1));//縦線
-                            gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * i, offset_x + label_width * 1, offset_y + pitchy * (i + 1));//縦線
-                            gfx.DrawLine(pen, offset_x + label_width * 2, offset_y + pitchy * i, offset_x + label_width * 2, offset_y + pitchy * (i + 1));//縦線
-                            gfx.DrawLine(pen, offset_x + label_width * 3, offset_y + pitchy * i, offset_x + label_width * 3, offset_y + pitchy * (i + 1));//縦線
-                            gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * i, offset_x + label_width * 4, offset_y + pitchy * (i + 1));//縦線
+                            gfx.DrawLine(pen, offset_x, offset_y + pitchy * ii, offset_x + label_width * 4, offset_y + pitchy * ii);//横線
+                            gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * ii, offset_x + label_width * 0, offset_y + pitchy * (ii + 1));//縦線
+                            gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * ii, offset_x + label_width * 1, offset_y + pitchy * (ii + 1));//縦線
+                            gfx.DrawLine(pen, offset_x + label_width * 2, offset_y + pitchy * ii, offset_x + label_width * 2, offset_y + pitchy * (ii + 1));//縦線
+                            gfx.DrawLine(pen, offset_x + label_width * 3, offset_y + pitchy * ii, offset_x + label_width * 3, offset_y + pitchy * (ii + 1));//縦線
+                            gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * ii, offset_x + label_width * 4, offset_y + pitchy * (ii + 1));//縦線
                         }
                     }
-                    gfx.DrawString(label1[i], font, color1, new XRect(offset_x + label_width * 0, offset_y + pitchy * i, label_width, offset_y + pitchy * (i + 1)), XStringFormats.TopCenter);
-                    gfx.DrawString(label2[i], font, color1, new XRect(offset_x + label_width * 1, offset_y + pitchy * i, label_width, offset_y + pitchy * (i + 1)), XStringFormats.TopCenter);
-                    gfx.DrawString(label3[i], font, color1, new XRect(offset_x + label_width * 2, offset_y + pitchy * i, label_width, offset_y + pitchy * (i + 1)), XStringFormats.TopCenter);
-                    gfx.DrawString(label4[i], font, color1, new XRect(offset_x + label_width * 3, offset_y + pitchy * i, label_width, offset_y + pitchy * (i + 1)), XStringFormats.TopCenter);
+                    gfx.DrawString(label1[i], font, color1, new XRect(offset_x + label_width * 0, offset_y + pitchy * ii, label_width, offset_y + pitchy * (ii + 1)), XStringFormats.TopCenter);
+                    gfx.DrawString(label2[i], font, color1, new XRect(offset_x + label_width * 1, offset_y + pitchy * ii, label_width, offset_y + pitchy * (ii + 1)), XStringFormats.TopCenter);
+                    gfx.DrawString(label3[i], font, color1, new XRect(offset_x + label_width * 2, offset_y + pitchy * ii, label_width, offset_y + pitchy * (ii + 1)), XStringFormats.TopCenter);
+                    gfx.DrawString(label4[i], font, color1, new XRect(offset_x + label_width * 3, offset_y + pitchy * ii, label_width, offset_y + pitchy * (ii + 1)), XStringFormats.TopCenter);
                     if (i > reac_f.Count && i < reac_f.Count + 4)
                     {
-                        gfx.DrawLine(pen, offset_x, offset_y + pitchy * i, offset_x + label_width * 4, offset_y + pitchy * i);//横線
-                        gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * i, offset_x + label_width * 0, offset_y + pitchy * (i + 1));//縦線
-                        gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * i, offset_x + label_width * 1, offset_y + pitchy * (i + 1));//縦線
-                        gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * i, offset_x + label_width * 4, offset_y + pitchy * (i + 1));//縦線
+                        gfx.DrawLine(pen, offset_x, offset_y + pitchy * ii, offset_x + label_width * 4, offset_y + pitchy * ii);//横線
+                        gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * ii, offset_x + label_width * 0, offset_y + pitchy * (ii + 1));//縦線
+                        gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * ii, offset_x + label_width * 1, offset_y + pitchy * (ii + 1));//縦線
+                        gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * ii, offset_x + label_width * 4, offset_y + pitchy * (ii + 1));//縦線
                     }
                     else if (i > 1 && i < reac_f.Count + 1)
                     {
-                        gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * i, offset_x + label_width * 0, offset_y + pitchy * (i + 1));//縦線
-                        gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * i, offset_x + label_width * 1, offset_y + pitchy * (i + 1));//縦線
-                        gfx.DrawLine(pen, offset_x + label_width * 2, offset_y + pitchy * i, offset_x + label_width * 2, offset_y + pitchy * (i + 1));//縦線
-                        gfx.DrawLine(pen, offset_x + label_width * 3, offset_y + pitchy * i, offset_x + label_width * 3, offset_y + pitchy * (i + 1));//縦線
-                        gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * i, offset_x + label_width * 4, offset_y + pitchy * (i + 1));//縦線
+                        gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * ii, offset_x + label_width * 0, offset_y + pitchy * (ii + 1));//縦線
+                        gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * ii, offset_x + label_width * 1, offset_y + pitchy * (ii + 1));//縦線
+                        gfx.DrawLine(pen, offset_x + label_width * 2, offset_y + pitchy * ii, offset_x + label_width * 2, offset_y + pitchy * (ii + 1));//縦線
+                        gfx.DrawLine(pen, offset_x + label_width * 3, offset_y + pitchy * ii, offset_x + label_width * 3, offset_y + pitchy * (ii + 1));//縦線
+                        gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * ii, offset_x + label_width * 4, offset_y + pitchy * (ii + 1));//縦線
                     }
                     else
                     {
-                        gfx.DrawLine(pen, offset_x, offset_y + pitchy * i, offset_x + label_width * 4, offset_y + pitchy * i);//横線
-                        gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * i, offset_x + label_width * 0, offset_y + pitchy * (i + 1));//縦線
-                        gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * i, offset_x + label_width * 1, offset_y + pitchy * (i + 1));//縦線
-                        gfx.DrawLine(pen, offset_x + label_width * 2, offset_y + pitchy * i, offset_x + label_width * 2, offset_y + pitchy * (i + 1));//縦線
-                        gfx.DrawLine(pen, offset_x + label_width * 3, offset_y + pitchy * i, offset_x + label_width * 3, offset_y + pitchy * (i + 1));//縦線
-                        gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * i, offset_x + label_width * 4, offset_y + pitchy * (i + 1));//縦線
+                        gfx.DrawLine(pen, offset_x, offset_y + pitchy * ii, offset_x + label_width * 4, offset_y + pitchy * ii);//横線
+                        gfx.DrawLine(pen, offset_x + label_width * 0, offset_y + pitchy * ii, offset_x + label_width * 0, offset_y + pitchy * (ii + 1));//縦線
+                        gfx.DrawLine(pen, offset_x + label_width * 1, offset_y + pitchy * ii, offset_x + label_width * 1, offset_y + pitchy * (ii + 1));//縦線
+                        gfx.DrawLine(pen, offset_x + label_width * 2, offset_y + pitchy * ii, offset_x + label_width * 2, offset_y + pitchy * (ii + 1));//縦線
+                        gfx.DrawLine(pen, offset_x + label_width * 3, offset_y + pitchy * ii, offset_x + label_width * 3, offset_y + pitchy * (ii + 1));//縦線
+                        gfx.DrawLine(pen, offset_x + label_width * 4, offset_y + pitchy * ii, offset_x + label_width * 4, offset_y + pitchy * (ii + 1));//縦線
                     }
                     if (i == label1.Count - 1)
                     {
-                        gfx.DrawLine(pen, offset_x, offset_y + pitchy * (i + 1), offset_x + label_width * 4, offset_y + pitchy * (i + 1));//横線
+                        gfx.DrawLine(pen, offset_x, offset_y + pitchy * (ii + 1), offset_x + label_width * 4, offset_y + pitchy * (ii + 1));//横線
                     }
                 }
                 var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
