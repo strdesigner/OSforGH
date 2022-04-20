@@ -203,6 +203,16 @@ namespace OpenSeesUtility.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap dataoutput {
+            get {
+                object obj = ResourceManager.GetObject("dataoutput", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap eccentric {
             get {
                 object obj = ResourceManager.GetObject("eccentric", resourceCulture);
@@ -466,6 +476,16 @@ namespace OpenSeesUtility.Properties {
         internal static System.Drawing.Bitmap rcwallcheck {
             get {
                 object obj = ResourceManager.GetObject("rcwallcheck", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap rcwallultimatecheck {
+            get {
+                object obj = ResourceManager.GetObject("rcwallultimatecheck", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -796,6 +816,16 @@ namespace OpenSeesUtility.Properties {
         internal static System.Drawing.Bitmap VisResultShell {
             get {
                 object obj = ResourceManager.GetObject("VisResultShell", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap VisualizeResultSpring {
+            get {
+                object obj = ResourceManager.GetObject("VisualizeResultSpring", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

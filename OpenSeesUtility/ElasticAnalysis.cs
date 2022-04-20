@@ -66,6 +66,7 @@ namespace ElasticAnalysis
             pManager.AddNumberParameter("spring element", "spring", "[[No.i, No.j, kxt, ktc, kyt, kyc, kzt, kzc, rx, ry, rz(spring value)],...](DataTree)", GH_ParamAccess.tree);///11
             pManager.AddNumberParameter("spring_force", "spring_f", "[[element No.,Pxi,Pyi,Pzi,Mxi,Myi,Mzi,Pxj,Pyj,Pzj,Mxj,Myj,Mzj,Pxc,Pyc,Pzc,Mxc,Myc,Mzc],...](DataTree)", GH_ParamAccess.tree);///12
             pManager.AddNumberParameter("strain_energy", "str_e", "strain energy", GH_ParamAccess.item);///13
+            pManager.AddNumberParameter("nodal displacement (each node)", "D(R)", "[[dxi,dyi,dzi,theta_xi,theta_yi,theta_zi,dxj,dyj,dzj,theta_xj,theta_yj,theta_zj],...](DataTree)", GH_ParamAccess.tree);///14
         }
         /// <summary>
         /// This is the method that actually does the work.
@@ -78,6 +79,7 @@ namespace ElasticAnalysis
             List<double> Iy = new List<double>(); List<double> Iz = new List<double>(); List<double> J = new List<double>();
             GH_Structure<GH_Number> disp = new GH_Structure<GH_Number>(); GH_Structure<GH_Number> reac_f = new GH_Structure<GH_Number>(); GH_Structure<GH_Number> sec_f = new GH_Structure<GH_Number>(); IList<List<GH_Number>> joint = new List<List<GH_Number>>(); GH_Structure<GH_Number> dispshell = new GH_Structure<GH_Number>(); GH_Structure<GH_Number> spring_f = new GH_Structure<GH_Number>();
             GH_Structure<GH_Number> shell_f = new GH_Structure<GH_Number>(); var qvec = new Vector3d(1, 0, 0);
+            GH_Structure<GH_Number> dispR = new GH_Structure<GH_Number>();
             int n; int m = 0; int m2 = 0; int m3 = 0; int m4 = 0; int nf; int nc = 0; int mc = 0; int mc2 = 0; int e2 = 0;
             var theDomain = new OpenSees.Components.DomainWrapper();
             DA.GetDataList("local coordinates vector", l_vec); if (l_vec[0][0] != -9999 && l_vec[0][1] != -9999 && l_vec[0][2] != -9999) { DA.SetDataList("local coordinates vector", l_vec); }
@@ -517,7 +519,15 @@ namespace ElasticAnalysis
                     for (int j = 0; j < 6; j++) { dlist.Add(new GH_Number(d[j])); }
                     disp.AppendRange(dlist, new GH_Path(e));
                 }
+                for (int i = 0; i < n; i++)
+                {
+                    List<GH_Number> dlist = new List<GH_Number>();
+                    var d = theDomain.GetNode(i+1).GetCommitDisp();
+                    for (int j = 0; j < 6; j++) { dlist.Add(new GH_Number(d[j])); }
+                    dispR.AppendRange(dlist, new GH_Path(i));
+                }
                 DA.SetDataTree(2, disp);
+                DA.SetDataTree(14, dispR);
             }
             if (_ijkl.Branches[0][0].Value != -9999)
             {

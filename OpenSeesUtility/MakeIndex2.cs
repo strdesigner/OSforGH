@@ -29,7 +29,7 @@ namespace MakeIndex2
             pManager.AddTextParameter("layer(beamall)", "layer(beamall)", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
             pManager.AddTextParameter("layer(springall)", "layer(springall)", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
             pManager.AddTextParameter("layer", "layer", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
-            pManager.AddTextParameter("name wick", "name wick", "usertextname for wick1 and wick2", GH_ParamAccess.list, new List<string> { "wickX", "wickY" });
+            pManager.AddTextParameter("name wick", "name wick", "usertextname for wick", GH_ParamAccess.list, new List<string> { "wickX", "wickY", "wickZ" });
             pManager.AddTextParameter("wick", "wick", "[wickname1,wickname2,...](Datalist)", GH_ParamAccess.list);
             pManager.AddNumberParameter("accuracy", "accuracy", "oversection accuracy", GH_ParamAccess.item, 5e-3);
             pManager[0].Optional = true; pManager[1].Optional = true; pManager[4].Optional = true;
@@ -55,7 +55,7 @@ namespace MakeIndex2
             List<string> layer = new List<string>(); if (!DA.GetDataList("layer", layer)) { };
             List<string> wick = new List<string>(); if (!DA.GetDataList("wick", wick)) { };
             var lines = new List<Curve>(); var lines_new = new List<Line>(); var lines2 = new List<Curve>();
-            var name_x = "wickX"; var name_y = "wickY"; var name_xy = new List<string> { "wickX", "wickY" }; DA.GetDataList("name wick", name_xy); name_x = name_xy[0]; name_y = name_xy[1]; var acc = 5e-3; DA.GetData("accuracy", ref acc);
+            var name_x = "wickX"; var name_y = "wickY"; var name_z = "wickZ"; var name_w = "wickW"; var name_xyz = new List<string> { "wickX", "wickY", "wickZ", "wickW" }; DA.GetDataList("name wick", name_xyz); name_x = name_xyz[0]; name_y = name_xyz[1]; name_z = name_xyz[2]; name_w = name_xyz[3]; var acc = 5e-3; DA.GetData("accuracy", ref acc);
             var doc = RhinoDoc.ActiveDoc; var index = new List<int>(); var index_new = new List<int>(); var index2 = new List<int>();
             if (layer.Count == 0 && layers.Count != 0) { layer = layers; }
             int k = 0;
@@ -77,8 +77,8 @@ namespace MakeIndex2
                             }
                             else
                             {
-                                string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y);//軸ラベル
-                                if (wick.Contains(text1) == true || wick.Contains(text2) == true)
+                                string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y); string text3 = obj.Attributes.GetUserString(name_z); string text4 = obj.Attributes.GetUserString(name_w);//軸ラベル
+                                if (wick.Contains(text1) == true || wick.Contains(text2) == true || wick.Contains(text3) == true || wick.Contains(text4) == true)
                                 {
                                     index.Add(k);//指定軸が含まれていればindexを格納
                                 }
@@ -105,8 +105,8 @@ namespace MakeIndex2
                         }
                         else
                         {
-                            string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y);//軸ラベル
-                            if (wick.Contains(text1) == true || wick.Contains(text2) == true)
+                            string text1 = obj.Attributes.GetUserString(name_x); string text2 = obj.Attributes.GetUserString(name_y); string text3 = obj.Attributes.GetUserString(name_z); string text4 = obj.Attributes.GetUserString(name_w);//軸ラベル
+                            if (wick.Contains(text1) == true || wick.Contains(text2) == true || wick.Contains(text3) == true || wick.Contains(text4) == true)
                             {
                                 index2.Add(k);//指定軸が含まれていればindexを格納
                             }

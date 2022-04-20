@@ -185,13 +185,14 @@ namespace OpenSeesUtility
                 {
                     var labels = new List<string>
                     {
-                        "部材番号","ばね方向","kx[kN/m]","ky[kN/m]","kz[kN/m]","kmy[kNm/rad]","kmz[kNm/rad]","","許容圧縮軸力Nca[kN]","許容引張軸力Nta[kN]","許容せん断力Qya[kN]","許容せん断力Qza[kN]","許容曲げモーメントMya[kN]","許容曲げモーメントMza[kN]","","N[kN]","Qy[kN]　Qz[kN]","My[kN]　Mz[kN]","N/Na","Qy/Qya　Qz/Qza","My/Mya　Mz/Mza","検定比合計","判定","","N[kN]","Qy[kN]　Qz[kN]","My[kN]　Mz[kN]","N/Na","Qy/Qya　Qz/Qza","My/Mya　Mz/Mza","検定比合計","判定","","N[kN]","Qy[kN]　Qz[kN]","My[kN]　Mz[kN]","N/Na","Qy/Qya　Qz/Qza","My/Mya　Mz/Mza","検定比合計","判定","","N[kN]","Qy[kN]　Qz[kN]","My[kN]　Mz[kN]","N/Na","Qy/Qya　Qz/Qza","My/Mya　Mz/Mza","検定比合計","判定","","N[kN]","Qy[kN]　Qz[kN]","My[kN]　Mz[kN]","N/Na","Qy/Qya　Qz/Qza","My/Mya　Mz/Mza","検定比合計","判定"
+                        "部材番号","ばね方向","kx[kN/m]","ky[kN/m]","kz[kN/m]","kmy[kNm/rad]","kmz[kNm/rad]","","許容引張軸力Nta[kN]","許容圧縮軸力Nca[kN]","許容せん断力Qya[kN]","許容せん断力Qza[kN]","許容曲げモーメントMya[kN]","許容曲げモーメントMza[kN]","","N[kN]","Qy[kN]　Qz[kN]","My[kN]　Mz[kN]","N/Na","Qy/Qya　Qz/Qza","My/Mya　Mz/Mza","検定比合計","判定","","N[kN]","Qy[kN]　Qz[kN]","My[kN]　Mz[kN]","N/Na","Qy/Qya　Qz/Qza","My/Mya　Mz/Mza","検定比合計","判定","","N[kN]","Qy[kN]　Qz[kN]","My[kN]　Mz[kN]","N/Na","Qy/Qya　Qz/Qza","My/Mya　Mz/Mza","検定比合計","判定","","N[kN]","Qy[kN]　Qz[kN]","My[kN]　Mz[kN]","N/Na","Qy/Qya　Qz/Qza","My/Mya　Mz/Mza","検定比合計","判定","","N[kN]","Qy[kN]　Qz[kN]","My[kN]　Mz[kN]","N/Na","Qy/Qya　Qz/Qza","My/Mya　Mz/Mza","検定比合計","判定"
                     };
                     var label_width = 110; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 25; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
                     for (int ind = 0; ind < index.Count; ind++)
                     {
                         int e = (int)index[ind];
-                        var kx1 = spring[e][2].Value; var kx2 = spring[e][3].Value; var ky1 = spring[e][4].Value; var ky2 = spring[e][5].Value; var kz1 = spring[e][6].Value; var kz2 = spring[e][7].Value; var kmy = spring[e][9].Value; var kmz = spring[e][10].Value;
+                        var kx1 = spring[e][2].Value; var kx2 = spring[e][3].Value; var ky1 = spring[e][4].Value; var ky2 = spring[e][5].Value; var kz1 = spring[e][6].Value; var kz2 = spring[e][7].Value;
+                        var kmy = spring[e][9].Value; var kmz = spring[e][10].Value;
                         var N = spring_f[e][0].Value; var Qy = spring_f[e][1].Value; var Qz = spring_f[e][2].Value; var My = spring_f[e][4].Value; var Mz = spring_f[e][5].Value;
                         var Na1 = spring_a[e][0].Value; var Na2 = spring_a[e][1].Value; var Qya1 = spring_a[e][2].Value; var Qya2 = spring_a[e][3].Value; var Qza1 = spring_a[e][4].Value; var Qza2 = spring_a[e][5].Value; var Mya = spring_a[e][6].Value; var Mza = spring_a[e][7].Value;
                         var N_x1 = spring_f[e][6 + 0].Value; var Qy_x1 = spring_f[e][6 + 1].Value; var Qz_x1 = spring_f[e][6 + 2].Value; var My_x1 = spring_f[e][6 + 4].Value; var Mz_x1 = spring_f[e][6 + 5].Value;
@@ -340,10 +341,54 @@ namespace OpenSeesUtility
                         var values = new List<List<string>>();
                         values.Add(new List<string> { e.ToString() });
                         values.Add(new List<string> { "+","","-" });
-                        values.Add(new List<string> { Math.Round(kx1, 0).ToString(),"", Math.Round(kx2, 0).ToString() });
-                        values.Add(new List<string> { Math.Round(ky1, 0).ToString(), "", Math.Round(ky2, 0).ToString() });
-                        values.Add(new List<string> { Math.Round(kz1, 0).ToString(), "", Math.Round(kz2, 0).ToString() });
-                        values.Add(new List<string> { Math.Round(kmy, 0).ToString() }); values.Add(new List<string> { Math.Round(kmz, 0).ToString() });
+                        if (kx1 >= 999999 && kx2>=999999)
+                        {
+                            values.Add(new List<string> { "---", "", "---" });
+                        }
+                        else if (kx1 >= 999999 && kx2 < 999999)
+                        {
+                            values.Add(new List<string> { "---", "", Math.Round(kx2, 0).ToString() });
+                        }
+                        else if (kx1 < 999999 && kx2 >= 999999)
+                        {
+                            values.Add(new List<string> { Math.Round(kx1, 0).ToString(), "", "---" });
+                        }
+                        else
+                        {
+                            values.Add(new List<string> { Math.Round(kx1, 0).ToString(), "", Math.Round(kx2, 0).ToString() });
+                        }
+                        if (ky1 >= 999999 && ky2 >= 999999)
+                        {
+                            values.Add(new List<string> { "---", "", "---" });
+                        }
+                        else
+                        {
+                            values.Add(new List<string> { Math.Round(ky1, 0).ToString(), "", Math.Round(ky2, 0).ToString() });
+                        }
+                        if (kz1 >= 999999 && kz2 >= 999999)
+                        {
+                            values.Add(new List<string> { "---", "", "---" });
+                        }
+                        else
+                        {
+                            values.Add(new List<string> { Math.Round(kz1, 0).ToString(), "", Math.Round(kz2, 0).ToString() });
+                        }
+                        if (kmy > 999999)
+                        {
+                            values.Add(new List<string> { "---" });
+                        }
+                        else
+                        {
+                            values.Add(new List<string> { Math.Round(kmy, 0).ToString() });
+                        }
+                        if (kmz > 999999)
+                        {
+                            values.Add(new List<string> { "---" });
+                        }
+                        else
+                        {
+                            values.Add(new List<string> { Math.Round(kmz, 0).ToString() });
+                        }
                         values.Add(new List<string> { "長期", "", "短期" });
                         var Na1_text = new List<string> { "-", "", "-" }; var Na2_text = new List<string> { "-", "", "-" };
                         var Qya1_text = new List<string> { "-", "", "-" }; var Qya2_text = new List<string> { "-", "", "-" }; var Qza1_text = new List<string> { "-", "", "-" }; var Qza2_text = new List<string> { "-", "", "-" };
@@ -359,7 +404,17 @@ namespace OpenSeesUtility
                         //Qya+とQya-, Qza+とQza-は同じ値として+の値のみ出力
                         values.Add(Na1_text); values.Add(Na2_text); values.Add(Qya1_text); values.Add(Qza1_text); values.Add(Mya_text); values.Add(Mza_text);
                         values.Add(new List<string> { casename[0] });
-                        values.Add(new List<string> { Math.Round(N, 2).ToString() }); values.Add(new List<string> { Math.Round(Qy, 2).ToString(),"",Math.Round(Qz, 2).ToString() }); values.Add(new List<string> { Math.Round(My, 2).ToString(),"",Math.Round(Mz, 2).ToString() });
+                        if (kx1 >= 999999 && kx2 >= 999999) { values.Add(new List<string> { "---" }); }
+                        else if (kx1 >= 999999 && N > 0) { values.Add(new List<string> { "---" }); }
+                        else if (kx2 >= 999999 && N < 0) { values.Add(new List<string> { "---" }); }
+                        else { values.Add(new List<string> { Math.Round(N, 2).ToString() }); }
+                        if (ky1 >= 999999 && ky2 >= 999999 && kz1 >= 999999 && kz2 >= 999999) { values.Add(new List<string> { "---", "", "---" }); }
+                        else if (ky1 >= 999999 && ky2 >= 999999) { values.Add(new List<string> { "---", "", Math.Round(Qz, 2).ToString() }); }
+                        else if (kz1 >= 999999 && kz2 >= 999999) { values.Add(new List<string> { Math.Round(Qy, 2).ToString(), "", "---" }); }
+                        else { values.Add(new List<string> { Math.Round(Qy, 2).ToString(), "", Math.Round(Qz, 2).ToString() }); }
+                        if (kmy > 999999 && kmz > 999999) { values.Add(new List<string> { "---", "", "---" }); }
+                        else { values.Add(new List<string> { Math.Round(My, 2).ToString(), "", Math.Round(Mz, 2).ToString() }); }
+
                         if (kN1 != 0) { values.Add(new List<string> { Math.Round(kN1, 2).ToString() }); } else { values.Add(new List<string> { "-" }); }
                         var value = new List<string>();
                         if (kQy1 != 0) { value.Add(Math.Round(kQy1, 2).ToString()); } else { value.Add("-"); }
@@ -375,7 +430,16 @@ namespace OpenSeesUtility
                         if (kN1 + kQy1 + kQz1 + kMy1 + kMz1 <= 1.0) { values.Add(new List<string> { "O.K." }); } else { values.Add(new List<string> { "N.G." }); }
 
                         values.Add(new List<string> { casename[1] });
-                        values.Add(new List<string> { Math.Round(N+N_x1, 2).ToString() }); values.Add(new List<string> { Math.Round(Qy+Qy_x1, 2).ToString(),"",Math.Round(Qz+Qz_x1, 2).ToString() }); values.Add(new List<string> { Math.Round(My+My_x1, 2).ToString(),"",Math.Round(Mz+Mz_x1, 2).ToString() });
+                        if (kx1 >= 999999 && kx2 >= 999999) { values.Add(new List<string> { "---" }); }
+                        else if (kx1 >= 999999 && N + N_x1 > 0) { values.Add(new List<string> { "---" }); }
+                        else if (kx2 >= 999999 && N + N_x1 < 0) { values.Add(new List<string> { "---" }); }
+                        else { values.Add(new List<string> { Math.Round(N + N_x1, 2).ToString() }); }
+                        if (ky1 >= 999999 && ky2 >= 999999 && kz1 >= 999999 && kz2 >= 999999) { values.Add(new List<string> { "---", "", "---" }); }
+                        else if (ky1 >= 999999 && ky2 >= 999999) { values.Add(new List<string> { "---", "", Math.Round(Qz + Qz_x1, 2).ToString() }); }
+                        else if (kz1 >= 999999 && kz2 >= 999999) { values.Add(new List<string> { Math.Round(Qy + Qy_x1, 2).ToString(), "", "---" }); }
+                        else { values.Add(new List<string> { Math.Round(Qy + Qy_x1, 2).ToString(), "", Math.Round(Qz + Qz_x1, 2).ToString() }); }
+                        if (kmy > 999999 && kmz > 999999) { values.Add(new List<string> { "---", "", "---" }); }
+                        else { values.Add(new List<string> { Math.Round(My + My_x1, 2).ToString(), "", Math.Round(Mz + Mz_x1, 2).ToString() }); }
                         if (kN2 != 0) { values.Add(new List<string> { Math.Round(kN2, 2).ToString() }); } else { values.Add(new List<string> { "-" }); }
                         value = new List<string>();
                         if (kQy2 != 0) { value.Add(Math.Round(kQy2, 2).ToString() ); } else { value.Add("-" ); }
@@ -391,7 +455,16 @@ namespace OpenSeesUtility
                         if (kN2 + kQy2 + kQz2 + kMy2 + kMz2 <= 1.0) { values.Add(new List<string> { "O.K." }); } else { values.Add(new List<string> { "N.G." }); }
 
                         values.Add(new List<string> { casename[2] });
-                        values.Add(new List<string> { Math.Round(N + N_y1, 2).ToString() }); values.Add(new List<string> { Math.Round(Qy + Qy_y1, 2).ToString(),"",Math.Round(Qz + Qz_y1, 2).ToString() }); values.Add(new List<string> { Math.Round(My + My_y1, 2).ToString(),"",Math.Round(Mz + Mz_y1, 2).ToString() });
+                        if (kx1 >= 999999 && kx2 >= 999999) { values.Add(new List<string> { "---" }); }
+                        else if (kx1 >= 999999 && N + N_y1 > 0) { values.Add(new List<string> { "---" }); }
+                        else if (kx2 >= 999999 && N + N_y1 < 0) { values.Add(new List<string> { "---" }); }
+                        else { values.Add(new List<string> { Math.Round(N + N_y1, 2).ToString() }); }
+                        if (ky1 >= 999999 && ky2 >= 999999 && kz1 >= 999999 && kz2 >= 999999) { values.Add(new List<string> { "---", "", "---" }); }
+                        else if (ky1 >= 999999 && ky2 >= 999999) { values.Add(new List<string> { "---", "", Math.Round(Qz + Qz_y1, 2).ToString() }); }
+                        else if (kz1 >= 999999 && kz2 >= 999999) { values.Add(new List<string> { Math.Round(Qy + Qy_y1, 2).ToString(), "", "---" }); }
+                        else { values.Add(new List<string> { Math.Round(Qy + Qy_y1, 2).ToString(), "", Math.Round(Qz + Qz_y1, 2).ToString() }); }
+                        if (kmy > 999999 && kmz > 999999) { values.Add(new List<string> { "---", "", "---" }); }
+                        else { values.Add(new List<string> { Math.Round(My + My_y1, 2).ToString(), "", Math.Round(Mz + Mz_y1, 2).ToString() }); }
                         if (kN3 != 0) { values.Add(new List<string> { Math.Round(kN3, 2).ToString() }); } else { values.Add(new List<string> { "-" }); }
                         value = new List<string>();
                         if (kQy3 != 0) { value.Add(Math.Round(kQy3, 2).ToString()); } else { value.Add("-"); }
@@ -407,7 +480,16 @@ namespace OpenSeesUtility
                         if (kN3 + kQy3 + kQz3 + kMy3 + kMz3 <= 1.0) { values.Add(new List<string> { "O.K." }); } else { values.Add(new List<string> { "N.G." }); }
 
                         values.Add(new List<string> { casename[3] });
-                        values.Add(new List<string> { Math.Round(N + N_x2, 2).ToString() }); values.Add(new List<string> { Math.Round(Qy + Qy_x2, 2).ToString(),"",Math.Round(Qz + Qz_x2, 2).ToString() }); values.Add(new List<string> { Math.Round(My + My_x2, 2).ToString(),"",Math.Round(Mz + Mz_x2, 2).ToString() });
+                        if (kx1 >= 999999 && kx2 >= 999999) { values.Add(new List<string> { "---" }); }
+                        else if (kx1 >= 999999 && N + N_x2 > 0) { values.Add(new List<string> { "---" }); }
+                        else if (kx2 >= 999999 && N + N_x2 < 0) { values.Add(new List<string> { "---" }); }
+                        else { values.Add(new List<string> { Math.Round(N + N_x2, 2).ToString() }); }
+                        if (ky1 >= 999999 && ky2 >= 999999 && kz1 >= 999999 && kz2 >= 999999) { values.Add(new List<string> { "---", "", "---" }); }
+                        else if (ky1 >= 999999 && ky2 >= 999999) { values.Add(new List<string> { "---", "", Math.Round(Qz + Qz_x2, 2).ToString() }); }
+                        else if (kz1 >= 999999 && kz2 >= 999999) { values.Add(new List<string> { Math.Round(Qy + Qy_x2, 2).ToString(), "", "---" }); }
+                        else { values.Add(new List<string> { Math.Round(Qy + Qy_x2, 2).ToString(), "", Math.Round(Qz + Qz_x2, 2).ToString() }); }
+                        if (kmy > 999999 && kmz > 999999) { values.Add(new List<string> { "---", "", "---" }); }
+                        else { values.Add(new List<string> { Math.Round(My + My_x2, 2).ToString(), "", Math.Round(Mz + Mz_x2, 2).ToString() }); }
                         if (kN4 != 0) { values.Add(new List<string> { Math.Round(kN4, 2).ToString() }); } else { values.Add(new List<string> { "-" }); }
                         value = new List<string>();
                         if (kQy4 != 0) { value.Add(Math.Round(kQy4, 2).ToString()); } else { value.Add("-"); }
@@ -423,7 +505,13 @@ namespace OpenSeesUtility
                         if (kN4 + kQy4 + kQz4 + kMy4 + kMz4 <= 1.0) { values.Add(new List<string> { "O.K." }); } else { values.Add(new List<string> { "N.G." }); }
 
                         values.Add(new List<string> { casename[4] });
-                        values.Add(new List<string> { Math.Round(N + N_y2, 2).ToString() }); values.Add(new List<string> { Math.Round(Qy + Qy_y2, 2).ToString(),"",Math.Round(Qz + Qz_y2, 2).ToString() }); values.Add(new List<string> { Math.Round(My + My_y2, 2).ToString(),"",Math.Round(Mz + Mz_y2, 2).ToString() });
+                        if (kx1 >= 999999 && kx2 >= 999999) { values.Add(new List<string> { "---" }); }
+                        else if (kx1 >= 999999 && N + N_y2 > 0) { values.Add(new List<string> { "---" }); }
+                        else if (kx2 >= 999999 && N + N_y2 < 0) { values.Add(new List<string> { "---" }); }
+                        else { values.Add(new List<string> { Math.Round(N + N_y2, 2).ToString() }); }
+                        values.Add(new List<string> { Math.Round(Qy + Qy_y2, 2).ToString(),"",Math.Round(Qz + Qz_y2, 2).ToString() });
+                        if (kmy > 999999 && kmz > 999999) { values.Add(new List<string> { "---", "", "---" }); }
+                        else { values.Add(new List<string> { Math.Round(My + My_y2, 2).ToString(), "", Math.Round(Mz + Mz_y2, 2).ToString() }); }
                         if (kN5 != 0) { values.Add(new List<string> { Math.Round(kN5, 2).ToString() }); } else { values.Add(new List<string> { "-" }); }
                         value = new List<string>();
                         if (kQy5 != 0) { value.Add(Math.Round(kQy5, 2).ToString()); } else { value.Add("-"); }

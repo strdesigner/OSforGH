@@ -85,6 +85,9 @@
     <Compile Include="kabecheckRC.cs" />
     <Compile Include="Eccentricity.cs" />
     <Compile Include="IndividualFooting.cs" />
+    <Compile Include="DataOutput.cs" />
+    <Compile Include="VisualizeResultSpring.cs" />
+    <Compile Include="RCWallUltimateCheck.cs" />
     <Compile Include="ReadBrace.cs" />
     <Compile Include="SteelBase.cs" />
     <Compile Include="rigidF.cs" />
@@ -361,6 +364,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Indivisualfooting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rcwallultimatecheck.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\VisualizeResultSpring.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dataoutput.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

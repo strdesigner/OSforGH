@@ -96,6 +96,8 @@ namespace SteelCheck
             pManager.AddNumberParameter("sec_f", "sec_f", "[[Pxi,Pyi,Pzi,Mxi,Myi,Mzi,Pxj,Pyj,Pzj,Mxj,Myj,Mzj,Pxc,Pyc,Pzc,Mxc,Myc,Mzc],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("kentei_hi", "kentei", "[[for Ni,for Qyi,for Qzi,for Myi,for Mzi,for Nj,for Qyj,for Qzj,for Myj,for Mzj,for Nc,for Qyc,for Qzc,for Myc,for Mzc],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddLineParameter("lines", "BEAM", "Line of elements", GH_ParamAccess.list);
+            pManager.AddNumberParameter("kmax1", "kmax1", "kmax1", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("kmax2", "kmax2", "kmax2", GH_ParamAccess.tree);///
         }
         /// <summary>
         /// This is the method that actually does the work.
@@ -127,6 +129,7 @@ namespace SteelCheck
             unit /= 1000000.0;
             unit *= 1000.0;
             List<double> index = new List<double>(); DA.GetDataList("index", index);
+            var kmax1 = new GH_Structure<GH_Number>(); var kmax2 = new GH_Structure<GH_Number>();
             if (index[0] == -9999)
             {
                 index = new List<double>();
@@ -208,6 +211,21 @@ namespace SteelCheck
                         var flist = new List<GH_Number>();
                         for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][i].Value)); }
                         kentei.AppendRange(klist, new GH_Path(new int[] { 0, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 0, ind })); ij_new.AppendRange(ij[e], new GH_Path(ind));
+                        var kmaxlist = new List<GH_Number>();
+                        if (S[sec] == "〇" || S[sec] == "4" || S[sec] == "○" || S[sec] == "●" || S[sec] == "2")
+                        {
+                            var k1 = Math.Max(Math.Sqrt(klist[3].Value * klist[3].Value + klist[4].Value * klist[4].Value) + klist[0].Value, Math.Sqrt(klist[1].Value * klist[1].Value + klist[2].Value * klist[2].Value));
+                            var k2 = Math.Max(Math.Sqrt(klist[8].Value * klist[8].Value + klist[9].Value * klist[9].Value) + klist[5].Value, Math.Sqrt(klist[6].Value * klist[6].Value + klist[7].Value * klist[7].Value));
+                            var k3 = Math.Max(Math.Sqrt(klist[13].Value * klist[13].Value + klist[14].Value * klist[14].Value) + klist[10].Value, Math.Sqrt(klist[11].Value * klist[11].Value + klist[12].Value * klist[12].Value));
+                            kmaxlist.Add(new GH_Number(k1)); kmaxlist.Add(new GH_Number(k2)); kmaxlist.Add(new GH_Number(k3)); kmax1.AppendRange(kmaxlist, new GH_Path(ind));
+                        }
+                        else
+                        {
+                            var k1 = Math.Max(klist[3].Value + klist[4].Value + klist[0].Value, klist[1].Value + klist[2].Value);
+                            var k2 = Math.Max(klist[8].Value + klist[9].Value + klist[5].Value, klist[6].Value + klist[7].Value);
+                            var k3 = Math.Max(klist[13].Value + klist[14].Value + klist[10].Value, klist[11].Value + klist[12].Value);
+                            kmaxlist.Add(new GH_Number(k1)); kmaxlist.Add(new GH_Number(k2)); kmaxlist.Add(new GH_Number(k3)); kmax1.AppendRange(kmaxlist, new GH_Path(ind));
+                        }
                         if (on_off_11 == 1)
                         {
                             var ni = (int)ij[e][0].Value; var nj = (int)ij[e][1].Value;
@@ -432,7 +450,45 @@ namespace SteelCheck
                             flist = new List<GH_Number>();
                             for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(-sec_f[e][18 * 2 + i].Value)); }
                             kentei.AppendRange(k4list, new GH_Path(new int[] { 4, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 4, ind }));
-
+                            var kmaxlist = new List<GH_Number>();
+                            if (S[sec] == "〇" || S[sec] == "4" || S[sec] == "○" || S[sec] == "●" || S[sec] == "2")
+                            {
+                                var k_1 = Math.Max(Math.Sqrt(k1list[3].Value * k1list[3].Value + k1list[4].Value * k1list[4].Value) + k1list[0].Value, Math.Sqrt(k1list[1].Value * k1list[1].Value + k1list[2].Value * k1list[2].Value));
+                                var k_2 = Math.Max(Math.Sqrt(k2list[3].Value * k2list[3].Value + k2list[4].Value * k2list[4].Value) + k2list[0].Value, Math.Sqrt(k2list[1].Value * k2list[1].Value + k2list[2].Value * k2list[2].Value));
+                                var k_3 = Math.Max(Math.Sqrt(k3list[3].Value * k3list[3].Value + k3list[4].Value * k3list[4].Value) + k3list[0].Value, Math.Sqrt(k3list[1].Value * k3list[1].Value + k3list[2].Value * k3list[2].Value));
+                                var k_4 = Math.Max(Math.Sqrt(k4list[3].Value * k4list[3].Value + k4list[4].Value * k4list[4].Value) + k4list[0].Value, Math.Sqrt(k4list[1].Value * k4list[1].Value + k4list[2].Value * k4list[2].Value));
+                                var k1 = Math.Max(Math.Max(k_1, k_2), Math.Max(k_3, k_4));
+                                k_1 = Math.Max(Math.Sqrt(k1list[8].Value * k1list[8].Value + k1list[9].Value * k1list[9].Value) + k1list[5].Value, Math.Sqrt(k1list[6].Value * k1list[6].Value + k1list[7].Value * k1list[7].Value));
+                                k_2 = Math.Max(Math.Sqrt(k2list[8].Value * k2list[8].Value + k2list[9].Value * k2list[9].Value) + k2list[5].Value, Math.Sqrt(k2list[6].Value * k2list[6].Value + k2list[7].Value * k2list[7].Value));
+                                k_3 = Math.Max(Math.Sqrt(k3list[8].Value * k3list[8].Value + k3list[9].Value * k3list[9].Value) + k3list[5].Value, Math.Sqrt(k3list[6].Value * k3list[6].Value + k3list[7].Value * k3list[7].Value));
+                                k_4 = Math.Max(Math.Max(k4list[8].Value, k4list[9].Value) + k4list[5].Value, Math.Max(Math.Max(k4list[6].Value, k4list[7].Value), k4list[5].Value));
+                                var k2 = Math.Max(Math.Max(k_1, k_2), Math.Max(k_3, k_4));
+                                k_1 = Math.Max(Math.Sqrt(k1list[13].Value * k1list[13].Value + k1list[14].Value * k1list[14].Value) + k1list[10].Value, Math.Sqrt(k1list[11].Value * k1list[11].Value + k1list[12].Value * k1list[12].Value));
+                                k_2 = Math.Max(Math.Sqrt(k2list[13].Value * k2list[13].Value + k2list[14].Value * k2list[14].Value) + k2list[10].Value, Math.Sqrt(k2list[11].Value * k2list[11].Value + k2list[12].Value * k2list[12].Value));
+                                k_3 = Math.Max(Math.Sqrt(k3list[13].Value * k3list[13].Value + k3list[14].Value * k3list[14].Value) + k3list[10].Value, Math.Sqrt(k3list[11].Value * k3list[11].Value + k3list[12].Value * k3list[12].Value));
+                                k_4 = Math.Max(Math.Sqrt(k4list[13].Value * k4list[13].Value + k4list[14].Value * k4list[14].Value) + k4list[10].Value, Math.Sqrt(k4list[11].Value * k4list[11].Value + k4list[12].Value * k4list[12].Value));
+                                var k3 = Math.Max(Math.Max(k_1, k_2), Math.Max(k_3, k_4));
+                                kmaxlist.Add(new GH_Number(k1)); kmaxlist.Add(new GH_Number(k2)); kmaxlist.Add(new GH_Number(k3)); kmax2.AppendRange(kmaxlist, new GH_Path(ind));
+                            }
+                            else
+                            {
+                                var k_1 = Math.Max(k1list[3].Value + k1list[4].Value + k1list[0].Value, k1list[1].Value + k1list[2].Value);
+                                var k_2 = Math.Max(k2list[3].Value + k2list[4].Value + k2list[0].Value, k2list[1].Value + k2list[2].Value);
+                                var k_3 = Math.Max(k3list[3].Value + k3list[4].Value + k3list[0].Value, k3list[1].Value + k3list[2].Value);
+                                var k_4 = Math.Max(k4list[3].Value + k4list[4].Value + k4list[0].Value, k4list[1].Value + k4list[2].Value);
+                                var k1 = Math.Max(Math.Max(k_1, k_2), Math.Max(k_3, k_4));
+                                k_1 = Math.Max(k1list[8].Value + k1list[9].Value + k1list[5].Value, k1list[6].Value + k1list[7].Value);
+                                k_2 = Math.Max(k2list[8].Value + k2list[9].Value + k2list[5].Value, k2list[6].Value + k2list[7].Value);
+                                k_3 = Math.Max(k3list[8].Value + k3list[9].Value + k3list[5].Value, k3list[6].Value + k3list[7].Value);
+                                k_4 = Math.Max(Math.Max(k4list[8].Value, k4list[9].Value) + k4list[5].Value, Math.Max(Math.Max(k4list[6].Value, k4list[7].Value), k4list[5].Value));
+                                var k2 = Math.Max(Math.Max(k_1, k_2), Math.Max(k_3, k_4));
+                                k_1 = Math.Max(k1list[13].Value + k1list[14].Value + k1list[10].Value, k1list[11].Value + k1list[12].Value);
+                                k_2 = Math.Max(k2list[13].Value + k2list[14].Value + k2list[10].Value, k2list[11].Value + k2list[12].Value);
+                                k_3 = Math.Max(k3list[13].Value + k3list[14].Value + k3list[10].Value, k3list[11].Value + k3list[12].Value);
+                                k_4 = Math.Max(k4list[13].Value + k4list[14].Value + k4list[10].Value, k4list[11].Value + k4list[12].Value);
+                                var k3 = Math.Max(Math.Max(k_1, k_2), Math.Max(k_3, k_4));
+                                kmaxlist.Add(new GH_Number(k1)); kmaxlist.Add(new GH_Number(k2)); kmaxlist.Add(new GH_Number(k3)); kmax2.AppendRange(kmaxlist, new GH_Path(ind));
+                            }
                             if (on_off_12 == 1)
                             {
                                 var ni = (int)ij[e][0].Value; var nj = (int)ij[e][1].Value;
@@ -655,7 +711,7 @@ namespace SteelCheck
                     DA.SetDataTree(6, f_ctree); DA.SetDataTree(7, f_ttree); DA.SetDataTree(8, f_bytree); DA.SetDataTree(9, f_bztree); DA.SetDataTree(10, f_stree);
                     DA.SetDataList("lambda", lambda);
                 }
-                DA.SetDataList("lines", lines);
+                DA.SetDataList("lines", lines); DA.SetDataTree(14, kmax1); DA.SetDataTree(15, kmax2);
             }
         }
 

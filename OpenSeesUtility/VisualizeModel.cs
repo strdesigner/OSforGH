@@ -177,7 +177,7 @@ namespace VisualizeModel
         {
             ///変数の型宣言**************************************************************************************
             IList<List<GH_Number>> r; IList<List<GH_Number>> ij; IList<List<GH_Number>> ijkl; IList<List<GH_Number>> f_v; IList<List<GH_Number>> s_load; IList<List<GH_Number>> fix;
-            List<double> index = new List<double>(); List<double> index2 = new List<double>(); List<double> index3 = new List<double>(); List<double> index4 = new List<double>();
+            List<double> index = new List<double>(); List<double> index2 = new List<double>(); List<double> index3 = new List<double>(); List<double> index4 = new List<double>(); var numbers = new List<int>();
             fontsize = double.NaN; if (!DA.GetData("fontsize", ref fontsize)) return; arrowsize = double.NaN; if (!DA.GetData("arrowsize", ref arrowsize)) return; arcsize = double.NaN; if (!DA.GetData("arcsize", ref arcsize)) return; DA.GetDataList("index", index); DA.GetDataList("index(shell)", index2);DA.GetDataList("index(kabe)", index3); DA.GetDataList("index(spring)", index4);
             Point3d r1; Point3d r2; Point3d r3;
             ///*************************************************************************************************
@@ -204,6 +204,11 @@ namespace VisualizeModel
                         {
                             index = new List<double>();
                             for (int e = 0; e < m; e++) { index.Add(e); }
+                        }
+                        for (int ind = 0; ind < index.Count; ind++)
+                        {
+                            int e = (int)index[ind];
+                            numbers.Add((int)ij[e][0].Value); numbers.Add((int)ij[e][1].Value);
                         }
                         DA.SetDataList("index", index);
                         for (int ind = 0; ind < index.Count; ind++)
@@ -267,6 +272,11 @@ namespace VisualizeModel
                             {
                                 index4 = new List<double>();
                                 for (int e = 0; e < m4; e++) { index4.Add(e); }
+                            }
+                            for (int ind = 0; ind < index4.Count; ind++)
+                            {
+                                int e = (int)index4[ind];
+                                numbers.Add((int)spring[e][0].Value); numbers.Add((int)spring[e][1].Value);
                             }
                             DA.SetDataList("index(spring)", index4);
                             if (Spring == 1)//ばねの描画
@@ -601,11 +611,15 @@ namespace VisualizeModel
                     fix = _fix.Branches; int nfix = fix.Count;
                     for (int i = 0; i < nfix; i++)
                     {
-                        List<double> ri = new List<double>(); List<int> boundary = new List<int>();
-                        ri.Add(r[(int)fix[i][0].Value][0].Value); ri.Add(r[(int)fix[i][0].Value][1].Value); ri.Add(r[(int)fix[i][0].Value][2].Value);
-                        _ri.Add(ri);
-                        boundary.Add((int)fix[i][1].Value); boundary.Add((int)fix[i][2].Value); boundary.Add((int)fix[i][3].Value); boundary.Add((int)fix[i][4].Value); boundary.Add((int)fix[i][5].Value); boundary.Add((int)fix[i][6].Value);
-                        _boundary.Add(boundary);
+                        if (numbers.IndexOf((int)fix[i][0].Value) > -1)
+                        {
+                            List<double> ri = new List<double>(); List<int> boundary = new List<int>();
+                            ri.Add(r[(int)fix[i][0].Value][0].Value); ri.Add(r[(int)fix[i][0].Value][1].Value); ri.Add(r[(int)fix[i][0].Value][2].Value);
+                            _ri.Add(ri);
+                            boundary.Add((int)fix[i][1].Value); boundary.Add((int)fix[i][2].Value); boundary.Add((int)fix[i][3].Value); boundary.Add((int)fix[i][4].Value); boundary.Add((int)fix[i][5].Value); boundary.Add((int)fix[i][6].Value);
+                            _boundary.Add(boundary);
+                            _nb.Add((int)fix[i][0].Value);
+                        }
                     }
                 }
                 DA.SetDataTree(4, _f_v); DA.SetDataTree(6, _s_load); DA.SetDataTree(7, _fix);
@@ -653,6 +667,7 @@ namespace VisualizeModel
 
         private readonly List<List<double>> _ri = new List<List<double>>();
         private readonly List<List<int>> _boundary = new List<List<int>>();
+        private readonly List<int> _nb = new List<int>();
         private readonly List<Brep> _shells = new List<Brep>();
         private readonly List<double> _valuet = new List<double>();
         private readonly List<Line> _sline = new List<Line>();
@@ -697,6 +712,7 @@ namespace VisualizeModel
 
             _ri.Clear();
             _boundary.Clear();
+            _nb.Clear();
             _shells.Clear();
             _points.Clear();
             _valuet.Clear();
@@ -971,6 +987,12 @@ namespace VisualizeModel
                     if (ifix[5] == 1)
                     {
                         args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(0, 0, -1), Color.Pink, 25, 0);
+                    }
+                    if (Value == 1)
+                    {
+                        var size = fontsize; Point3d point = new Point3d(ri[0], ri[1], ri[2]); plane.Origin = point;
+                        viewport.GetWorldToScreenScale(point, out double pixPerUnit); size /= pixPerUnit;
+                        args.Display.Draw3dText(_nb[i].ToString(), Color.DarkRed, plane, size, "", false, false, Rhino.DocObjects.TextHorizontalAlignment.Right, Rhino.DocObjects.TextVerticalAlignment.Top);
                     }
                 }
             }

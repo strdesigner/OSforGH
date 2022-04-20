@@ -102,6 +102,8 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("QaS(L-X)", "QaS(L-X)", "[[Qai,Qac,Qaj],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("QaS(L-Y)", "QaS(L-Y)", "[[Qai,Qac,Qaj],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("kentei_hi", "kentei", "[[for Myi,for Myj,for Myc, for Qzi,for Qzj,for Qzc],...](DataTree)", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("kmax1", "kmax1", "kmax1", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("kmax2", "kmax2", "kmax2", GH_ParamAccess.tree);///
         }
 
         /// <summary>
@@ -123,6 +125,7 @@ namespace OpenSeesUtility
             var kentei = new GH_Structure<GH_Number>(); int digit = 4;
             var unitl = 1.0 / 1000.0; var unitf = 1.0 / 1000.0;///単位合わせのための係数
             List<double> index = new List<double>(); DA.GetDataList("index", index);
+            var kmax1 = new GH_Structure<GH_Number>(); var kmax2 = new GH_Structure<GH_Number>();
             int Digit(int num)//数字の桁数を求める関数
             {
                 // Mathf.Log10(0)はNegativeInfinityを返すため、別途処理する。
@@ -538,6 +541,12 @@ namespace OpenSeesUtility
                     else { klist.Add(new GH_Number(Math.Abs(Mc) / Ma_cbL)); }
                     klist.Add(new GH_Number(Math.Abs(Qi) / Qa_iL)); klist.Add(new GH_Number(Math.Abs(Qj) / Qa_jL)); klist.Add(new GH_Number(Math.Abs(Qc) / Qa_cL));
                     kentei.AppendRange(klist, new GH_Path(e));
+                    
+                    var kmaxlist = new List<GH_Number>();
+                    var k1 = Math.Max(klist[0].Value, klist[3].Value);
+                    var k2 = Math.Max(klist[1].Value, klist[4].Value);
+                    var k3 = Math.Max(klist[2].Value, klist[5].Value);
+                    kmaxlist.Add(new GH_Number(k1)); kmaxlist.Add(new GH_Number(k2)); kmaxlist.Add(new GH_Number(k3)); kmax1.AppendRange(kmaxlist, new GH_Path(ind));
 
                     var ki = new List<double>(); var kj = new List<double>(); var kc = new List<double>();
                     if (Mi + Mi_x < 0) { ki.Add(Math.Abs(Mi + Mi_x) / Ma_itS); }
@@ -571,6 +580,13 @@ namespace OpenSeesUtility
                     k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qj + Qj_x * N) / Qa_jLpX, Math.Abs(Qj - Qj_x * N) / Qa_jLmX), Math.Max(Math.Abs(Qj + Qj_y * N) / Qa_jLpY, Math.Abs(Qj - Qj_y * N) / Qa_jLpY))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qc + Qc_x * N) / Qa_cLpX, Math.Abs(Qc - Qc_x * N) / Qa_cLmX), Math.Max(Math.Abs(Qc + Qc_y * N) / Qa_cLpY, Math.Abs(Qc - Qc_y * N) / Qa_cLpY))));
 
+                    kmaxlist = new List<GH_Number>();
+                    k1 = Math.Max(k2list[0].Value, k2list[3].Value);
+                    k2 = Math.Max(k2list[1].Value, k2list[4].Value);
+                    k3 = Math.Max(k2list[2].Value, k2list[5].Value);
+                    kmaxlist.Add(new GH_Number(k1)); kmaxlist.Add(new GH_Number(k2)); kmaxlist.Add(new GH_Number(k3)); kmax2.AppendRange(kmaxlist, new GH_Path(ind));
+
+                    DA.SetDataTree(8, kmax1); DA.SetDataTree(9, kmax2);
 
                     var r1 = new Point3d(r[ni][0].Value, r[ni][1].Value, r[ni][2].Value); var r2 = new Point3d(r[nj][0].Value, r[nj][1].Value, r[nj][2].Value);
                     var rc = (r1 + r2) / 2.0; var ri = (r1 + rc) / 2.0; var rj = (r2 + rc) / 2.0;
