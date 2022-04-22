@@ -119,7 +119,7 @@ namespace OpenSeesUtility
             DA.GetDataTree("barT2", out GH_Structure<GH_Number> _barT2); var barT2 = _barT2.Branches;
             DA.GetDataTree("barB1", out GH_Structure<GH_Number> _barB1); var barB1 = _barB1.Branches;
             DA.GetDataTree("barB2", out GH_Structure<GH_Number> _barB2); var barB2 = _barB2.Branches;
-            var barNo = new List<double>(); DA.GetDataList("bar", barNo); var Fc = new List<double>(); DA.GetDataList("Standard allowable stress (compression)[N/mm2]", Fc); var N = 2.0; DA.GetData("n", ref N);
+            var barNo = new List<double>(); DA.GetDataList("bar", barNo); var Fc = new List<double>(); DA.GetDataList("Standard allowable stress (compression)[N/mm2]", Fc); var Nq = 2.0; DA.GetData("n", ref Nq);
             DA.GetData("fontsize", ref fontsize); var barname = new List<string>(); DA.GetDataList("name", barname);
             var P1 = new List<double>(); DA.GetDataList("P1", P1); var P2 = new List<double>(); DA.GetDataList("P2", P2);
             var kentei = new GH_Structure<GH_Number>(); int digit = 4;
@@ -201,7 +201,8 @@ namespace OpenSeesUtility
                     }
                 }
                 var MaL = new GH_Structure<GH_Number>(); var QaL = new GH_Structure<GH_Number>(); var n = 15.0;
-                var MaS = new GH_Structure<GH_Number>(); var QaLpX = new GH_Structure<GH_Number>(); var QaLpY = new GH_Structure<GH_Number>(); var QaLmX = new GH_Structure<GH_Number>(); var QaLmY = new GH_Structure<GH_Number>();
+                var MaLpX = new GH_Structure<GH_Number>(); var MaLpY = new GH_Structure<GH_Number>(); var MaLmX = new GH_Structure<GH_Number>(); var MaLmY = new GH_Structure<GH_Number>();
+                var QaLpX = new GH_Structure<GH_Number>(); var QaLpY = new GH_Structure<GH_Number>(); var QaLmX = new GH_Structure<GH_Number>(); var QaLmY = new GH_Structure<GH_Number>();
                 var Ftit = new List<List<string>>(); var Ftib = new List<List<string>>();
                 var Ftct = new List<List<string>>(); var Ftcb = new List<List<string>>();
                 var Ftjt = new List<List<string>>(); var Ftjb = new List<List<string>>();
@@ -210,20 +211,20 @@ namespace OpenSeesUtility
                 var Nod = new List<List<string>>(); var Ele = new List<List<string>>(); var Name = new List<List<string>>(); var Size = new List<List<string>>();
                 var Bart = new List<List<string>>(); var Barb = new List<List<string>>(); var Bars = new List<List<string>>();
                 var Dt = new List<List<string>>(); var Db = new List<List<string>>();
-                var M = new List<List<double>>(); var Q = new List<List<double>>();
-                var Mx = new List<List<double>>(); var Qx = new List<List<double>>();
-                var My = new List<List<double>>(); var Qy = new List<List<double>>();
-                var Mt_aL = new List<List<double>>(); var Mb_aL = new List<List<double>>(); var Mt_aS = new List<List<double>>(); var Mb_aS = new List<List<double>>();
+                var M = new List<List<double>>(); var Q = new List<List<double>>(); var N = new List<List<double>>();
+                var Mx = new List<List<double>>(); var Qx = new List<List<double>>(); var Nx = new List<List<double>>();
+                var My = new List<List<double>>(); var Qy = new List<List<double>>(); var Ny = new List<List<double>>();
+                var Mt_aL = new List<List<double>>(); var Mb_aL = new List<List<double>>(); var Mt_aLpX = new List<List<double>>(); var Mb_aLpX = new List<List<double>>(); var Mt_aLpY = new List<List<double>>(); var Mb_aLpY = new List<List<double>>(); var Mt_aLmX = new List<List<double>>(); var Mb_aLmX = new List<List<double>>(); var Mt_aLmY = new List<List<double>>(); var Mb_aLmY = new List<List<double>>();
                 var Q_aL = new List<List<double>>(); var Q_aLpX = new List<List<double>>(); var Q_aLpY = new List<List<double>>(); var Q_aLmX = new List<List<double>>(); var Q_aLmY = new List<List<double>>();
                 for (int ind = 0; ind < index.Count; ind++)
                 {
                     int e = (int)index[ind]; int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value; Nod.Add(new List<string> { ni.ToString() + "(i端)", "中央", nj.ToString() + "(j端)" }); Ele.Add(new List<string> { e.ToString() });
-                    var f = sec_f[e]; var Mi = f[4].Value; var Mj = f[10].Value; var Mc = f[16].Value; var Qi = f[2].Value; var Qj = f[8].Value; var Qc = f[14].Value;
-                    var Mi_x = 0.0; var Mj_x = 0.0; var Mc_x = 0.0; var Qi_x = 0.0; var Qj_x = 0.0; var Qc_x = 0.0; var Mi_y = 0.0; var Mj_y = 0.0; var Mc_y = 0.0; var Qi_y = 0.0; var Qj_y = 0.0; var Qc_y = 0.0;
+                    var f = sec_f[e]; var Mi = f[4].Value; var Mj = f[10].Value; var Mc = f[16].Value; var Qi = f[2].Value; var Qj = f[8].Value; var Qc = f[14].Value; var Ni = f[0].Value; var Nj = -f[6].Value; var Nc = f[12].Value;
+                    var Mi_x = 0.0; var Mj_x = 0.0; var Mc_x = 0.0; var Qi_x = 0.0; var Qj_x = 0.0; var Qc_x = 0.0; var Mi_y = 0.0; var Mj_y = 0.0; var Mc_y = 0.0; var Qi_y = 0.0; var Qj_y = 0.0; var Qc_y = 0.0; var Ni_x = 0.0; var Nj_x = 0.0; var Nc_x = 0.0; var Ni_y = 0.0; var Nj_y = 0.0; var Nc_y = 0.0;
                     if (sec_f[0].Count / 18 == 3)
                     {
-                        Mi_x = f[18 + 4].Value; Mj_x = f[18 + 10].Value; Mc_x = f[18 + 16].Value; Qi_x = f[18 + 2].Value; Qj_x = f[18 + 8].Value; Qc_x = f[18 + 14].Value;
-                        Mi_y = f[36 + 4].Value; Mj_y = f[36 + 10].Value; Mc_y = f[36 + 16].Value; Qi_y = f[36 + 2].Value; Qj_y = f[36 + 8].Value; Qc_y = f[36 + 14].Value;
+                        Mi_x = f[18 + 4].Value; Mj_x = f[18 + 10].Value; Mc_x = f[18 + 16].Value; Qi_x = f[18 + 2].Value; Qj_x = f[18 + 8].Value; Qc_x = f[18 + 14].Value; Ni_x = f[18 + 0].Value; Nj_x = f[18 + 6].Value; Nc_x = f[18 + 12].Value;
+                        Mi_y = f[36 + 4].Value; Mj_y = f[36 + 10].Value; Mc_y = f[36 + 16].Value; Qi_y = f[36 + 2].Value; Qj_y = f[36 + 8].Value; Qc_y = f[36 + 14].Value; Ni_y = f[36 + 0].Value; Nj_y = f[36 + 6].Value; Nc_y = f[36 + 12].Value;
                     }
                     int mat = (int)ij[e][2].Value; int bar = (int)barNo[e]; var T1 = barT1[bar]; var T2 = barT2[bar]; var B1 = barB1[bar]; var B2 = barB2[bar];
                     Name.Add(new List<string> { barname[bar] });
@@ -316,25 +317,50 @@ namespace OpenSeesUtility
                     var d_ib = ((kB + S_i + D_it1 / 2.0) * a_ib1 + (kB + S_i + D_ib1 + 25.0 + D_ib2 / 2.0) * a_ib2) / a_ib;//i端の右端より鉄筋重心までの距離
 
                     var gamma_it = a_ib / a_it; var D_it = D - d_it; var dc1_it = d_ib / D_it; var pt_it = a_it / (b * D_it);
-                    var xn1_it = pt_it * (Math.Sqrt(Math.Pow(n * (1 + gamma_it) - gamma_it, 2) + 2.0 / pt_it * (n * (1 + gamma_it * dc1_it) - gamma_it * dc1_it)) - (n * (1 + gamma_it) - gamma_it));//RC規準2010 P.123(13.5)
-                    var C1_itL = pt_it * fcL / (3 * xn1_it) * (n * (1 - xn1_it) * (3 - xn1_it) - gamma_it * (n - 1) * (xn1_it - dc1_it) * (3 * dc1_it - xn1_it));
-                    var C2_itL = pt_it * ft_itL / (3 * n * (1 - xn1_it)) * (n * (1 - xn1_it) * (3 - xn1_it) - gamma_it * (n - 1) * (xn1_it - dc1_it) * (3 * dc1_it - xn1_it));
+                    var C1_itL = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcL, Ni) * 1000 / b / D / fcL) * pt_it + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcL, Ni) * 1000 / b / D / fcL)) * fcL;
+                    var C2_itL = (0.8 * pt_it + 0.37 * Ni * 1000 / b / D / ft_itL) * ft_itL;
                     var C_itL = Math.Min(C1_itL, C2_itL);
-                    var C1_itS = pt_it * fcS / (3 * xn1_it) * (n * (1 - xn1_it) * (3 - xn1_it) - gamma_it * (n - 1) * (xn1_it - dc1_it) * (3 * dc1_it - xn1_it));
-                    var C2_itS = pt_it * ft_itS / (3 * n * (1 - xn1_it)) * (n * (1 - xn1_it) * (3 - xn1_it) - gamma_it * (n - 1) * (xn1_it - dc1_it) * (3 * dc1_it - xn1_it));
-                    var C_itS = Math.Min(C1_itS, C2_itS);
-                    var Ma_itL = C_itL * b * Math.Pow(D_it, 2) * unitl * unitf; var Ma_itS = C_itS * b * Math.Pow(D_it, 2) * unitl * unitf;
+                    var C1_itLpX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Ni + Ni_x) * 1000 / b / D / fcS) * pt_it + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Ni + Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_itLpX = (0.8 * pt_it + 0.37 * Math.Min(0.4 * b * D * fcS, Ni + Ni_x) * 1000 / b / D / ft_itS) * ft_itS;
+                    var C_itLpX = Math.Min(C1_itLpX, C2_itLpX);
+                    var C1_itLpY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Ni + Ni_y) * 1000 / b / D / fcS) * pt_it + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Ni + Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_itLpY = (0.8 * pt_it + 0.37 * Math.Min(0.4 * b * D * fcS, Ni + Ni_y) * 1000 / b / D / ft_itS) * ft_itS;
+                    var C_itLpY = Math.Min(C1_itLpY, C2_itLpY);
+                    var C1_itLmX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Ni - Ni_x) * 1000 / b / D / fcS) * pt_it + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Ni - Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_itLmX = (0.8 * pt_it + 0.37 * Math.Min(0.4 * b * D * fcS, Ni - Ni_x) * 1000 / b / D / ft_itS) * ft_itS;
+                    var C_itLmX = Math.Min(C1_itLmX, C2_itLmX);
+                    var C1_itLmY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Ni - Ni_y) * 1000 / b / D / fcS) * pt_it + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Ni - Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_itLmY = (0.8 * pt_it + 0.37 * Math.Min(0.4 * b * D * fcS, Ni - Ni_y) * 1000 / b / D / ft_itS) * ft_itS;
+                    var C_itLmY = Math.Min(C1_itLmY, C2_itLmY);
+
+                    var Ma_itL = C_itL * b * Math.Pow(D_it, 2) * unitl * unitf;
+                    var Ma_itLpX = C_itLpX * b * Math.Pow(D_it, 2) * unitl * unitf;
+                    var Ma_itLpY = C_itLpY * b * Math.Pow(D_it, 2) * unitl * unitf;
+                    var Ma_itLmX = C_itLmX * b * Math.Pow(D_it, 2) * unitl * unitf;
+                    var Ma_itLmY = C_itLmY * b * Math.Pow(D_it, 2) * unitl * unitf;
 
                     var gamma_ib = a_it / a_ib; var D_ib = D - d_ib; var dc1_ib = d_it / D_ib; var pt_ib = a_ib / (b * D_ib);
-                    var xn1_ib = pt_ib * (Math.Sqrt(Math.Pow(n * (1 + gamma_ib) - gamma_ib, 2) + 2.0 / pt_ib * (n * (1 + gamma_ib * dc1_ib) - gamma_ib * dc1_ib)) - (n * (1 + gamma_ib) - gamma_ib));//RC規準2010 P.123(13.5)
-                    var C1_ibL = pt_ib * fcL / (3 * xn1_ib) * (n * (1 - xn1_ib) * (3 - xn1_ib) - gamma_ib * (n - 1) * (xn1_ib - dc1_ib) * (3 * dc1_ib - xn1_ib));
-                    var C2_ibL = pt_ib * ft_ibL / (3 * n * (1 - xn1_ib)) * (n * (1 - xn1_ib) * (3 - xn1_ib) - gamma_ib * (n - 1) * (xn1_ib - dc1_ib) * (3 * dc1_ib - xn1_ib));
+                    var C1_ibL = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcL, Ni) * 1000 / b / D / fcL) * pt_ib + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcL, Ni) * 1000 / b / D / fcL)) * fcL;
+                    var C2_ibL = (0.8 * pt_ib + 0.37 * Math.Min(0.4 * b * D * fcL, Ni) * 1000 / b / D / ft_ibL) * ft_ibL;
                     var C_ibL = Math.Min(C1_ibL, C2_ibL);
+                    var C1_ibLpX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Ni + Ni_x) * 1000 / b / D / fcS) * pt_ib + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Ni + Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ibLpX = (0.8 * pt_ib + 0.37 * Math.Min(0.4 * b * D * fcS, Ni + Ni_x) * 1000 / b / D / ft_ibS) * ft_ibS;
+                    var C_ibLpX = Math.Min(C1_ibLpX, C2_ibLpX);
+                    var C1_ibLpY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Ni + Ni_y) * 1000 / b / D / fcS) * pt_ib + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Ni + Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ibLpY = (0.8 * pt_ib + 0.37 * Math.Min(0.4 * b * D * fcS, Ni + Ni_y) * 1000 / b / D / ft_ibS) * ft_ibS;
+                    var C_ibLpY = Math.Min(C1_ibLpY, C2_ibLpY);
+                    var C1_ibLmX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Ni - Ni_x) * 1000 / b / D / fcS) * pt_ib + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Ni - Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ibLmX = (0.8 * pt_ib + 0.37 * Math.Min(0.4 * b * D * fcS, Ni - Ni_x) * 1000 / b / D / ft_ibS) * ft_ibS;
+                    var C_ibLmX = Math.Min(C1_ibLmX, C2_ibLmX);
+                    var C1_ibLmY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Ni - Ni_y) * 1000 / b / D / fcS) * pt_ib + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Ni - Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ibLmY = (0.8 * pt_ib + 0.37 * Math.Min(0.4 * b * D * fcS, Ni - Ni_y) * 1000 / b / D / ft_ibS) * ft_ibS;
+                    var C_ibLmY = Math.Min(C1_ibLmY, C2_ibLmY);
+
                     var Ma_ibL = C_ibL * b * Math.Pow(D_ib, 2) * unitl * unitf;
-                    var C1_ibS = pt_ib * fcS / (3 * xn1_ib) * (n * (1 - xn1_ib) * (3 - xn1_ib) - gamma_ib * (n - 1) * (xn1_ib - dc1_ib) * (3 * dc1_ib - xn1_ib));
-                    var C2_ibS = pt_ib * ft_ibS / (3 * n * (1 - xn1_ib)) * (n * (1 - xn1_ib) * (3 - xn1_ib) - gamma_ib * (n - 1) * (xn1_ib - dc1_ib) * (3 * dc1_ib - xn1_ib));
-                    var C_ibS = Math.Min(C1_ibS, C2_ibS);
-                    var Ma_ibS = C_ibS * b * Math.Pow(D_ib, 2) * unitl * unitf;
+                    var Ma_ibLpX = C_ibLpX * b * Math.Pow(D_ib, 2) * unitl * unitf;
+                    var Ma_ibLpY = C_ibLpY * b * Math.Pow(D_ib, 2) * unitl * unitf;
+                    var Ma_ibLmX = C_ibLmX * b * Math.Pow(D_ib, 2) * unitl * unitf;
+                    var Ma_ibLmY = C_ibLmY * b * Math.Pow(D_ib, 2) * unitl * unitf;
                     //************************************************************************************************************************************************************
                     //中央の許容曲げモーメント
                     //************************************************************************************************************************************************************
@@ -371,25 +397,50 @@ namespace OpenSeesUtility
                     var d_cb = ((kB + S_c + D_ct1 / 2.0) * a_cb1 + (kB + S_c + D_cb1 + 25.0 + D_cb2 / 2.0) * a_cb2) / a_cb;//中央の右端より鉄筋重心までの距離
 
                     var gamma_ct = a_cb / a_ct; var D_ct = D - d_ct; var dc1_ct = d_cb / D_ct; var pt_ct = a_ct / (b * D_ct);
-                    var xn1_ct = pt_ct * (Math.Sqrt(Math.Pow(n * (1 + gamma_ct) - gamma_ct, 2) + 2.0 / pt_ct * (n * (1 + gamma_ct * dc1_ct) - gamma_ct * dc1_ct)) - (n * (1 + gamma_ct) - gamma_ct));//RC規準2010 P.123(13.5)
-                    var C1_ctL = pt_ct * fcL / (3 * xn1_ct) * (n * (1 - xn1_ct) * (3 - xn1_ct) - gamma_ct * (n - 1) * (xn1_ct - dc1_ct) * (3 * dc1_ct - xn1_ct));
-                    var C2_ctL = pt_ct * ft_ctL / (3 * n * (1 - xn1_ct)) * (n * (1 - xn1_ct) * (3 - xn1_ct) - gamma_ct * (n - 1) * (xn1_ct - dc1_ct) * (3 * dc1_ct - xn1_ct));
+                    var C1_ctL = (40.0 / 3.0 * (1.0 - 1.2 * Ni * 1000 / b / D / fcL) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * Ni * 1000 / b / D / fcL)) * fcL;
+                    var C2_ctL = (0.8 * pt_ct + 0.37 * Ni * 1000 / b / D / ft_ctL) * ft_ctL;
                     var C_ctL = Math.Min(C1_ctL, C2_ctL);
-                    var C1_ctS = pt_ct * fcS / (3 * xn1_ct) * (n * (1 - xn1_ct) * (3 - xn1_ct) - gamma_ct * (n - 1) * (xn1_ct - dc1_ct) * (3 * dc1_ct - xn1_ct));
-                    var C2_ctS = pt_ct * ft_ctS / (3 * n * (1 - xn1_ct)) * (n * (1 - xn1_ct) * (3 - xn1_ct) - gamma_ct * (n - 1) * (xn1_ct - dc1_ct) * (3 * dc1_ct - xn1_ct));
-                    var C_ctS = Math.Min(C1_ctS, C2_ctS);
-                    var Ma_ctL = C_ctL * b * Math.Pow(D_ct, 2) * unitl * unitf; var Ma_ctS = C_ctS * b * Math.Pow(D_ct, 2) * unitl * unitf;
+                    var C1_ctLpX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ctLpX = (0.8 * pt_ct + 0.37 * (Ni + Ni_x) * 1000 / b / D / ft_ctS) * ft_ctS;
+                    var C_ctLpX = Math.Min(C1_ctLpX, C2_ctLpX);
+                    var C1_ctLpY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ctLpY = (0.8 * pt_ct + 0.37 * (Ni + Ni_y) * 1000 / b / D / ft_ctS) * ft_ctS;
+                    var C_ctLpY = Math.Min(C1_ctLpY, C2_ctLpY);
+                    var C1_ctLmX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ctLmX = (0.8 * pt_ct + 0.37 * (Ni - Ni_x) * 1000 / b / D / ft_ctS) * ft_ctS;
+                    var C_ctLmX = Math.Min(C1_ctLmX, C2_ctLmX);
+                    var C1_ctLmY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ctLmY = (0.8 * pt_ct + 0.37 * (Ni - Ni_y) * 1000 / b / D / ft_ctS) * ft_ctS;
+                    var C_ctLmY = Math.Min(C1_ctLmY, C2_ctLmY);
+
+                    var Ma_ctL = C_ctL * b * Math.Pow(D_ct, 2) * unitl * unitf;
+                    var Ma_ctLpX = C_ctLpX * b * Math.Pow(D_ct, 2) * unitl * unitf;
+                    var Ma_ctLpY = C_ctLpY * b * Math.Pow(D_ct, 2) * unitl * unitf;
+                    var Ma_ctLmX = C_ctLmX * b * Math.Pow(D_ct, 2) * unitl * unitf;
+                    var Ma_ctLmY = C_ctLmY * b * Math.Pow(D_ct, 2) * unitl * unitf;
 
                     var gamma_cb = a_ct / a_cb; var D_cb = D - d_cb; var dc1_cb = d_ct / D_cb; var pt_cb = a_cb / (b * D_cb);
-                    var xn1_cb = pt_cb * (Math.Sqrt(Math.Pow(n * (1 + gamma_cb) - gamma_cb, 2) + 2.0 / pt_cb * (n * (1 + gamma_cb * dc1_cb) - gamma_cb * dc1_cb)) - (n * (1 + gamma_cb) - gamma_cb));//RC規準2010 P.123(13.5)
-                    var C1_cbL = pt_cb * fcL / (3 * xn1_cb) * (n * (1 - xn1_cb) * (3 - xn1_cb) - gamma_cb * (n - 1) * (xn1_cb - dc1_cb) * (3 * dc1_cb - xn1_cb));
-                    var C2_cbL = pt_cb * ft_cbL / (3 * n * (1 - xn1_cb)) * (n * (1 - xn1_cb) * (3 - xn1_cb) - gamma_cb * (n - 1) * (xn1_cb - dc1_cb) * (3 * dc1_cb - xn1_cb));
+                    var C1_cbL = (40.0 / 3.0 * (1.0 - 1.2 * Ni * 1000 / b / D / fcL) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * Ni * 1000 / b / D / fcL)) * fcL;
+                    var C2_cbL = (0.8 * pt_cb + 0.37 * Ni * 1000 / b / D / ft_cbL) * ft_cbL;
                     var C_cbL = Math.Min(C1_cbL, C2_cbL);
+                    var C1_cbLpX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_cbLpX = (0.8 * pt_cb + 0.37 * (Ni + Ni_x) * 1000 / b / D / ft_cbS) * ft_cbS;
+                    var C_cbLpX = Math.Min(C1_cbLpX, C2_cbLpX);
+                    var C1_cbLpY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_cbLpY = (0.8 * pt_cb + 0.37 * (Ni + Ni_y) * 1000 / b / D / ft_cbS) * ft_cbS;
+                    var C_cbLpY = Math.Min(C1_cbLpY, C2_cbLpY);
+                    var C1_cbLmX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_cbLmX = (0.8 * pt_cb + 0.37 * (Ni - Ni_x) * 1000 / b / D / ft_cbS) * ft_cbS;
+                    var C_cbLmX = Math.Min(C1_cbLmX, C2_cbLmX);
+                    var C1_cbLmY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_cbLmY = (0.8 * pt_cb + 0.37 * (Ni - Ni_y) * 1000 / b / D / ft_cbS) * ft_cbS;
+                    var C_cbLmY = Math.Min(C1_cbLmY, C2_cbLmY);
+
                     var Ma_cbL = C_cbL * b * Math.Pow(D_cb, 2) * unitl * unitf;
-                    var C1_cbS = pt_cb * fcS / (3 * xn1_cb) * (n * (1 - xn1_cb) * (3 - xn1_cb) - gamma_cb * (n - 1) * (xn1_cb - dc1_cb) * (3 * dc1_cb - xn1_cb));
-                    var C2_cbS = pt_cb * ft_cbS / (3 * n * (1 - xn1_cb)) * (n * (1 - xn1_cb) * (3 - xn1_cb) - gamma_cb * (n - 1) * (xn1_cb - dc1_cb) * (3 * dc1_cb - xn1_cb));
-                    var C_cbS = Math.Min(C1_cbS, C2_cbS);
-                    var Ma_cbS = C_cbS * b * Math.Pow(D_cb, 2) * unitl * unitf;
+                    var Ma_cbLpX = C_cbLpX * b * Math.Pow(D_cb, 2) * unitl * unitf;
+                    var Ma_cbLpY = C_cbLpY * b * Math.Pow(D_cb, 2) * unitl * unitf;
+                    var Ma_cbLmX = C_cbLmX * b * Math.Pow(D_cb, 2) * unitl * unitf;
+                    var Ma_cbLmY = C_cbLmY * b * Math.Pow(D_cb, 2) * unitl * unitf;
                     //************************************************************************************************************************************************************
                     //j端の許容曲げモーメント
                     //************************************************************************************************************************************************************
@@ -426,24 +477,50 @@ namespace OpenSeesUtility
                     var d_jb = ((kB + S_j + D_jt1 / 2.0) * a_jb1 + (kB + S_j + D_jb1 + 25.0 + D_jb2 / 2.0) * a_jb2) / a_jb;//j端の右端より鉄筋重心までの距離
 
                     var gamma_jt = a_jb / a_jt; var D_jt = D - d_jt; var dc1_jt = d_jb / D_jt; var pt_jt = a_jt / (b * D_jt);
-                    var xn1_jt = pt_jt * (Math.Sqrt(Math.Pow(n * (1 + gamma_jt) - gamma_jt, 2) + 2.0 / pt_jt * (n * (1 + gamma_jt * dc1_jt) - gamma_jt * dc1_jt)) - (n * (1 + gamma_jt) - gamma_jt));//RC規準2010 P.123(13.5)
-                    var C1_jtL = pt_jt * fcL / (3 * xn1_jt) * (n * (1 - xn1_jt) * (3 - xn1_jt) - gamma_jt * (n - 1) * (xn1_jt - dc1_jt) * (3 * dc1_jt - xn1_jt));
-                    var C2_jtL = pt_jt * ft_jtL / (3 * n * (1 - xn1_jt)) * (n * (1 - xn1_jt) * (3 - xn1_jt) - gamma_jt * (n - 1) * (xn1_jt - dc1_jt) * (3 * dc1_jt - xn1_jt));
+                    var C1_jtL = (40.0 / 3.0 * (1.0 - 1.2 * Ni * 1000 / b / D / fcL) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * Ni * 1000 / b / D / fcL)) * fcL;
+                    var C2_jtL = (0.8 * pt_jt + 0.37 * Ni * 1000 / b / D / ft_jtL) * ft_jtL;
                     var C_jtL = Math.Min(C1_jtL, C2_jtL);
-                    var C1_jtS = pt_jt * fcS / (3 * xn1_jt) * (n * (1 - xn1_jt) * (3 - xn1_jt) - gamma_jt * (n - 1) * (xn1_jt - dc1_jt) * (3 * dc1_jt - xn1_jt));
-                    var C2_jtS = pt_jt * ft_jtS / (3 * n * (1 - xn1_jt)) * (n * (1 - xn1_jt) * (3 - xn1_jt) - gamma_jt * (n - 1) * (xn1_jt - dc1_jt) * (3 * dc1_jt - xn1_jt));
-                    var C_jtS = Math.Min(C1_jtS, C2_jtS);
-                    var Ma_jtL = C_jtL * b * Math.Pow(D_jt, 2) * unitl * unitf; var Ma_jtS = C_jtS * b * Math.Pow(D_jt, 2) * unitl * unitf;
+                    var C1_jtLpX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jtLpX = (0.8 * pt_jt + 0.37 * (Ni + Ni_x) * 1000 / b / D / ft_jtS) * ft_jtS;
+                    var C_jtLpX = Math.Min(C1_jtLpX, C2_jtLpX);
+                    var C1_jtLpY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jtLpY = (0.8 * pt_jt + 0.37 * (Ni + Ni_y) * 1000 / b / D / ft_jtS) * ft_jtS;
+                    var C_jtLpY = Math.Min(C1_jtLpY, C2_jtLpY);
+                    var C1_jtLmX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jtLmX = (0.8 * pt_jt + 0.37 * (Ni - Ni_x) * 1000 / b / D / ft_jtS) * ft_jtS;
+                    var C_jtLmX = Math.Min(C1_jtLmX, C2_jtLmX);
+                    var C1_jtLmY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jtLmY = (0.8 * pt_jt + 0.37 * (Ni - Ni_y) * 1000 / b / D / ft_jtS) * ft_jtS;
+                    var C_jtLmY = Math.Min(C1_jtLmY, C2_jtLmY);
+
+                    var Ma_jtL = C_jtL * b * Math.Pow(D_jt, 2) * unitl * unitf;
+                    var Ma_jtLpX = C_jtLpX * b * Math.Pow(D_jt, 2) * unitl * unitf;
+                    var Ma_jtLpY = C_jtLpY * b * Math.Pow(D_jt, 2) * unitl * unitf;
+                    var Ma_jtLmX = C_jtLmX * b * Math.Pow(D_jt, 2) * unitl * unitf;
+                    var Ma_jtLmY = C_jtLmY * b * Math.Pow(D_jt, 2) * unitl * unitf;
 
                     var gamma_jb = a_jt / a_jb; var D_jb = D - d_jb; var dc1_jb = d_jt / D_jb; var pt_jb = a_jb / (b * D_jb);
-                    var xn1_jb = pt_jb * (Math.Sqrt(Math.Pow(n * (1 + gamma_jb) - gamma_jb, 2) + 2.0 / pt_jb * (n * (1 + gamma_jb * dc1_jb) - gamma_jb * dc1_jb)) - (n * (1 + gamma_jb) - gamma_jb));//RC規準2010 P.123(13.5)
-                    var C1_jbL = pt_jb * fcL / (3 * xn1_jb) * (n * (1 - xn1_jb) * (3 - xn1_jb) - gamma_jb * (n - 1) * (xn1_jb - dc1_jb) * (3 * dc1_jb - xn1_jb));
-                    var C2_jbL = pt_jb * ft_jbL / (3 * n * (1 - xn1_jb)) * (n * (1 - xn1_jb) * (3 - xn1_jb) - gamma_jb * (n - 1) * (xn1_jb - dc1_jb) * (3 * dc1_jb - xn1_jb));
+                    var C1_jbL = (40.0 / 3.0 * (1.0 - 1.2 * Ni * 1000 / b / D / fcL) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * Ni * 1000 / b / D / fcL)) * fcL;
+                    var C2_jbL = (0.8 * pt_jb + 0.37 * Ni * 1000 / b / D / ft_jbL) * ft_jbL;
                     var C_jbL = Math.Min(C1_jbL, C2_jbL);
-                    var C1_jbS = pt_jb * fcS / (3 * xn1_jb) * (n * (1 - xn1_jb) * (3 - xn1_jb) - gamma_jb * (n - 1) * (xn1_jb - dc1_jb) * (3 * dc1_jb - xn1_jb));
-                    var C2_jbS = pt_jb * ft_jbS / (3 * n * (1 - xn1_jb)) * (n * (1 - xn1_jb) * (3 - xn1_jb) - gamma_jb * (n - 1) * (xn1_jb - dc1_jb) * (3 * dc1_jb - xn1_jb));
-                    var C_jbS = Math.Min(C1_jbS, C2_jbS);
-                    var Ma_jbL = C_jbL * b * Math.Pow(D_jb, 2) * unitl * unitf; var Ma_jbS = C_jbS * b * Math.Pow(D_jb, 2) * unitl * unitf;
+                    var C1_jbLpX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jbLpX = (0.8 * pt_jb + 0.37 * (Ni + Ni_x) * 1000 / b / D / ft_jbS) * ft_jbS;
+                    var C_jbLpX = Math.Min(C1_jbLpX, C2_jbLpX);
+                    var C1_jbLpY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jbLpY = (0.8 * pt_jb + 0.37 * (Ni + Ni_y) * 1000 / b / D / ft_jbS) * ft_jbS;
+                    var C_jbLpY = Math.Min(C1_jbLpY, C2_jbLpY);
+                    var C1_jbLmX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jbLmX = (0.8 * pt_jb + 0.37 * (Ni - Ni_x) * 1000 / b / D / ft_jbS) * ft_jbS;
+                    var C_jbLmX = Math.Min(C1_jbLmX, C2_jbLmX);
+                    var C1_jbLmY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jbLmY = (0.8 * pt_jb + 0.37 * (Ni - Ni_y) * 1000 / b / D / ft_jbS) * ft_jbS;
+                    var C_jbLmY = Math.Min(C1_jbLmY, C2_jbLmY);
+
+                    var Ma_jbL = C_jbL * b * Math.Pow(D_jb, 2) * unitl * unitf;
+                    var Ma_jbLpX = C_jbLpX * b * Math.Pow(D_jb, 2) * unitl * unitf;
+                    var Ma_jbLpY = C_jbLpY * b * Math.Pow(D_jb, 2) * unitl * unitf;
+                    var Ma_jbLmX = C_jbLmX * b * Math.Pow(D_jb, 2) * unitl * unitf;
+                    var Ma_jbLmY = C_jbLmY * b * Math.Pow(D_jb, 2) * unitl * unitf;
                     //************************************************************************************************************************************************************
                     //i端の許容せん断力
                     //************************************************************************************************************************************************************
@@ -511,16 +588,22 @@ namespace OpenSeesUtility
                     Dt.Add(new List<string> { (d_it.ToString()).Substring(0, Digit((int)d_it)), (d_ct.ToString()).Substring(0, Digit((int)d_ct)), (d_jt.ToString()).Substring(0, Digit((int)d_jt)) });
                     Db.Add(new List<string> { (d_ib.ToString()).Substring(0, Digit((int)d_ib)), (d_cb.ToString()).Substring(0, Digit((int)d_cb)), (d_jb.ToString()).Substring(0, Digit((int)d_jb)) });
                     Mt_aL.Add(new List<double> { Ma_itL, Ma_ctL, Ma_jtL }); Mb_aL.Add(new List<double> { Ma_ibL, Ma_cbL, Ma_jbL });
-                    Mt_aS.Add(new List<double> { Ma_itS, Ma_ctS, Ma_jtS }); Mb_aS.Add(new List<double> { Ma_ibS, Ma_cbS, Ma_jbS });
+                    Mt_aLpX.Add(new List<double> { Ma_itLpX, Ma_ctLpX, Ma_jtLpX }); Mb_aLpX.Add(new List<double> { Ma_ibLpX, Ma_cbLpX, Ma_jbLpX });
+                    Mt_aLpY.Add(new List<double> { Ma_itLpY, Ma_ctLpY, Ma_jtLpY }); Mb_aLpY.Add(new List<double> { Ma_ibLpY, Ma_cbLpY, Ma_jbLpY });
+                    Mt_aLmX.Add(new List<double> { Ma_itLmX, Ma_ctLmX, Ma_jtLmX }); Mb_aLmX.Add(new List<double> { Ma_ibLmX, Ma_cbLmX, Ma_jbLmX });
+                    Mt_aLmY.Add(new List<double> { Ma_itLmY, Ma_ctLmY, Ma_jtLmY }); Mb_aLmY.Add(new List<double> { Ma_ibLmY, Ma_cbLmY, Ma_jbLmY });
                     Q_aL.Add(new List<double> { Qa_iL, Qa_cL, Qa_jL }); Q_aLpX.Add(new List<double> { Qa_iLpX, Qa_cLpX, Qa_jLpX }); Q_aLpY.Add(new List<double> { Qa_iLpY, Qa_cLpY, Qa_jLpY }); Q_aLmX.Add(new List<double> { Qa_iLmX, Qa_cLmX, Qa_jLmX }); Q_aLmY.Add(new List<double> { Qa_iLmY, Qa_cLmY, Qa_jLmY });
-                    M.Add(new List<double> { Mi, Mc, Mj }); Q.Add(new List<double> { Qi, Qc, Qj });
-                    Mx.Add(new List<double> { Mi_x, Mc_x, Mj_x }); Qx.Add(new List<double> { Qi_x, Qc_x, Qj_x });
-                    My.Add(new List<double> { Mi_y, Mc_y, Mj_y }); Qy.Add(new List<double> { Qi_y, Qc_y, Qj_y });
+                    M.Add(new List<double> { Mi, Mc, Mj }); Q.Add(new List<double> { Qi, Qc, Qj }); N.Add(new List<double> { Ni, Nc, Nj });
+                    Mx.Add(new List<double> { Mi_x, Mc_x, Mj_x }); Qx.Add(new List<double> { Qi_x, Qc_x, Qj_x }); Nx.Add(new List<double> { Ni_x, Nc_x, Nj_x });
+                    My.Add(new List<double> { Mi_y, Mc_y, Mj_y }); Qy.Add(new List<double> { Qi_y, Qc_y, Qj_y }); Ny.Add(new List<double> { Ni_y, Nc_y, Nj_y });
                     //************************************************************************************************************************************************************
-                    List<GH_Number> MLlist = new List<GH_Number>(); List<GH_Number> MSlist = new List<GH_Number>();
+                    List<GH_Number> MLlist = new List<GH_Number>(); List<GH_Number> MLpXlist = new List<GH_Number>(); List<GH_Number> MLpYlist = new List<GH_Number>(); List<GH_Number> MLmXlist = new List<GH_Number>(); List<GH_Number> MLmYlist = new List<GH_Number>();
                     MLlist.Add(new GH_Number(Ma_itL)); MLlist.Add(new GH_Number(Ma_ctL)); MLlist.Add(new GH_Number(Ma_jtL)); MLlist.Add(new GH_Number(Ma_ibL)); MLlist.Add(new GH_Number(Ma_cbL)); MLlist.Add(new GH_Number(Ma_jbL));
-                    MSlist.Add(new GH_Number(Ma_itS)); MSlist.Add(new GH_Number(Ma_ctS)); MSlist.Add(new GH_Number(Ma_jtS)); MSlist.Add(new GH_Number(Ma_ibS)); MSlist.Add(new GH_Number(Ma_cbS)); MSlist.Add(new GH_Number(Ma_jbS));
-                    MaL.AppendRange(MLlist, new GH_Path(e)); MaS.AppendRange(MSlist, new GH_Path(e));
+                    MLpXlist.Add(new GH_Number(Ma_itLpX)); MLpXlist.Add(new GH_Number(Ma_ctLpX)); MLpXlist.Add(new GH_Number(Ma_jtLpX)); MLpXlist.Add(new GH_Number(Ma_ibLpX)); MLpXlist.Add(new GH_Number(Ma_cbLpX)); MLpXlist.Add(new GH_Number(Ma_jbLpX));
+                    MLpYlist.Add(new GH_Number(Ma_itLpY)); MLpYlist.Add(new GH_Number(Ma_ctLpY)); MLpYlist.Add(new GH_Number(Ma_jtLpY)); MLpYlist.Add(new GH_Number(Ma_ibLpY)); MLpYlist.Add(new GH_Number(Ma_cbLpY)); MLpYlist.Add(new GH_Number(Ma_jbLpY));
+                    MLmXlist.Add(new GH_Number(Ma_itLmX)); MLmXlist.Add(new GH_Number(Ma_ctLmX)); MLmXlist.Add(new GH_Number(Ma_jtLmX)); MLmXlist.Add(new GH_Number(Ma_ibLmX)); MLmXlist.Add(new GH_Number(Ma_cbLmX)); MLmXlist.Add(new GH_Number(Ma_jbLmX));
+                    MLmYlist.Add(new GH_Number(Ma_itLmY)); MLmYlist.Add(new GH_Number(Ma_ctLmY)); MLmYlist.Add(new GH_Number(Ma_jtLmY)); MLmYlist.Add(new GH_Number(Ma_ibLmY)); MLmYlist.Add(new GH_Number(Ma_cbLmY)); MLmYlist.Add(new GH_Number(Ma_jbLmY));
+                    MaL.AppendRange(MLlist, new GH_Path(e)); MaLpX.AppendRange(MLpXlist, new GH_Path(e)); MaLpY.AppendRange(MLpYlist, new GH_Path(e)); MaLmX.AppendRange(MLmXlist, new GH_Path(e)); MaLmY.AppendRange(MLmYlist, new GH_Path(e));
                     List<GH_Number> QLlist = new List<GH_Number>(); List<GH_Number> QLpXlist = new List<GH_Number>(); List<GH_Number> QLpYlist = new List<GH_Number>(); List<GH_Number> QLmXlist = new List<GH_Number>(); List<GH_Number> QLmYlist = new List<GH_Number>();
                     QLlist.Add(new GH_Number(Qa_iL)); QLlist.Add(new GH_Number(Qa_cL)); QLlist.Add(new GH_Number(Qa_jL));
                     QaL.AppendRange(QLlist, new GH_Path(e));
@@ -549,36 +632,36 @@ namespace OpenSeesUtility
                     kmaxlist.Add(new GH_Number(k1)); kmaxlist.Add(new GH_Number(k2)); kmaxlist.Add(new GH_Number(k3)); kmax1.AppendRange(kmaxlist, new GH_Path(ind));
 
                     var ki = new List<double>(); var kj = new List<double>(); var kc = new List<double>();
-                    if (Mi + Mi_x < 0) { ki.Add(Math.Abs(Mi + Mi_x) / Ma_itS); }
-                    else { ki.Add(Math.Abs(Mi + Mi_x) / Ma_ibS); }
-                    if (Mi - Mi_x < 0) { ki.Add(Math.Abs(Mi - Mi_x) / Ma_itS); }
-                    else { ki.Add(Math.Abs(Mi - Mi_x) / Ma_ibS); }
-                    if (Mi + Mi_y < 0) { ki.Add(Math.Abs(Mi + Mi_y) / Ma_itS); }
-                    else { ki.Add(Math.Abs(Mi + Mi_y) / Ma_ibS); }
-                    if (Mi - Mi_y < 0) { ki.Add(Math.Abs(Mi - Mi_y) / Ma_itS); }
-                    else { ki.Add(Math.Abs(Mi - Mi_y) / Ma_ibS); }
-                    if (Mj + Mj_x < 0) { kj.Add(Math.Abs(Mj + Mj_x) / Ma_jtS); }
-                    else { kj.Add(Math.Abs(Mj + Mj_x) / Ma_jbS); }
-                    if (Mj - Mj_x < 0) { kj.Add(Math.Abs(Mj - Mj_x) / Ma_jtS); }
-                    else { kj.Add(Math.Abs(Mj - Mj_x) / Ma_jbS); }
-                    if (Mj + Mj_y < 0) { kj.Add(Math.Abs(Mj + Mj_y) / Ma_jtS); }
-                    else { kj.Add(Math.Abs(Mj + Mj_y) / Ma_jbS); }
-                    if (Mj - Mj_y < 0) { kj.Add(Math.Abs(Mj - Mj_y) / Ma_jtS); }
-                    else { kj.Add(Math.Abs(Mj - Mj_y) / Ma_jbS); }
-                    if (Mc + Mc_x < 0) { kc.Add(Math.Abs(Mc + Mc_x) / Ma_ctS); }
-                    else { kc.Add(Math.Abs(Mc + Mc_x) / Ma_cbS); }
-                    if (Mc - Mc_x < 0) { kc.Add(Math.Abs(Mc - Mc_x) / Ma_ctS); }
-                    else { kc.Add(Math.Abs(Mc - Mc_x) / Ma_cbS); }
-                    if (Mc + Mc_y < 0) { kc.Add(Math.Abs(Mc + Mc_y) / Ma_ctS); }
-                    else { kc.Add(Math.Abs(Mc + Mc_y) / Ma_cbS); }
-                    if (Mc - Mc_y < 0) { kc.Add(Math.Abs(Mc - Mc_y) / Ma_ctS); }
-                    else { kc.Add(Math.Abs(Mc - Mc_y) / Ma_cbS); }
+                    if (Mi + Mi_x < 0) { ki.Add(Math.Abs(Mi + Mi_x) / Ma_itLpX); }
+                    else { ki.Add(Math.Abs(Mi + Mi_x) / Ma_ibLpX); }
+                    if (Mi - Mi_x < 0) { ki.Add(Math.Abs(Mi - Mi_x) / Ma_itLmX); }
+                    else { ki.Add(Math.Abs(Mi - Mi_x) / Ma_ibLmX); }
+                    if (Mi + Mi_y < 0) { ki.Add(Math.Abs(Mi + Mi_y) / Ma_itLpY); }
+                    else { ki.Add(Math.Abs(Mi + Mi_y) / Ma_ibLpY); }
+                    if (Mi - Mi_y < 0) { ki.Add(Math.Abs(Mi - Mi_y) / Ma_itLmY); }
+                    else { ki.Add(Math.Abs(Mi - Mi_y) / Ma_ibLmY); }
+                    if (Mj + Mj_x < 0) { kj.Add(Math.Abs(Mj + Mj_x) / Ma_jtLpX); }
+                    else { kj.Add(Math.Abs(Mj + Mj_x) / Ma_jbLpX); }
+                    if (Mj - Mj_x < 0) { kj.Add(Math.Abs(Mj - Mj_x) / Ma_jtLmX); }
+                    else { kj.Add(Math.Abs(Mj - Mj_x) / Ma_jbLmX); }
+                    if (Mj + Mj_y < 0) { kj.Add(Math.Abs(Mj + Mj_y) / Ma_jtLpY); }
+                    else { kj.Add(Math.Abs(Mj + Mj_y) / Ma_jbLpY); }
+                    if (Mj - Mj_y < 0) { kj.Add(Math.Abs(Mj - Mj_y) / Ma_jtLmY); }
+                    else { kj.Add(Math.Abs(Mj - Mj_y) / Ma_jbLmY); }
+                    if (Mc + Mc_x < 0) { kc.Add(Math.Abs(Mc + Mc_x) / Ma_ctLpX); }
+                    else { kc.Add(Math.Abs(Mc + Mc_x) / Ma_cbLpX); }
+                    if (Mc - Mc_x < 0) { kc.Add(Math.Abs(Mc - Mc_x) / Ma_ctLmX); }
+                    else { kc.Add(Math.Abs(Mc - Mc_x) / Ma_cbLmX); }
+                    if (Mc + Mc_y < 0) { kc.Add(Math.Abs(Mc + Mc_y) / Ma_ctLpY); }
+                    else { kc.Add(Math.Abs(Mc + Mc_y) / Ma_cbLpY); }
+                    if (Mc - Mc_y < 0) { kc.Add(Math.Abs(Mc - Mc_y) / Ma_ctLmY); }
+                    else { kc.Add(Math.Abs(Mc - Mc_y) / Ma_cbLmY); }
                     k2list.Add(new GH_Number(Math.Max(Math.Max(ki[0], ki[1]), Math.Max(ki[2], ki[3]))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(kj[0], kj[1]), Math.Max(kj[2], kj[3]))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(kc[0], kc[1]), Math.Max(kc[2], kc[3]))));
-                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qi + Qi_x * N) / Qa_iLpX, Math.Abs(Qi - Qi_x * N) / Qa_iLmX), Math.Max(Math.Abs(Qi + Qi_y * N) / Qa_iLpY, Math.Abs(Qi - Qi_y * N) / Qa_iLpY))));
-                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qj + Qj_x * N) / Qa_jLpX, Math.Abs(Qj - Qj_x * N) / Qa_jLmX), Math.Max(Math.Abs(Qj + Qj_y * N) / Qa_jLpY, Math.Abs(Qj - Qj_y * N) / Qa_jLpY))));
-                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qc + Qc_x * N) / Qa_cLpX, Math.Abs(Qc - Qc_x * N) / Qa_cLmX), Math.Max(Math.Abs(Qc + Qc_y * N) / Qa_cLpY, Math.Abs(Qc - Qc_y * N) / Qa_cLpY))));
+                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qi + Qi_x * Nq) / Qa_iLpX, Math.Abs(Qi - Qi_x * Nq) / Qa_iLmX), Math.Max(Math.Abs(Qi + Qi_y * Nq) / Qa_iLpY, Math.Abs(Qi - Qi_y * Nq) / Qa_iLpY))));
+                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qj + Qj_x * Nq) / Qa_jLpX, Math.Abs(Qj - Qj_x * Nq) / Qa_jLmX), Math.Max(Math.Abs(Qj + Qj_y * Nq) / Qa_jLpY, Math.Abs(Qj - Qj_y * Nq) / Qa_jLpY))));
+                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qc + Qc_x * Nq) / Qa_cLpX, Math.Abs(Qc - Qc_x * Nq) / Qa_cLmX), Math.Max(Math.Abs(Qc + Qc_y * Nq) / Qa_cLpY, Math.Abs(Qc - Qc_y * Nq) / Qa_cLpY))));
 
                     kmaxlist = new List<GH_Number>();
                     k1 = Math.Max(k2list[0].Value, k2list[3].Value);
@@ -722,7 +805,7 @@ namespace OpenSeesUtility
                     {
                         var labels = new List<string>
                         {
-                            "部材番号","配筋符号","断面算定用bxD[mm]"," ","i端左端ft[N/mm2]","i端右端ft[N/mm2]","中央左端ft[N/mm2]","中央右端ft[N/mm2]","j端左端ft[N/mm2]", "j端右端ft[N/mm2]", "i端fs[N/mm2]", "中央fs[N/mm2]","j端fs[N/mm2]", "コンクリートfc[N/mm2]","コンクリートfs[N/mm2]", "節点番号","左端部補強筋", "左端-鉄筋重心距離dt[mm]","右端部補強筋","右端-鉄筋重心距離dt[mm]","横筋"," ","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q[kN]","Qa[kN]","せん断検定比Q/Qa","判定"
+                            "部材番号","配筋符号","断面算定用bxD[mm]"," ","i端左端ft[N/mm2]","i端右端ft[N/mm2]","中央左端ft[N/mm2]","中央右端ft[N/mm2]","j端左端ft[N/mm2]", "j端右端ft[N/mm2]", "i端fs[N/mm2]", "中央fs[N/mm2]","j端fs[N/mm2]", "コンクリートfc[N/mm2]","コンクリートfs[N/mm2]", "節点番号","左端部補強筋", "左端-鉄筋重心距離dt[mm]","右端部補強筋","右端-鉄筋重心距離dt[mm]","横筋"," ","N[kN]","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q[kN]","Qa[kN]","せん断検定比Q/Qa","判定"
                         };
                         var label_width = 100; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 45; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
                         for (int ind = 0; ind < index.Count; ind++)//
@@ -735,6 +818,10 @@ namespace OpenSeesUtility
                             values.Add(FC[ind]); values.Add(FS[ind]); values.Add(Nod[ind]);
                             values.Add(Bart[ind]); values.Add(Dt[ind]); values.Add(Barb[ind]); values.Add(Db[ind]); values.Add(Bars[ind]);
                             values.Add(new List<string> { "長期検討" });
+                            var Ni = N[ind][0]; var Nc = N[ind][1]; var Nj = N[ind][2];
+                            var Ni_text = Ni.ToString("F10").Substring(0, Math.Max(5, Digit((int)Ni)));
+                            var Nc_text = Nc.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nc)));
+                            var Nj_text = Nj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nj)));
                             var Mit = 0.0; var Mib = 0.0; var Mct = 0.0; var Mcb = 0.0; var Mjt = 0.0; var Mjb = 0.0;
                             var Mit_text = ""; var Mib_text = ""; var Mct_text = ""; var Mcb_text = ""; var Mjt_text = ""; var Mjb_text = "";
                             if (M[ind][0] < 0) { Mit = Math.Abs(M[ind][0]); Mit_text = Mit.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mit))); }
@@ -761,6 +848,7 @@ namespace OpenSeesUtility
                             var Qac_text = Qac.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qac)));
                             var Qaj_text = Qaj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qaj)));
                             var ki2 = Math.Abs(Qi / Qai); var kc2 = Math.Abs(Qc / Qac); var kj2 = Math.Abs(Qj / Qaj);
+                            values.Add(new List<string> { Ni_text, Nc_text, Nj_text });
                             values.Add(new List<string> { Mit_text, Mct_text, Mjt_text }); values.Add(new List<string> { Mib_text, Mcb_text, Mjb_text });
                             values.Add(new List<string> { Mait_text, Mact_text, Majt_text }); values.Add(new List<string> { Maib_text, Macb_text, Majb_text });
                             values.Add(new List<string> { ki.ToString("F10").Substring(0, 4), kc.ToString("F10").Substring(0, 4), kj.ToString("F10").Substring(0, 4) });
@@ -809,8 +897,8 @@ namespace OpenSeesUtility
                                 else
                                 {
                                     var color1 = XBrushes.Black; var color2 = XBrushes.Black; var color3 = XBrushes.Black; var f = font;
-                                    if (i == 26) { color1 = k_color[0]; color2 = k_color[1]; color3 = k_color[2]; }
-                                    if (i == 29) { color1 = k2_color[0]; color2 = k2_color[1]; color3 = k2_color[2]; }
+                                    if (i == 27) { color1 = k_color[0]; color2 = k_color[1]; color3 = k_color[2]; }
+                                    if (i == 30) { color1 = k2_color[0]; color2 = k2_color[1]; color3 = k2_color[2]; }
                                     gfx.DrawString(values[i][0], f, color1, new XRect(offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i, text_width, offset_y + pitchy * (i + 1)), XStringFormats.TopCenter);
                                     gfx.DrawString(values[i][1], f, color2, new XRect(offset_x + label_width + text_width * 3 * j + text_width, offset_y + pitchy * i, text_width, offset_y + pitchy * (i + 1)), XStringFormats.TopCenter);
                                     gfx.DrawString(values[i][2], f, color3, new XRect(offset_x + label_width + text_width * 3 * j + text_width * 2, offset_y + pitchy * i, text_width, offset_y + pitchy * (i + 1)), XStringFormats.TopCenter);
@@ -827,7 +915,7 @@ namespace OpenSeesUtility
                     {
                         var labels = new List<string>
                         {
-                            "部材番号","配筋符号","断面算定用bxD[mm]"," ","i端左端ft[N/mm2]","i端右端ft[N/mm2]","中央左端ft[N/mm2]","中央右端ft[N/mm2]","j端左端ft[N/mm2]", "j端右端ft[N/mm2]", "i端fs[N/mm2]", "中央fs[N/mm2]","j端fs[N/mm2]", "コンクリートfc[N/mm2]","コンクリートfs[N/mm2]", "節点番号","左端部補強筋", "左端-鉄筋重心距離dt[mm]","右端部補強筋","右端-鉄筋重心距離dt[mm]","横筋"," ","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q=QL[kN]","Qa[kN]","せん断検定比Q/Qa","判定","","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q=QL+"+Math.Round(N,2).ToString()+"QX[kN]","Qa[kN]","せん断検定比Q/Qa","判定","","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q=QL+"+Math.Round(N,2).ToString()+"QY[kN]","Qa[kN]","せん断検定比Q/Qa","判定","","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q=QL-"+Math.Round(N,2).ToString()+"QX[kN]","Qa[kN]","せん断検定比Q/Qa","判定","","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q=QL-"+Math.Round(N,2).ToString()+"QY[kN]","Qa[kN]","せん断検定比Q/Qa","判定"
+                            "部材番号","配筋符号","断面算定用bxD[mm]"," ","i端左端ft[N/mm2]","i端右端ft[N/mm2]","中央左端ft[N/mm2]","中央右端ft[N/mm2]","j端左端ft[N/mm2]", "j端右端ft[N/mm2]", "i端fs[N/mm2]", "中央fs[N/mm2]","j端fs[N/mm2]", "コンクリートfc[N/mm2]","コンクリートfs[N/mm2]", "節点番号","左端部補強筋", "左端-鉄筋重心距離dt[mm]","右端部補強筋","右端-鉄筋重心距離dt[mm]","横筋"," ","N[kN]","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q=QL[kN]","Qa[kN]","せん断検定比Q/Qa","判定","","N[kN]","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q=QL+"+Math.Round(Nq,2).ToString()+"QX[kN]","Qa[kN]","せん断検定比Q/Qa","判定","","N[kN]","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q=QL+"+Math.Round(Nq,2).ToString()+"QY[kN]","Qa[kN]","せん断検定比Q/Qa","判定","","N[kN]","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q=QL-"+Math.Round(Nq,2).ToString()+"QX[kN]","Qa[kN]","せん断検定比Q/Qa","判定","","N[kN]","左端M[kNm]","右端M[kNm]","左端Ma[kNm]","右端Ma[kNm]","曲げ検定比M/Ma", "Q=QL-"+Math.Round(Nq,2).ToString()+"QY[kN]","Qa[kN]","せん断検定比Q/Qa","判定"
                         };
                         var label_width = 100; var offset_x = 25; var offset_y = 25; var pitchy = 10.5; var text_width = 45; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
                         for (int ind = 0; ind < index.Count; ind++)//
@@ -840,6 +928,10 @@ namespace OpenSeesUtility
                             values.Add(FC[ind]); values.Add(FS[ind]); values.Add(Nod[ind]);
                             values.Add(Bart[ind]); values.Add(Dt[ind]); values.Add(Barb[ind]); values.Add(Db[ind]); values.Add(Bars[ind]);
                             values.Add(new List<string> { "長期検討" });
+                            var Ni = N[ind][0]; var Nc = N[ind][1]; var Nj = N[ind][2];
+                            var Ni_text = Ni.ToString("F10").Substring(0, Math.Max(5, Digit((int)Ni)));
+                            var Nc_text = Nc.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nc)));
+                            var Nj_text = Nj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nj)));
                             var Mit = 0.0; var Mib = 0.0; var Mct = 0.0; var Mcb = 0.0; var Mjt = 0.0; var Mjb = 0.0;
                             var Mit_text = ""; var Mib_text = ""; var Mct_text = ""; var Mcb_text = ""; var Mjt_text = ""; var Mjb_text = "";
                             if (M[ind][0] < 0) { Mit = Math.Abs(M[ind][0]); Mit_text = Mit.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mit))); }
@@ -866,6 +958,7 @@ namespace OpenSeesUtility
                             var Qac_text = Qac.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qac)));
                             var Qaj_text = Qaj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qaj)));
                             var ki2 = Math.Abs(Qi / Qai); var kc2 = Math.Abs(Qc / Qac); var kj2 = Math.Abs(Qj / Qaj);
+                            values.Add(new List<string> { Ni_text, Nc_text, Nj_text });
                             values.Add(new List<string> { Mit_text, Mct_text, Mjt_text }); values.Add(new List<string> { Mib_text, Mcb_text, Mjb_text });
                             values.Add(new List<string> { Mait_text, Mact_text, Majt_text }); values.Add(new List<string> { Maib_text, Macb_text, Majb_text });
                             values.Add(new List<string> { ki.ToString("F10").Substring(0, 4), kc.ToString("F10").Substring(0, 4), kj.ToString("F10").Substring(0, 4) });
@@ -885,6 +978,10 @@ namespace OpenSeesUtility
                             }
                             else { values.Add(new List<string> { "N.G.", "N.G.", "N.G." }); }
                             values.Add(new List<string> { "短期(L+X)検討" });
+                            Ni = N[ind][0] + Nx[ind][0]; Nc = N[ind][1] + Nx[ind][1]; Nj = N[ind][2] + Nx[ind][2];
+                            Ni_text = Ni.ToString("F10").Substring(0, Math.Max(5, Digit((int)Ni)));
+                            Nc_text = Nc.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nc)));
+                            Nj_text = Nj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nj)));
                             Mit = 0.0; Mib = 0.0; Mct = 0.0; Mcb = 0.0; Mjt = 0.0; Mjb = 0.0;
                             Mit_text = ""; Mib_text = ""; Mct_text = ""; Mcb_text = ""; Mjt_text = ""; Mjb_text = "";
                             if ((M[ind][0] + Mx[ind][0]) < 0) { Mit = Math.Abs(M[ind][0] + Mx[ind][0]); Mit_text = Mit.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mit))); }
@@ -893,8 +990,8 @@ namespace OpenSeesUtility
                             else { Mcb = Math.Abs(M[ind][1] + Mx[ind][1]); Mcb_text = Mcb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mcb))); }
                             if (M[ind][2] + Mx[ind][2] > 0) { Mjt = Math.Abs(M[ind][2] + Mx[ind][2]); Mjt_text = Mjt.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mjt))); }
                             else { Mjb = Math.Abs(M[ind][2] + Mx[ind][2]); Mjb_text = Mjb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mjb))); }
-                            Mait = Mt_aS[ind][0]; Mact = Mt_aS[ind][1]; Majt = Mt_aS[ind][2];
-                            Maib = Mb_aS[ind][0]; Macb = Mb_aS[ind][1]; Majb = Mb_aS[ind][2];
+                            Mait = Mt_aLpX[ind][0]; Mact = Mt_aLpX[ind][1]; Majt = Mt_aLpX[ind][2];
+                            Maib = Mb_aLpX[ind][0]; Macb = Mb_aLpX[ind][1]; Majb = Mb_aLpX[ind][2];
                             Mait_text = Mait.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mait)));
                             Mact_text = Mact.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mact)));
                             Majt_text = Majt.ToString("F10").Substring(0, Math.Max(5, Digit((int)Majt)));
@@ -902,7 +999,7 @@ namespace OpenSeesUtility
                             Macb_text = Macb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Macb)));
                             Majb_text = Majb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Majb)));
                             ki = Math.Max(Mit / Mait, Mib / Maib); kc = Math.Max(Mct / Mact, Mcb / Macb); kj = Math.Max(Mjt / Majt, Mjb / Majb);
-                            Qi = Math.Abs(Q[ind][0] + Qx[ind][0] * N); Qc = Math.Abs(Q[ind][1] + Qx[ind][1] * N); Qj = Math.Abs(Q[ind][2] + Qx[ind][2] * N);
+                            Qi = Math.Abs(Q[ind][0] + Qx[ind][0] * Nq); Qc = Math.Abs(Q[ind][1] + Qx[ind][1] * Nq); Qj = Math.Abs(Q[ind][2] + Qx[ind][2] * Nq);
                             Qi_text = Qi.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qi)));
                             Qc_text = Qc.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qc)));
                             Qj_text = Qj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qj)));
@@ -911,6 +1008,7 @@ namespace OpenSeesUtility
                             Qac_text = Qac.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qac)));
                             Qaj_text = Qaj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qaj)));
                             ki2 = Math.Abs(Qi / Qai); kc2 = Math.Abs(Qc / Qac); kj2 = Math.Abs(Qj / Qaj);
+                            values.Add(new List<string> { Ni_text, Nc_text, Nj_text });
                             values.Add(new List<string> { Mit_text, Mct_text, Mjt_text }); values.Add(new List<string> { Mib_text, Mcb_text, Mjb_text });
                             values.Add(new List<string> { Mait_text, Mact_text, Majt_text }); values.Add(new List<string> { Maib_text, Macb_text, Majb_text });
                             values.Add(new List<string> { ki.ToString("F10").Substring(0, 4), kc.ToString("F10").Substring(0, 4), kj.ToString("F10").Substring(0, 4) });
@@ -929,6 +1027,10 @@ namespace OpenSeesUtility
                             }
                             else { values.Add(new List<string> { "N.G.", "N.G.", "N.G." }); }
                             values.Add(new List<string> { "短期(L+Y)検討" });
+                            Ni = N[ind][0] + Ny[ind][0]; Nc = N[ind][1] + Ny[ind][1]; Nj = N[ind][2] + Ny[ind][2];
+                            Ni_text = Ni.ToString("F10").Substring(0, Math.Max(5, Digit((int)Ni)));
+                            Nc_text = Nc.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nc)));
+                            Nj_text = Nj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nj)));
                             Mit = 0.0; Mib = 0.0; Mct = 0.0; Mcb = 0.0; Mjt = 0.0; Mjb = 0.0;
                             Mit_text = ""; Mib_text = ""; Mct_text = ""; Mcb_text = ""; Mjt_text = ""; Mjb_text = "";
                             if ((M[ind][0] + My[ind][0]) < 0) { Mit = Math.Abs(M[ind][0] + My[ind][0]); Mit_text = Mit.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mit))); }
@@ -937,6 +1039,8 @@ namespace OpenSeesUtility
                             else { Mcb = Math.Abs(M[ind][1] + My[ind][1]); Mcb_text = Mcb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mcb))); }
                             if (M[ind][2] + My[ind][2] > 0) { Mjt = Math.Abs(M[ind][2] + My[ind][2]); Mjt_text = Mjt.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mjt))); }
                             else { Mjb = Math.Abs(M[ind][2] + My[ind][2]); Mjb_text = Mjb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mjb))); }
+                            Mait = Mt_aLpY[ind][0]; Mact = Mt_aLpY[ind][1]; Majt = Mt_aLpY[ind][2];
+                            Maib = Mb_aLpY[ind][0]; Macb = Mb_aLpY[ind][1]; Majb = Mb_aLpY[ind][2];
                             Mait_text = Mait.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mait)));
                             Mact_text = Mact.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mact)));
                             Majt_text = Majt.ToString("F10").Substring(0, Math.Max(5, Digit((int)Majt)));
@@ -944,7 +1048,7 @@ namespace OpenSeesUtility
                             Macb_text = Macb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Macb)));
                             Majb_text = Majb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Majb)));
                             ki = Math.Max(Mit / Mait, Mib / Maib); kc = Math.Max(Mct / Mact, Mcb / Macb); kj = Math.Max(Mjt / Majt, Mjb / Majb);
-                            Qi = Math.Abs(Q[ind][0] + Qy[ind][0] * N); Qc = Math.Abs(Q[ind][1] + Qy[ind][1] * N); Qj = Math.Abs(Q[ind][2] + Qy[ind][2] * N);
+                            Qi = Math.Abs(Q[ind][0] + Qy[ind][0] * Nq); Qc = Math.Abs(Q[ind][1] + Qy[ind][1] * Nq); Qj = Math.Abs(Q[ind][2] + Qy[ind][2] * Nq);
                             Qi_text = Qi.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qi)));
                             Qc_text = Qc.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qc)));
                             Qj_text = Qj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qj)));
@@ -953,6 +1057,7 @@ namespace OpenSeesUtility
                             Qac_text = Qac.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qac)));
                             Qaj_text = Qaj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qaj)));
                             ki2 = Math.Abs(Qi / Qai); kc2 = Math.Abs(Qc / Qac); kj2 = Math.Abs(Qj / Qaj);
+                            values.Add(new List<string> { Ni_text, Nc_text, Nj_text });
                             values.Add(new List<string> { Mit_text, Mct_text, Mjt_text }); values.Add(new List<string> { Mib_text, Mcb_text, Mjb_text });
                             values.Add(new List<string> { Mait_text, Mact_text, Majt_text }); values.Add(new List<string> { Maib_text, Macb_text, Majb_text });
                             values.Add(new List<string> { ki.ToString("F10").Substring(0, 4), kc.ToString("F10").Substring(0, 4), kj.ToString("F10").Substring(0, 4) });
@@ -971,6 +1076,10 @@ namespace OpenSeesUtility
                             }
                             else { values.Add(new List<string> { "N.G.", "N.G.", "N.G." }); }
                             values.Add(new List<string> { "短期(L-X)検討" });
+                            Ni = N[ind][0] - Nx[ind][0]; Nc = N[ind][1] - Nx[ind][1]; Nj = N[ind][2] - Nx[ind][2];
+                            Ni_text = Ni.ToString("F10").Substring(0, Math.Max(5, Digit((int)Ni)));
+                            Nc_text = Nc.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nc)));
+                            Nj_text = Nj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nj)));
                             Mit = 0.0; Mib = 0.0; Mct = 0.0; Mcb = 0.0; Mjt = 0.0; Mjb = 0.0;
                             Mit_text = ""; Mib_text = ""; Mct_text = ""; Mcb_text = ""; Mjt_text = ""; Mjb_text = "";
                             if ((M[ind][0] - Mx[ind][0]) < 0) { Mit = Math.Abs(M[ind][0] - Mx[ind][0]); Mit_text = Mit.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mit))); }
@@ -979,6 +1088,8 @@ namespace OpenSeesUtility
                             else { Mcb = Math.Abs(M[ind][1] - Mx[ind][1]); Mcb_text = Mcb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mcb))); }
                             if (M[ind][2] - Mx[ind][2] > 0) { Mjt = Math.Abs(M[ind][2] - Mx[ind][2]); Mjt_text = Mjt.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mjt))); }
                             else { Mjb = Math.Abs(M[ind][2] - Mx[ind][2]); Mjb_text = Mjb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mjb))); }
+                            Mait = Mt_aLmX[ind][0]; Mact = Mt_aLmX[ind][1]; Majt = Mt_aLmX[ind][2];
+                            Maib = Mb_aLmX[ind][0]; Macb = Mb_aLmX[ind][1]; Majb = Mb_aLmX[ind][2];
                             Mait_text = Mait.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mait)));
                             Mact_text = Mact.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mact)));
                             Majt_text = Majt.ToString("F10").Substring(0, Math.Max(5, Digit((int)Majt)));
@@ -986,7 +1097,7 @@ namespace OpenSeesUtility
                             Macb_text = Macb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Macb)));
                             Majb_text = Majb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Majb)));
                             ki = Math.Max(Mit / Mait, Mib / Maib); kc = Math.Max(Mct / Mact, Mcb / Macb); kj = Math.Max(Mjt / Majt, Mjb / Majb);
-                            Qi = Math.Abs(Q[ind][0] - Qx[ind][0] * N); Qc = Math.Abs(Q[ind][1] - Qx[ind][1] * N); Qj = Math.Abs(Q[ind][2] - Qx[ind][2] * N);
+                            Qi = Math.Abs(Q[ind][0] - Qx[ind][0] * Nq); Qc = Math.Abs(Q[ind][1] - Qx[ind][1] * Nq); Qj = Math.Abs(Q[ind][2] - Qx[ind][2] * Nq);
                             Qi_text = Qi.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qi)));
                             Qc_text = Qc.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qc)));
                             Qj_text = Qj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qj)));
@@ -995,6 +1106,7 @@ namespace OpenSeesUtility
                             Qac_text = Qac.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qac)));
                             Qaj_text = Qaj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qaj)));
                             ki2 = Math.Abs(Qi / Qai); kc2 = Math.Abs(Qc / Qac); kj2 = Math.Abs(Qj / Qaj);
+                            values.Add(new List<string> { Ni_text, Nc_text, Nj_text });
                             values.Add(new List<string> { Mit_text, Mct_text, Mjt_text }); values.Add(new List<string> { Mib_text, Mcb_text, Mjb_text });
                             values.Add(new List<string> { Mait_text, Mact_text, Majt_text }); values.Add(new List<string> { Maib_text, Macb_text, Majb_text });
                             values.Add(new List<string> { ki.ToString("F10").Substring(0, 4), kc.ToString("F10").Substring(0, 4), kj.ToString("F10").Substring(0, 4) });
@@ -1013,6 +1125,10 @@ namespace OpenSeesUtility
                             }
                             else { values.Add(new List<string> { "N.G.", "N.G.", "N.G." }); }
                             values.Add(new List<string> { "短期(L-Y)検討" });
+                            Ni = N[ind][0] - Ny[ind][0]; Nc = N[ind][1] - Ny[ind][1]; Nj = N[ind][2] - Ny[ind][2];
+                            Ni_text = Ni.ToString("F10").Substring(0, Math.Max(5, Digit((int)Ni)));
+                            Nc_text = Nc.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nc)));
+                            Nj_text = Nj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Nj)));
                             Mit = 0.0; Mib = 0.0; Mct = 0.0; Mcb = 0.0; Mjt = 0.0; Mjb = 0.0;
                             Mit_text = ""; Mib_text = ""; Mct_text = ""; Mcb_text = ""; Mjt_text = ""; Mjb_text = "";
                             if ((M[ind][0] - My[ind][0]) < 0) { Mit = Math.Abs(M[ind][0] - My[ind][0]); Mit_text = Mit.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mit))); }
@@ -1021,6 +1137,8 @@ namespace OpenSeesUtility
                             else { Mcb = Math.Abs(M[ind][1] - My[ind][1]); Mcb_text = Mcb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mcb))); }
                             if (M[ind][2] - My[ind][2] > 0) { Mjt = Math.Abs(M[ind][2] - My[ind][2]); Mjt_text = Mjt.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mjt))); }
                             else { Mjb = Math.Abs(M[ind][2] - My[ind][2]); Mjb_text = Mjb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mjb))); }
+                            Mait = Mt_aLmY[ind][0]; Mact = Mt_aLmY[ind][1]; Majt = Mt_aLmY[ind][2];
+                            Maib = Mb_aLmY[ind][0]; Macb = Mb_aLmY[ind][1]; Majb = Mb_aLmY[ind][2];
                             Mait_text = Mait.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mait)));
                             Mact_text = Mact.ToString("F10").Substring(0, Math.Max(5, Digit((int)Mact)));
                             Majt_text = Majt.ToString("F10").Substring(0, Math.Max(5, Digit((int)Majt)));
@@ -1028,7 +1146,7 @@ namespace OpenSeesUtility
                             Macb_text = Macb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Macb)));
                             Majb_text = Majb.ToString("F10").Substring(0, Math.Max(5, Digit((int)Majb)));
                             ki = Math.Max(Mit / Mait, Mib / Maib); kc = Math.Max(Mct / Mact, Mcb / Macb); kj = Math.Max(Mjt / Majt, Mjb / Majb);
-                            Qi = Math.Abs(Q[ind][0] - Qy[ind][0] * N); Qc = Math.Abs(Q[ind][1] - Qy[ind][1] * N); Qj = Math.Abs(Q[ind][2] - Qy[ind][2] * N);
+                            Qi = Math.Abs(Q[ind][0] - Qy[ind][0] * Nq); Qc = Math.Abs(Q[ind][1] - Qy[ind][1] * Nq); Qj = Math.Abs(Q[ind][2] - Qy[ind][2] * Nq);
                             Qi_text = Qi.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qi)));
                             Qc_text = Qc.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qc)));
                             Qj_text = Qj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qj)));
@@ -1037,6 +1155,7 @@ namespace OpenSeesUtility
                             Qac_text = Qac.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qac)));
                             Qaj_text = Qaj.ToString("F10").Substring(0, Math.Max(5, Digit((int)Qaj)));
                             ki2 = Math.Abs(Qi / Qai); kc2 = Math.Abs(Qc / Qac); kj2 = Math.Abs(Qj / Qaj);
+                            values.Add(new List<string> { Ni_text, Nc_text, Nj_text });
                             values.Add(new List<string> { Mit_text, Mct_text, Mjt_text }); values.Add(new List<string> { Mib_text, Mcb_text, Mjb_text });
                             values.Add(new List<string> { Mait_text, Mact_text, Majt_text }); values.Add(new List<string> { Maib_text, Macb_text, Majb_text });
                             values.Add(new List<string> { ki.ToString("F10").Substring(0, 4), kc.ToString("F10").Substring(0, 4), kj.ToString("F10").Substring(0, 4) });
@@ -1084,16 +1203,16 @@ namespace OpenSeesUtility
                                 else
                                 {
                                     var color1 = XBrushes.Black; var color2 = XBrushes.Black; var color3 = XBrushes.Black; var f = font;
-                                    if (i == 26) { color1 = k_color[0]; color2 = k_color[1]; color3 = k_color[2]; }
-                                    if (i == 29) { color1 = k2_color[0]; color2 = k2_color[1]; color3 = k2_color[2]; }
-                                    if (i == 36) { color1 = k_color[3]; color2 = k_color[4]; color3 = k_color[5]; }
-                                    if (i == 39) { color1 = k2_color[3]; color2 = k2_color[4]; color3 = k2_color[5]; }
-                                    if (i == 46) { color1 = k_color[6]; color2 = k_color[7]; color3 = k_color[8]; }
-                                    if (i == 49) { color1 = k2_color[6]; color2 = k2_color[7]; color3 = k2_color[8]; }
-                                    if (i == 56) { color1 = k_color[9]; color2 = k_color[10]; color3 = k_color[11]; }
-                                    if (i == 59) { color1 = k2_color[9]; color2 = k2_color[10]; color3 = k2_color[11]; }
-                                    if (i == 66) { color1 = k_color[12]; color2 = k_color[13]; color3 = k_color[14]; }
-                                    if (i == 69) { color1 = k2_color[12]; color2 = k2_color[13]; color3 = k2_color[14]; }
+                                    if (i == 27) { color1 = k_color[0]; color2 = k_color[1]; color3 = k_color[2]; }
+                                    if (i == 30) { color1 = k2_color[0]; color2 = k2_color[1]; color3 = k2_color[2]; }
+                                    if (i == 38) { color1 = k_color[3]; color2 = k_color[4]; color3 = k_color[5]; }
+                                    if (i == 41) { color1 = k2_color[3]; color2 = k2_color[4]; color3 = k2_color[5]; }
+                                    if (i == 49) { color1 = k_color[6]; color2 = k_color[7]; color3 = k_color[8]; }
+                                    if (i == 52) { color1 = k2_color[6]; color2 = k2_color[7]; color3 = k2_color[8]; }
+                                    if (i == 60) { color1 = k_color[9]; color2 = k_color[10]; color3 = k_color[11]; }
+                                    if (i == 63) { color1 = k2_color[9]; color2 = k2_color[10]; color3 = k2_color[11]; }
+                                    if (i == 71) { color1 = k_color[12]; color2 = k_color[13]; color3 = k_color[14]; }
+                                    if (i == 74) { color1 = k2_color[12]; color2 = k2_color[13]; color3 = k2_color[14]; }
                                     gfx.DrawString(values[i][0], f, color1, new XRect(offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i, text_width, offset_y + pitchy * (i + 1)), XStringFormats.TopCenter);
                                     gfx.DrawString(values[i][1], f, color2, new XRect(offset_x + label_width + text_width * 3 * j + text_width, offset_y + pitchy * i, text_width, offset_y + pitchy * (i + 1)), XStringFormats.TopCenter);
                                     gfx.DrawString(values[i][2], f, color3, new XRect(offset_x + label_width + text_width * 3 * j + text_width * 2, offset_y + pitchy * i, text_width, offset_y + pitchy * (i + 1)), XStringFormats.TopCenter);

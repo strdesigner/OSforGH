@@ -237,6 +237,7 @@ namespace VisualizeResult
                     var d = _d.Branches; double dmax = 0.0;
                     ///節点の描画****************************************************************************************
                     var ddivlist = new List<List<Point3d>>(); var rdivlist = new List<List<Point3d>>();
+                    if (dscale == 0) { dscale=1e-12; }
                     for (int e = 0; e < m; e++)
                     {
                         int i = (int)ij[e][0].Value; int j = (int)ij[e][1].Value; double theta = ij[e][4].Value;

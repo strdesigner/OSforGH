@@ -55,6 +55,18 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("spring element", "spring", "[[No.i, No.j, kxt, ktc, kyt, kyc, kzt, kzc, rx, ry, rz(spring value)],...](DataTree)", GH_ParamAccess.tree, -9999);///
             pManager.AddNumberParameter("spring_allowable_f", "spring_a", "[[Nta,Nca,Qyta,Qyca,Qzta,Qzca,Mxa,Mya,Mza],...](DataTree)", GH_ParamAccess.tree,-9999);///
             pManager.AddTextParameter("secname", "secname", "[secname0,secname1,...]", GH_ParamAccess.list,"-9999");///
+            pManager.AddNumberParameter("p_load1", "p_load1", "[[No,Fx,Fy,Fz,Mx,My,Mz],...]", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("p_load2", "p_load2", "[[No,Fx,Fy,Fz,Mx,My,Mz],...]", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("p_load3", "p_load3", "[[No,Fx,Fy,Fz,Mx,My,Mz],...]", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("e_load1", "e_load1", "[[No.,Wx,Wy,Wz],...]", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("e_load2", "e_load2", "[[No.,Wx,Wy,Wz],...]", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("e_load3", "e_load3", "[[No.,Wx,Wy,Wz],...]", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("sf_load1", "sf_load1", "[[No.i,No.j,No.k,No.l,Sz],...]", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("sf_load2", "sf_load2", "[[No.i,No.j,No.k,No.l,Sz],...]", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("sf_load3", "sf_load3", "[[No.i,No.j,No.k,No.l,Sz],...]", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("w_load1", "w_load1", "[[No.i,No.j,No.k,No.l,Wz],...]", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("w_load2", "w_load2", "[[No.i,No.j,No.k,No.l,Wz],...]", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("w_load3", "w_load3", "[[No.i,No.j,No.k,No.l,Wz],...]", GH_ParamAccess.tree, -9999);///
             pManager.AddNumberParameter("disp", "D(R)", "[[dx,dy,dz,theta_x,theta_y,theta_z],...](DataTree)", GH_ParamAccess.tree, -9999);
             pManager.AddNumberParameter("reaction_force", "reac_f", "[[Node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree, -9999);///
             pManager.AddNumberParameter("sectional_force1", "sec_f1", "[[element No.,Pxi,Pyi,Pzi,Mxi,Myi,Mzi,Pxj,Pyj,Pzj,Mxj,Myj,Mzj,Pxc,Pyc,Pzc,Mxc,Myc,Mzc],...](DataTree)", GH_ParamAccess.tree, -9999);///
@@ -83,6 +95,18 @@ namespace OpenSeesUtility
             DA.GetDataTree("element_node_relationship(shell)", out GH_Structure<GH_Number> _ijkl); var ijkl = _ijkl.Branches;
             DA.GetDataTree("boundary_condition", out GH_Structure<GH_Number> _B); var B = _B.Branches;
             DA.GetDataTree("joint condition", out GH_Structure<GH_Number> _joint); var joint = _joint.Branches;
+            DA.GetDataTree("p_load1", out GH_Structure<GH_Number> _p_load1); var p_load1 = _p_load1.Branches;
+            DA.GetDataTree("p_load2", out GH_Structure<GH_Number> _p_load2); var p_load2 = _p_load2.Branches;
+            DA.GetDataTree("p_load3", out GH_Structure<GH_Number> _p_load3); var p_load3 = _p_load3.Branches;
+            DA.GetDataTree("e_load1", out GH_Structure<GH_Number> _e_load); var e_load = _e_load.Branches;
+            DA.GetDataTree("e_load2", out GH_Structure<GH_Number> _e_load2); var e_load2 = _e_load2.Branches;
+            DA.GetDataTree("e_load3", out GH_Structure<GH_Number> _e_load3); var e_load3 = _e_load3.Branches;
+            DA.GetDataTree("sf_load1", out GH_Structure<GH_Number> _sf_load); var sf_load = _sf_load.Branches;
+            DA.GetDataTree("sf_load2", out GH_Structure<GH_Number> _sf_load2); var sf_load2 = _sf_load2.Branches;
+            DA.GetDataTree("sf_load3", out GH_Structure<GH_Number> _sf_load3); var sf_load3 = _sf_load3.Branches;
+            DA.GetDataTree("w_load1", out GH_Structure<GH_Number> _w_load); var w_load = _w_load.Branches;
+            DA.GetDataTree("w_load2", out GH_Structure<GH_Number> _w_load2); var w_load2 = _w_load2.Branches;
+            DA.GetDataTree("w_load3", out GH_Structure<GH_Number> _w_load3); var w_load3 = _w_load3.Branches;
             DA.GetDataTree("spring element", out GH_Structure<GH_Number> _spring); var spring = _spring.Branches;
             DA.GetDataTree("spring_allowable_f", out GH_Structure<GH_Number> _spring_a); var spring_a = _spring_a.Branches;
             DA.GetDataTree("disp", out GH_Structure<GH_Number> _d); var d = _d.Branches;
@@ -270,6 +294,747 @@ namespace OpenSeesUtility
                     var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
                     // ドキュメントを保存。
                     var filename = dir + "/" + pdfname + "_bnds.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (p_load1[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 7 + 1;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var slide = -clear; var count = 1;
+                    var labels = new List<string> { "No.", "Fx", "Fy", "Fz", "Mx", "My", "Mz" };
+                    var labels2 = new List<string> { "", "[kN]", "[kN]", "[kN]", "[kNm]", "[kNm]", "[kNm]" };
+                    var Fx = 0.0; var Fy = 0.0; var Fz = 0.0; var Mx = 0.0; var My = 0.0; var Mz = 0.0;
+                    for (int i = 0; i < p_load1.Count; i++)
+                    {
+                        var No = (int)p_load1[i][0].Value;
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 2) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1;
+                        var values = new List<string> { No.ToString(), p_load1[i][1].Value.ToString("F"), p_load1[i][2].Value.ToString("F"), p_load1[i][3].Value.ToString("F"), p_load1[i][4].Value.ToString("F"), p_load1[i][5].Value.ToString("F"), p_load1[i][6].Value.ToString("F") };
+                        Fx += p_load1[i][1].Value; Fy += p_load1[i][2].Value; Fz += p_load1[i][3].Value; Mx += p_load1[i][4].Value; My += p_load1[i][5].Value; Mz += p_load1[i][6].Value;
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    count += 1;
+                    var total_values = new List<string> { "sum", Fx.ToString("F"), Fy.ToString("F"), Fz.ToString("F"), Mx.ToString("F"), My.ToString("F"), Mz.ToString("F") };
+                    for (int j = 0; j < total_values.Count; j++)
+                    {
+                        gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                        gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                        gfx.DrawString(total_values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                        if (j == labels.Count - 1)
+                        {
+                            j += 1;
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_p1.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (p_load2[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 7 + 1;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var slide = -clear; var count = 1;
+                    var labels = new List<string> { "No.", "Fx", "Fy", "Fz", "Mx", "My", "Mz" };
+                    var labels2 = new List<string> { "", "[kN]", "[kN]", "[kN]", "[kNm]", "[kNm]", "[kNm]" };
+                    var Fx = 0.0; var Fy = 0.0; var Fz = 0.0; var Mx = 0.0; var My = 0.0; var Mz = 0.0;
+                    for (int i = 0; i < p_load2.Count; i++)
+                    {
+                        var No = (int)p_load2[i][0].Value;
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 2) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1;
+                        var values = new List<string> { No.ToString(), p_load2[i][1].Value.ToString("F"), p_load2[i][2].Value.ToString("F"), p_load2[i][3].Value.ToString("F"), p_load2[i][4].Value.ToString("F"), p_load2[i][5].Value.ToString("F"), p_load2[i][6].Value.ToString("F") };
+                        Fx += p_load2[i][1].Value; Fy += p_load2[i][2].Value; Fz += p_load2[i][3].Value; Mx += p_load2[i][4].Value; My += p_load2[i][5].Value; Mz += p_load2[i][6].Value;
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    count += 1;
+                    var total_values = new List<string> { "sum", Fx.ToString("F"), Fy.ToString("F"), Fz.ToString("F"), Mx.ToString("F"), My.ToString("F"), Mz.ToString("F") };
+                    for (int j = 0; j < total_values.Count; j++)
+                    {
+                        gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                        gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                        gfx.DrawString(total_values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                        if (j == labels.Count - 1)
+                        {
+                            j += 1;
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_p2.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (p_load3[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 7 + 1;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var slide = -clear; var count = 1;
+                    var labels = new List<string> { "No.", "Fx", "Fy", "Fz", "Mx", "My", "Mz" };
+                    var labels2 = new List<string> { "", "[kN]", "[kN]", "[kN]", "[kNm]", "[kNm]", "[kNm]" };
+                    var Fx = 0.0; var Fy = 0.0; var Fz = 0.0; var Mx = 0.0; var My = 0.0; var Mz = 0.0;
+                    for (int i = 0; i < p_load3.Count; i++)
+                    {
+                        var No = (int)p_load3[i][0].Value;
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 2) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1;
+                        var values = new List<string> { No.ToString(), p_load3[i][1].Value.ToString("F"), p_load3[i][2].Value.ToString("F"), p_load3[i][3].Value.ToString("F"), p_load3[i][4].Value.ToString("F"), p_load3[i][5].Value.ToString("F"), p_load3[i][6].Value.ToString("F") };
+                        Fx += p_load3[i][1].Value; Fy += p_load3[i][2].Value; Fz += p_load3[i][3].Value; Mx += p_load3[i][4].Value; My += p_load3[i][5].Value; Mz += p_load3[i][6].Value;
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    count += 1;
+                    var total_values = new List<string> { "sum", Fx.ToString("F"), Fy.ToString("F"), Fz.ToString("F"), Mx.ToString("F"), My.ToString("F"), Mz.ToString("F") };
+                    for (int j = 0; j < total_values.Count; j++)
+                    {
+                        gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                        gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                        gfx.DrawString(total_values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                        if (j == labels.Count - 1)
+                        {
+                            j += 1;
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_p3.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (e_load[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 4 + 5;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var slide = -clear; var count = 1;
+                    var labels = new List<string> { "No.", "Wx", "Wy", "Wz" };
+                    var labels2 = new List<string> { "", "[kN/m]", "[kN/m]", "[kN/m]" };
+                    for (int i = 0; i < e_load.Count; i++)
+                    {
+                        var No = (int)e_load[i][0].Value;
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 3) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1;
+                        var values = new List<string> { No.ToString(), e_load[i][1].Value.ToString("F"), e_load[i][2].Value.ToString("F"), e_load[i][3].Value.ToString("F")};
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_e_load1.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (e_load2[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 4 + 5;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var slide = -clear; var count = 1;
+                    var labels = new List<string> { "No.", "Wx", "Wy", "Wz" };
+                    var labels2 = new List<string> { "", "[kN/m]", "[kN/m]", "[kN/m]" };
+                    for (int i = 0; i < e_load2.Count; i++)
+                    {
+                        var No = (int)e_load2[i][0].Value;
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 3) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1;
+                        var values = new List<string> { No.ToString(), e_load2[i][1].Value.ToString("F"), e_load2[i][2].Value.ToString("F"), e_load2[i][3].Value.ToString("F") };
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_e_load2.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (e_load3[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 4 + 5;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var slide = -clear; var count = 1;
+                    var labels = new List<string> { "No.", "Wx", "Wy", "Wz" };
+                    var labels2 = new List<string> { "", "[kN/m]", "[kN/m]", "[kN/m]" };
+                    for (int i = 0; i < e_load3.Count; i++)
+                    {
+                        var No = (int)e_load3[i][0].Value;
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 3) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1;
+                        var values = new List<string> { No.ToString(), e_load3[i][1].Value.ToString("F"), e_load3[i][2].Value.ToString("F"), e_load3[i][3].Value.ToString("F") };
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_e_load3.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (sf_load[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 5 + 5;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var labels = new List<string> { "No.", "No.", "No.", "No.","Sz" };
+                    var labels2 = new List<string> { "i", "j", "k", "l", "[kN/m2]" };
+                    if (sf_load[0].Count >= 10){ labels.Add("Sz2"); labels2.Add("[kN/m2]"); clear += label_width; }
+                    var slide = -clear; var count = 1;
+                    for (int i = 0; i < sf_load.Count; i++)
+                    {
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 2) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1; var n4 = ((int)sf_load[i][3].Value).ToString();
+                        if ((int)sf_load[i][3].Value == -1) { n4 = "--"; }
+                        var values = new List<string> { ((int)sf_load[i][0].Value).ToString(), ((int)sf_load[i][1].Value).ToString(), ((int)sf_load[i][2].Value).ToString(), n4, sf_load[i][4].Value.ToString("F")};
+                        if (sf_load[0].Count >= 10) { values.Add(sf_load[i][9].Value.ToString("F")); }
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_sf_load.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (sf_load2[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 5 + 5;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var labels = new List<string> { "No.", "No.", "No.", "No.", "Sz" };
+                    var labels2 = new List<string> { "i", "j", "k", "l", "[kN/m2]" };
+                    if (sf_load2[0].Count >= 10) { labels.Add("Sz2"); labels2.Add("[kN/m2]"); clear += label_width; }
+                    var slide = -clear; var count = 1;
+                    for (int i = 0; i < sf_load2.Count; i++)
+                    {
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 2) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1; var n4 = ((int)sf_load2[i][3].Value).ToString();
+                        if ((int)sf_load2[i][3].Value == -1) { n4 = "--"; }
+                        var values = new List<string> { ((int)sf_load2[i][0].Value).ToString(), ((int)sf_load2[i][1].Value).ToString(), ((int)sf_load2[i][2].Value).ToString(), n4, sf_load2[i][4].Value.ToString("F") };
+                        if (sf_load2[0].Count >= 10) { values.Add(sf_load2[i][9].Value.ToString("F")); }
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_sf_load2.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (sf_load3[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 5 + 5;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var labels = new List<string> { "No.", "No.", "No.", "No.", "Sz" };
+                    var labels2 = new List<string> { "i", "j", "k", "l", "[kN/m2]" };
+                    if (sf_load3[0].Count >= 10) { labels.Add("Sz2"); labels2.Add("[kN/m2]"); clear += label_width; }
+                    var slide = -clear; var count = 1;
+                    for (int i = 0; i < sf_load3.Count; i++)
+                    {
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 2) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1; var n4 = ((int)sf_load3[i][3].Value).ToString();
+                        if ((int)sf_load3[i][3].Value == -1) { n4 = "--"; }
+                        var values = new List<string> { ((int)sf_load3[i][0].Value).ToString(), ((int)sf_load3[i][1].Value).ToString(), ((int)sf_load3[i][2].Value).ToString(), n4, sf_load3[i][4].Value.ToString("F") };
+                        if (sf_load3[0].Count >= 10) { values.Add(sf_load3[i][9].Value.ToString("F")); }
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_sf_load3.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (w_load[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 5 + 5;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var labels = new List<string> { "No.", "No.", "No.", "No.", "Wz" };
+                    var labels2 = new List<string> { "i", "j", "k", "l", "[kN/m2]" };
+                    if (w_load[0].Count >= 10) { labels.Add("Wz2"); labels2.Add("[kN/m2]"); clear += label_width; }
+                    var slide = -clear; var count = 1;
+                    for (int i = 0; i < w_load.Count; i++)
+                    {
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 2) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1; var n4 = ((int)w_load[i][3].Value).ToString();
+                        if ((int)w_load[i][3].Value == -1) { n4 = "--"; }
+                        var values = new List<string> { ((int)w_load[i][0].Value).ToString(), ((int)w_load[i][1].Value).ToString(), ((int)w_load[i][2].Value).ToString(), n4, w_load[i][4].Value.ToString("F") };
+                        if (w_load[0].Count >= 10) { values.Add(w_load[i][9].Value.ToString("F")); }
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_w_load.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (w_load2[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 5 + 5;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var labels = new List<string> { "No.", "No.", "No.", "No.", "Wz" };
+                    var labels2 = new List<string> { "i", "j", "k", "l", "[kN/m2]" };
+                    if (w_load2[0].Count >= 10) { labels.Add("Wz2"); labels2.Add("[kN/m2]"); clear += label_width; }
+                    var slide = -clear; var count = 1;
+                    for (int i = 0; i < w_load2.Count; i++)
+                    {
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 2) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1; var n4 = ((int)w_load2[i][3].Value).ToString();
+                        if ((int)w_load2[i][3].Value == -1) { n4 = "--"; }
+                        var values = new List<string> { ((int)w_load2[i][0].Value).ToString(), ((int)w_load2[i][1].Value).ToString(), ((int)w_load2[i][2].Value).ToString(), n4, w_load2[i][4].Value.ToString("F") };
+                        if (w_load2[0].Count >= 10) { values.Add(w_load2[i][9].Value.ToString("F")); }
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_w_load2.pdf";
+                    document.Save(filename);
+                    // ビューアを起動。
+                    Process.Start(filename);
+                }
+                if (w_load3[0][0].Value != -9999)
+                {
+                    // PDFドキュメントを作成。
+                    PdfDocument document = new PdfDocument();
+                    document.Info.Title = pdfname;
+                    document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                    var label_width = 40; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; var lines = 50; var clear = label_width * 5 + 5;
+                    PdfPage page = new PdfPage(); page.Size = PageSize.A4; var pen = XPens.Black;
+                    var labels = new List<string> { "No.", "No.", "No.", "No.", "Wz" };
+                    var labels2 = new List<string> { "i", "j", "k", "l", "[kN/m2]" };
+                    if (w_load3[0].Count >= 10) { labels.Add("Wz2"); labels2.Add("[kN/m2]"); clear += label_width; }
+                    var slide = -clear; var count = 1;
+                    for (int i = 0; i < w_load3.Count; i++)
+                    {
+                        if (i % lines == 0)
+                        {
+                            count = 1;
+                            if (i % (lines * 2) == 0)
+                            {
+                                page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); slide = -clear;
+                            }
+                            slide += clear;
+                            for (int j = 0; j < labels.Count; j++)//ラベル列**************************************************************************
+                            {
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * (j + 1) + slide, offset_y);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * 2, offset_x + label_width * (j + 1) + slide, offset_y + pitchy * 2);//横線
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                gfx.DrawString(labels[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y, label_width, offset_y + pitchy), XStringFormats.TopCenter);
+                                gfx.DrawString(labels2[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy, label_width, offset_y + pitchy * 2), XStringFormats.TopCenter);
+                                if (j == labels.Count - 1)
+                                {
+                                    j += 1;
+                                    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y, offset_x + label_width * j + slide, offset_y + pitchy * 2);//縦線
+                                }
+                            }
+                        }
+                        count += 1; var n4 = ((int)w_load3[i][3].Value).ToString();
+                        if ((int)w_load3[i][3].Value == -1) { n4 = "--"; }
+                        var values = new List<string> { ((int)w_load3[i][0].Value).ToString(), ((int)w_load3[i][1].Value).ToString(), ((int)w_load3[i][2].Value).ToString(), n4, w_load3[i][4].Value.ToString("F") };
+                        if (w_load3[0].Count >= 10) { values.Add(w_load3[i][9].Value.ToString("F")); }
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                            gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            gfx.DrawString(values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                            if (j == labels.Count - 1)
+                            {
+                                j += 1;
+                                gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                            }
+                        }
+                    }
+                    var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
+                    // ドキュメントを保存。
+                    var filename = dir + "/" + pdfname + "_w_load3.pdf";
                     document.Save(filename);
                     // ビューアを起動。
                     Process.Start(filename);
