@@ -86,6 +86,7 @@
     <Compile Include="Eccentricity.cs" />
     <Compile Include="IndividualFooting.cs" />
     <Compile Include="DataOutput.cs" />
+    <Compile Include="VisualizeResult2.cs" />
     <Compile Include="VisualizeResultSpring.cs" />
     <Compile Include="RCWallUltimateCheck.cs" />
     <Compile Include="ReadBrace.cs" />
@@ -373,6 +374,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\dataoutput.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\VisResult2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

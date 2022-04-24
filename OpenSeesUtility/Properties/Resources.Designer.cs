@@ -813,6 +813,16 @@ namespace OpenSeesUtility.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap VisResult2 {
+            get {
+                object obj = ResourceManager.GetObject("VisResult2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap VisResultShell {
             get {
                 object obj = ResourceManager.GetObject("VisResultShell", resourceCulture);
