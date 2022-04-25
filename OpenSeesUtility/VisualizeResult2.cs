@@ -630,17 +630,17 @@ namespace OpenSeesUtility
                                     if (val1 * val2 >= 0)
                                     {
                                         var ptc1 = (pts[i] + pts[i + 1]) / 2.0; var ptc2 = (pts2[i] + pts2[i + 1]) / 2.0;
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], ptc1, ptc2, pts2[i]);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc1, pts2[i], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc1, pts[i + 1], pts2[i + 1], ptc2);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc1, pts2[i + 1], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                     else
                                     {
                                         var ptc = pts2[i] + (pts2[i + 1] - pts2[i]) * Math.Abs(val1) / (Math.Abs(val1) + Math.Abs(val2));
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], pts2[i], ptc);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc, pts2[i], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc, pts[i + 1], pts2[i + 1]);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc, pts2[i + 1], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                 }
@@ -670,17 +670,17 @@ namespace OpenSeesUtility
                                     if (val1 * val2 >= 0)
                                     {
                                         var ptc1 = (pts[i] + pts[i + 1]) / 2.0; var ptc2 = (pts2[i] + pts2[i + 1]) / 2.0;
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], ptc1, ptc2, pts2[i]);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc1, pts2[i], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc1, pts[i + 1], pts2[i + 1], ptc2);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc1, pts2[i + 1], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                     else
                                     {
                                         var ptc = pts2[i] + (pts2[i + 1] - pts2[i]) * Math.Abs(val1) / (Math.Abs(val1) + Math.Abs(val2));
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], pts2[i], ptc);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc, pts2[i], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc, pts[i + 1], pts2[i + 1]);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc, pts2[i + 1], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                 }
@@ -710,17 +710,17 @@ namespace OpenSeesUtility
                                     if (val1 * val2 >= 0)
                                     {
                                         var ptc1 = (pts[i] + pts[i + 1]) / 2.0; var ptc2 = (pts2[i] + pts2[i + 1]) / 2.0;
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], ptc1, ptc2, pts2[i]);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc1, pts2[i], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc1, pts[i + 1], pts2[i + 1], ptc2);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc1, pts2[i + 1], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                     else
                                     {
                                         var ptc = pts2[i] + (pts2[i + 1] - pts2[i]) * Math.Abs(val1) / (Math.Abs(val1) + Math.Abs(val2));
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], pts2[i], ptc);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc, pts2[i], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc, pts[i + 1], pts2[i + 1]);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc, pts2[i + 1], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                 }
@@ -750,17 +750,17 @@ namespace OpenSeesUtility
                                     if (val1 * val2 >= 0)
                                     {
                                         var ptc1 = (pts[i] + pts[i + 1]) / 2.0; var ptc2 = (pts2[i] + pts2[i + 1]) / 2.0;
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], ptc1, ptc2, pts2[i]);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc1, pts2[i], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc1, pts[i + 1], pts2[i + 1], ptc2);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc1, pts2[i + 1], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                     else
                                     {
                                         var ptc = pts2[i] + (pts2[i + 1] - pts2[i]) * Math.Abs(val1) / (Math.Abs(val1) + Math.Abs(val2));
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], pts2[i], ptc);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc, pts2[i], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc, pts[i + 1], pts2[i + 1]);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc, pts2[i + 1], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                 }
@@ -779,7 +779,6 @@ namespace OpenSeesUtility
                                 curve.DivideByCount(div, true, out Point3d[] pts);
                                 var pts2 = new List<Point3d>(); var color3 = new ColorHSL(1.9 / 3.0, 1, 0.5);
                                 for (int i = 0; i < pts.Length; i++) { pts2.Add(element.ClosestPoint(pts[i], true)); }
-                                RhinoApp.WriteLine(Nmax.ToString() + " " + Nmin.ToString());
                                 for (int i = 0; i < pts.Length - 1; i++)
                                 {
                                     var vec1 = pts[i] - pts2[i]; var val1 = vec1.Length;
@@ -799,17 +798,17 @@ namespace OpenSeesUtility
                                     if (val1 * val2 >= 0)
                                     {
                                         var ptc1 = (pts[i] + pts[i + 1]) / 2.0; var ptc2 = (pts2[i] + pts2[i + 1]) / 2.0;
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], ptc1, ptc2, pts2[i]);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc1, pts2[i], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc1, pts[i + 1], pts2[i + 1], ptc2);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc1, pts2[i + 1], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                     else
                                     {
                                         var ptc = pts2[i] + (pts2[i + 1] - pts2[i]) * Math.Abs(val1) / (Math.Abs(val1) + Math.Abs(val2));
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], pts2[i], ptc);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc, pts2[i], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc, pts[i + 1], pts2[i + 1]);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc, pts2[i + 1], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                 }
@@ -839,17 +838,17 @@ namespace OpenSeesUtility
                                     if (val1 * val2 >= 0)
                                     {
                                         var ptc1 = (pts[i] + pts[i + 1]) / 2.0; var ptc2 = (pts2[i] + pts2[i + 1]) / 2.0;
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], ptc1, ptc2, pts2[i]);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc1, pts2[i], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc1, pts[i + 1], pts2[i + 1], ptc2);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc1, pts2[i + 1], ptc2 }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                     else
                                     {
                                         var ptc = pts2[i] + (pts2[i + 1] - pts2[i]) * Math.Abs(val1) / (Math.Abs(val1) + Math.Abs(val2));
-                                        var surf = NurbsSurface.CreateFromCorners(pts[i], pts2[i], ptc);
+                                        var surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i], ptc, pts2[i], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color1);
-                                        surf = NurbsSurface.CreateFromCorners(ptc, pts[i + 1], pts2[i + 1]);
+                                        surf = NurbsSurface.CreateFromPoints(new Point3d[] { pts[i + 1], ptc, pts2[i + 1], ptc }, 2, 2, 1, 1);
                                         _surf.Add(surf); _cs.Add(color2);
                                     }
                                 }
