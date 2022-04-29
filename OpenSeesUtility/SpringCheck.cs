@@ -85,6 +85,7 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("fontsize", "FS", "font size for display texts", GH_ParamAccess.item, 12.0);///
             pManager.AddTextParameter("casename", "casename", "casenames", GH_ParamAccess.list, new List<string> { "長期検討","L+X検討", "L+Y検討", "L-X検討", "L-Y検討" });///
             pManager.AddTextParameter("outputname", "outputname", "output file name", GH_ParamAccess.item, "SpringCheck");///
+            pManager.AddNumberParameter("n", "n", "ratio of shortterm /longterm allowable stress (default=2.0)", GH_ParamAccess.item, 2.0);///
         }
 
         /// <summary>
@@ -106,6 +107,7 @@ namespace OpenSeesUtility
             DA.GetDataTree("spring element", out GH_Structure<GH_Number> _spring); var spring = _spring.Branches;
             DA.GetDataTree("spring_force", out GH_Structure<GH_Number> _spring_f); var spring_f = _spring_f.Branches;
             DA.GetDataTree("spring_allowable_f", out GH_Structure<GH_Number> _spring_a); var spring_a = _spring_a.Branches;
+            var nvalue = 2.0; DA.GetData("n", ref nvalue);
             List<double> index = new List<double>(); DA.GetDataList("index", index); var pts = new List<Point3d>();
             var casename = new List<string>(); DA.GetDataList("casename", casename);
             var kentei = new GH_Structure<GH_Number>(); int digit = 4; fontsize = 20.0; DA.GetData("fontsize", ref fontsize);
@@ -211,29 +213,29 @@ namespace OpenSeesUtility
                         //L
                         if (N >= 0)
                         {
-                            if (Na1 != 0) { kN1 = N / Na1 * 2; };
+                            if (Na1 != 0) { kN1 = N / Na1 * nvalue; };
                         }
                         else
                         {
-                            if (Na2 != 0) { kN1 = -N / Na2 * 2; };
+                            if (Na2 != 0) { kN1 = -N / Na2 * nvalue; };
                         }
                         if (Qy >= 0)
                         {
-                            if (Qya1 != 0) { kQy1 = Qy / Qya1 * 2; };
+                            if (Qya1 != 0) { kQy1 = Qy / Qya1 * nvalue; };
                         }
                         else
                         {
-                            if (Qya2 != 0) { kQy1 = -Qy / Qya2 * 2; };
+                            if (Qya2 != 0) { kQy1 = -Qy / Qya2 * nvalue; };
                         }
                         if (Qz >= 0)
                         {
-                            if (Qza1 != 0) { kQz1 = Qz / Qza1 * 2; };
+                            if (Qza1 != 0) { kQz1 = Qz / Qza1 * nvalue; };
                         }
                         else
                         {
-                            if (Qza2 != 0) { kQz1 = -Qz / Qza2 * 2; };
+                            if (Qza2 != 0) { kQz1 = -Qz / Qza2 * nvalue; };
                         }
-                        if (Mya != 0) { kMy1 = Math.Abs(My) / Mya * 2; }; if (Mza != 0) { kMz1 = Math.Abs(Mz) / Mza * 2; };
+                        if (Mya != 0) { kMy1 = Math.Abs(My) / Mya * nvalue; }; if (Mza != 0) { kMz1 = Math.Abs(Mz) / Mza * nvalue; };
                         //L+X
                         if ((N + N_x1) >= 0)
                         {
@@ -393,14 +395,14 @@ namespace OpenSeesUtility
                         var Na1_text = new List<string> { "-", "", "-" }; var Na2_text = new List<string> { "-", "", "-" };
                         var Qya1_text = new List<string> { "-", "", "-" }; var Qya2_text = new List<string> { "-", "", "-" }; var Qza1_text = new List<string> { "-", "", "-" }; var Qza2_text = new List<string> { "-", "", "-" };
                         var Mya_text = new List<string> { "-" }; var Mza_text = new List<string> { "-" };
-                        if (Na1 != 0) { Na1_text = new List<string> { Math.Round(Na1 / 2.0, 2).ToString(), "", Math.Round(Na1, 2).ToString() }; }
-                        if (Na2 != 0) { Na2_text = new List<string> { Math.Round(Na2 / 2.0, 2).ToString(), "", Math.Round(Na2, 2).ToString() }; }
-                        if (Qya1 != 0) { Qya1_text = new List<string> { Math.Round(Qya1 / 2.0, 2).ToString(), "", Math.Round(Qya1, 2).ToString() }; }
-                        if (Qya2 != 0) { Qya2_text = new List<string> { Math.Round(Qya2 / 2.0, 2).ToString(), "", Math.Round(Qya2, 2).ToString() }; }
-                        if (Qza1 != 0) { Qza1_text = new List<string> { Math.Round(Qza1 / 2.0, 2).ToString(), "", Math.Round(Qza1, 2).ToString() }; }
-                        if (Qza2 != 0) { Qza2_text = new List<string> { Math.Round(Qza2 / 2.0, 2).ToString(), "", Math.Round(Qza2, 2).ToString() }; }
-                        if (Mya != 0) { Mya_text = new List<string> { Math.Round(Mya / 2.0, 2).ToString(), "", Math.Round(Mya, 2).ToString() }; }
-                        if (Mza != 0) { Mza_text = new List<string> { Math.Round(Mza / 2.0, 2).ToString(), "", Math.Round(Mza, 2).ToString() }; }
+                        if (Na1 != 0) { Na1_text = new List<string> { Math.Round(Na1 / nvalue, 2).ToString(), "", Math.Round(Na1, 2).ToString() }; }
+                        if (Na2 != 0) { Na2_text = new List<string> { Math.Round(Na2 / nvalue, 2).ToString(), "", Math.Round(Na2, 2).ToString() }; }
+                        if (Qya1 != 0) { Qya1_text = new List<string> { Math.Round(Qya1 / nvalue, 2).ToString(), "", Math.Round(Qya1, 2).ToString() }; }
+                        if (Qya2 != 0) { Qya2_text = new List<string> { Math.Round(Qya2 / nvalue, 2).ToString(), "", Math.Round(Qya2, 2).ToString() }; }
+                        if (Qza1 != 0) { Qza1_text = new List<string> { Math.Round(Qza1 / nvalue, 2).ToString(), "", Math.Round(Qza1, 2).ToString() }; }
+                        if (Qza2 != 0) { Qza2_text = new List<string> { Math.Round(Qza2 / nvalue, 2).ToString(), "", Math.Round(Qza2, 2).ToString() }; }
+                        if (Mya != 0) { Mya_text = new List<string> { Math.Round(Mya / nvalue, 2).ToString(), "", Math.Round(Mya, 2).ToString() }; }
+                        if (Mza != 0) { Mza_text = new List<string> { Math.Round(Mza / nvalue, 2).ToString(), "", Math.Round(Mza, 2).ToString() }; }
                         //Qya+とQya-, Qza+とQza-は同じ値として+の値のみ出力
                         values.Add(Na1_text); values.Add(Na2_text); values.Add(Qya1_text); values.Add(Qza1_text); values.Add(Mya_text); values.Add(Mza_text);
                         values.Add(new List<string> { casename[0] });
@@ -607,15 +609,15 @@ namespace OpenSeesUtility
                 if (N < 0) { Na = spring_a[e][1].Value; }
                 if (Qy < 0) { Qya = spring_a[e][3].Value; }
                 if (Qz < 0) { Qza = spring_a[e][5].Value; }
-                if (Na != 0) { klist.Add(new GH_Number(Math.Abs(N) / Na * 2)); }
+                if (Na != 0) { klist.Add(new GH_Number(Math.Abs(N) / Na * nvalue)); }
                 else { klist.Add(new GH_Number(0)); }
-                if (Qya != 0) { klist.Add(new GH_Number(Math.Abs(Qy) / Qya * 2)); }
+                if (Qya != 0) { klist.Add(new GH_Number(Math.Abs(Qy) / Qya * nvalue)); }
                 else { klist.Add(new GH_Number(0)); }
-                if (Qza != 0) { klist.Add(new GH_Number(Math.Abs(Qz) / Qza * 2)); }
+                if (Qza != 0) { klist.Add(new GH_Number(Math.Abs(Qz) / Qza * nvalue)); }
                 else { klist.Add(new GH_Number(0)); }
-                if (Mya != 0) { klist.Add(new GH_Number(Math.Abs(My) / Mya * 2)); }
+                if (Mya != 0) { klist.Add(new GH_Number(Math.Abs(My) / Mya * nvalue)); }
                 else { klist.Add(new GH_Number(0)); }
-                if (Mza != 0) { klist.Add(new GH_Number(Math.Abs(Mz) / Mza * 2)); }
+                if (Mza != 0) { klist.Add(new GH_Number(Math.Abs(Mz) / Mza * nvalue)); }
                 else { klist.Add(new GH_Number(0)); }
                 kentei.AppendRange(klist, new GH_Path(new int[] { 0, e }));
                 if (on_off_11 == 1)
