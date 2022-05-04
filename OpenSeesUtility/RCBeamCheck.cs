@@ -101,7 +101,7 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("QaS(L+Y)", "QaS(L+Y)", "[[Qai,Qac,Qaj],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("QaS(L-X)", "QaS(L-X)", "[[Qai,Qac,Qaj],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("QaS(L-Y)", "QaS(L-Y)", "[[Qai,Qac,Qaj],...](DataTree)", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("kentei_hi", "kentei", "[[for Myi,for Myj,for Myc, for Qzi,for Qzj,for Qzc],...](DataTree)", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("kentei(max)", "kentei(max)", "[[element.No, long-term, short-term],...]", GH_ParamAccess.tree);///
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace OpenSeesUtility
                 index = new List<double>();
                 for (int e = 0; e < ij.Count; e++) { index.Add(e); }
             }
-            if (r[0][0].Value != -9999 && ij[0][0].Value != -9999 && sec_f[0][0].Value != -9999 && barT1[0][0].Value != -9999 && barT2[0][0].Value != -9999 && barB1[0][0].Value != -9999 && barB2[0][0].Value != -9999)
+            if (r[0][0].Value != -9999 && ij[0][0].Value != -9999 && sec_f[0][0].Value != -9999 && barT1[0][0].Value != -9999 && barT2[0][0].Value != -9999 && barB1[0][0].Value != -9999 && barB2[0][0].Value != -9999 && P1[0] != -9999 && P2[0] != -9999)
             {
                 if (barNo[0] == -9999)
                 {
@@ -547,7 +547,7 @@ namespace OpenSeesUtility
                     if (Mc < 0) { klist.Add(new GH_Number(Math.Abs(Mc) / Ma_ctL)); }
                     else { klist.Add(new GH_Number(Math.Abs(Mc) / Ma_cbL)); }
                     klist.Add(new GH_Number(Math.Abs(Qi) / Qa_iL)); klist.Add(new GH_Number(Math.Abs(Qj) / Qa_jL)); klist.Add(new GH_Number(Math.Abs(Qc) / Qa_cL));
-                    kentei.AppendRange(klist, new GH_Path(e,0));
+                    //kentei.AppendRange(klist, new GH_Path(e,0));
 
                     var ki = new List<double>(); var kj = new List<double>(); var kc = new List<double>();
                     if (Mi + Mi_x < 0) { ki.Add(Math.Abs(Mi + Mi_x) / Ma_itS); }
@@ -580,10 +580,14 @@ namespace OpenSeesUtility
                     k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qi+Qi_x * N) / Qa_iLpX, Math.Abs(Qi + Qi_x2 * N) / Qa_iLmX), Math.Max(Math.Abs(Qi + Qi_y * N) / Qa_iLpY, Math.Abs(Qi + Qi_y2 * N) / Qa_iLpY))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qj + Qj_x * N) / Qa_jLpX, Math.Abs(Qj + Qj_x2 * N) / Qa_jLmX), Math.Max(Math.Abs(Qj + Qj_y * N) / Qa_jLpY, Math.Abs(Qj + Qj_y2 * N) / Qa_jLpY))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qc + Qc_x * N) / Qa_cLpX, Math.Abs(Qc + Qc_x2 * N) / Qa_cLmX), Math.Max(Math.Abs(Qc + Qc_y * N) / Qa_cLpY, Math.Abs(Qc + Qc_y2 * N) / Qa_cLpY))));
-                    kentei.AppendRange(k2list, new GH_Path(e, 1));
+                    //kentei.AppendRange(k2list, new GH_Path(e, 1));
 
                     var r1 = new Point3d(r[ni][0].Value, r[ni][1].Value, r[ni][2].Value); var r2 = new Point3d(r[nj][0].Value, r[nj][1].Value, r[nj][2].Value);
                     var rc = (r1 + r2) / 2.0; var ri = (r1 + rc) / 2.0; var rj = (r2 + rc) / 2.0;
+                    var kmax1 = 0.0; var kmax2 = 0.0;
+                    for (int i = 0; i < klist.Count; i++) { kmax1 = Math.Max(kmax1, klist[i].Value); }
+                    for (int i = 0; i < k2list.Count; i++) { kmax2 = Math.Max(kmax2, k2list[i].Value); }
+                    kentei.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1), new GH_Number(kmax2) }, new GH_Path(ind));
                     if (on_off_11 == 1)
                     {
                         if (on_off_21 == 1)

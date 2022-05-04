@@ -71,10 +71,7 @@ namespace OpenSeesUtility
                "OpenSees", "Analysis")
         {
         }
-
-        /// <summary>
-        /// Registers all the input parameters for this component.
-        /// </summary>
+        public override bool IsPreviewCapable { get { return true; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddNumberParameter("nodal_coordinates", "R", "[[x1,y1,z1],...](DataTree)", GH_ParamAccess.tree, -9999);///
@@ -93,8 +90,7 @@ namespace OpenSeesUtility
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("kentei_hi", "kentei", "[[for N,for Qy,for Qz,for My,for Mz],...](DataTree)", GH_ParamAccess.tree);///
-            pManager.AddPointParameter("pts", "pts", "point", GH_ParamAccess.list);
+            pManager.AddNumberParameter("kentei(max)", "kentei(max)", "[[element.No, long-term, short-term],...]", GH_ParamAccess.tree);///
         }
 
         /// <summary>
@@ -116,6 +112,7 @@ namespace OpenSeesUtility
                 index = new List<double>();
                 for (int e = 0; e < spring.Count; e++) { index.Add(e); }
             }
+            var kmax1 = new List<double>(); var kmax2 = new List<double>();
             if (on_off == 1)
             {
                 XColor RGB(double h, double s, double l)//convert HSL to RGB
@@ -599,7 +596,7 @@ namespace OpenSeesUtility
             }
             for (int ind = 0; ind < index.Count; ind++)
             {
-                int e = (int)index[ind];
+                int e = (int)index[ind]; kmax1.Add(0.0); kmax2.Add(0.0);
                 var ni = (int)spring[e][0].Value; var nj = (int)spring[e][1].Value;
                 var r1 = new Point3d(r[ni][0].Value, r[ni][1].Value, r[ni][2].Value); var r2 = new Point3d(r[nj][0].Value, r[nj][1].Value, r[nj][2].Value);
                 var rc = (r1 + r2) / 2.0; pts.Add(rc);
@@ -619,7 +616,7 @@ namespace OpenSeesUtility
                 else { klist.Add(new GH_Number(0)); }
                 if (Mza != 0) { klist.Add(new GH_Number(Math.Abs(Mz) / Mza * nvalue)); }
                 else { klist.Add(new GH_Number(0)); }
-                kentei.AppendRange(klist, new GH_Path(new int[] { 0, e }));
+                //kentei.AppendRange(klist, new GH_Path(new int[] { 0, e }));
                 if (on_off_11 == 1)
                 {
                     if (on_off_21 == 1)
@@ -652,134 +649,141 @@ namespace OpenSeesUtility
                         if (k > 0.01) { _text.Add(k.ToString("F").Substring(0, digit)); _p.Add(rc); _c.Add(color); }
                     }
                 }
+                var N_x1 = 0.0; var Qy_x1 = 0.0; var Qz_x1 = 0.0; var My_x1 = 0.0; var Mz_x1 = 0.0;
+                var N_y1 = 0.0; var Qy_y1 = 0.0; var Qz_y1 = 0.0; var My_y1 = 0.0; var Mz_y1 = 0.0;
+                var N_x2 = 0.0; var Qy_x2 = 0.0; var Qz_x2 = 0.0; var My_x2 = 0.0; var Mz_x2 = 0.0; var N_y2 = 0.0; var Qy_y2 = 0.0; var Qz_y2 = 0.0; var My_y2 = 0.0; var Mz_y2 = 0.0;
                 if (spring_f[0].Count == 18 || spring_f[0].Count == 30)
                 {
-                    var N_x1 = spring_f[e][6 + 0].Value; var Qy_x1 = spring_f[e][6 + 1].Value; var Qz_x1 = spring_f[e][6 + 2].Value; var My_x1 = spring_f[e][6 + 4].Value; var Mz_x1 = spring_f[e][6 + 5].Value;
-                    var N_y1 = spring_f[e][12 + 0].Value; var Qy_y1 = spring_f[e][12 + 1].Value; var Qz_y1 = spring_f[e][12 + 2].Value; var My_y1 = spring_f[e][12 + 4].Value; var Mz_y1 = spring_f[e][12 + 5].Value;
-                    var N_x2 = -N_x1; var Qy_x2 = -Qy_x1; var Qz_x2 = -Qz_x1; var My_x2 = -My_x1; var Mz_x2 = -Mz_x1; var N_y2 = -N_y1; var Qy_y2 = -Qy_y1; var Qz_y2 = -Qz_y1; var My_y2 = -My_y1; var Mz_y2 = -Mz_y1;
-                    if (spring_f[0].Count == 30)
+                    N_x1 = spring_f[e][6 + 0].Value; Qy_x1 = spring_f[e][6 + 1].Value; Qz_x1 = spring_f[e][6 + 2].Value; My_x1 = spring_f[e][6 + 4].Value; Mz_x1 = spring_f[e][6 + 5].Value;
+                    N_y1 = spring_f[e][12 + 0].Value; Qy_y1 = spring_f[e][12 + 1].Value; Qz_y1 = spring_f[e][12 + 2].Value; My_y1 = spring_f[e][12 + 4].Value; Mz_y1 = spring_f[e][12 + 5].Value;
+                    N_x2 = -N_x1; Qy_x2 = -Qy_x1; Qz_x2 = -Qz_x1; My_x2 = -My_x1; Mz_x2 = -Mz_x1; N_y2 = -N_y1; Qy_y2 = -Qy_y1; Qz_y2 = -Qz_y1; My_y2 = -My_y1; Mz_y2 = -Mz_y1;
+                }
+                if (spring_f[0].Count == 30)
+                {
+                    N_x2 = spring_f[e][12 + 6 + 0].Value; Qy_x2 = spring_f[e][12 + 6 + 1].Value; Qz_x2 = spring_f[e][12 + 6 + 2].Value; My_x2 = spring_f[e][12 + 6 + 4].Value; Mz_x2 = spring_f[e][12 + 6 + 5].Value;
+                    N_y2 = spring_f[e][12 + 12 + 0].Value; Qy_y2 = spring_f[e][12 + 12 + 1].Value; Qz_y2 = spring_f[e][12 + 12 + 2].Value; My_y2 = spring_f[e][12 + 12 + 4].Value; Mz_y2 = spring_f[e][12 + 12 + 5].Value;
+                }
+                var k2list = new List<GH_Number>();
+                Na = spring_a[e][0].Value; Qya = spring_a[e][2].Value; Qza = spring_a[e][4].Value;
+                if (N + N_x1 < 0) { Na = spring_a[e][1].Value; }
+                if (Qy + Qy_x1 < 0) { Qya = spring_a[e][3].Value; }
+                if (Qz + Qz_x1 < 0) { Qza = spring_a[e][5].Value; }
+                if (Na != 0) { k2list.Add(new GH_Number(Math.Abs(N+N_x1) / Na)); }
+                else { k2list.Add(new GH_Number(0)); }
+                if (Qya != 0) { k2list.Add(new GH_Number(Math.Abs(Qy+Qy_x1) / Qya)); }
+                else { k2list.Add(new GH_Number(0)); }
+                if (Qza != 0) { k2list.Add(new GH_Number(Math.Abs(Qz+Qz_x1) / Qza)); }
+                else { k2list.Add(new GH_Number(0)); }
+                if (Mya != 0) { k2list.Add(new GH_Number(Math.Abs(My+My_x1) / Mya)); }
+                else { k2list.Add(new GH_Number(0)); }
+                if (Mza != 0) { k2list.Add(new GH_Number(Math.Abs(Mz+Mz_x1) / Mza)); }
+                else { k2list.Add(new GH_Number(0)); }
+                //kentei.AppendRange(k2list, new GH_Path(new int[] { 1, e }));
+                var k3list = new List<GH_Number>();
+                Na = spring_a[e][0].Value; Qya = spring_a[e][2].Value; Qza = spring_a[e][4].Value;
+                if (N + N_y1 < 0) { Na = spring_a[e][1].Value; }
+                if (Qy + Qy_y1 < 0) { Qya = spring_a[e][3].Value; }
+                if (Qz + Qz_y1 < 0) { Qza = spring_a[e][5].Value; }
+                if (Na != 0) { k3list.Add(new GH_Number(Math.Abs(N + N_y1) / Na)); }
+                else { k3list.Add(new GH_Number(0)); }
+                if (Qya != 0) { k3list.Add(new GH_Number(Math.Abs(Qy + Qy_y1) / Qya)); }
+                else { k3list.Add(new GH_Number(0)); }
+                if (Qza != 0) { k3list.Add(new GH_Number(Math.Abs(Qz + Qz_y1) / Qza)); }
+                else { k3list.Add(new GH_Number(0)); }
+                if (Mya != 0) { k3list.Add(new GH_Number(Math.Abs(My + My_y1) / Mya)); }
+                else { k3list.Add(new GH_Number(0)); }
+                if (Mza != 0) { k3list.Add(new GH_Number(Math.Abs(Mz + Mz_y1) / Mza)); }
+                else { k3list.Add(new GH_Number(0)); }
+                //kentei.AppendRange(k3list, new GH_Path(new int[] { 2, e }));
+                var k4list = new List<GH_Number>();
+                Na = spring_a[e][0].Value; Qya = spring_a[e][2].Value; Qza = spring_a[e][4].Value;
+                if (N + N_x2 < 0) { Na = spring_a[e][1].Value; }
+                if (Qy + Qy_x2 < 0) { Qya = spring_a[e][3].Value; }
+                if (Qz + Qz_x2 < 0) { Qza = spring_a[e][5].Value; }
+                if (Na != 0) { k4list.Add(new GH_Number(Math.Abs(N + N_x2) / Na)); }
+                else { k4list.Add(new GH_Number(0)); }
+                if (Qya != 0) { k4list.Add(new GH_Number(Math.Abs(Qy + Qy_x2) / Qya)); }
+                else { k4list.Add(new GH_Number(0)); }
+                if (Qza != 0) { k4list.Add(new GH_Number(Math.Abs(Qz + Qz_x2) / Qza)); }
+                else { k4list.Add(new GH_Number(0)); }
+                if (Mya != 0) { k4list.Add(new GH_Number(Math.Abs(My + My_x2) / Mya)); }
+                else { k4list.Add(new GH_Number(0)); }
+                if (Mza != 0) { k4list.Add(new GH_Number(Math.Abs(Mz + Mz_x2) / Mza)); }
+                else { k4list.Add(new GH_Number(0)); }
+                //kentei.AppendRange(k4list, new GH_Path(new int[] { 3, e }));
+                var k5list = new List<GH_Number>();
+                Na = spring_a[e][0].Value; Qya = spring_a[e][2].Value; Qza = spring_a[e][4].Value;
+                if (N + N_y2 < 0) { Na = spring_a[e][1].Value; }
+                if (Qy + Qy_y2 < 0) { Qya = spring_a[e][3].Value; }
+                if (Qz + Qz_y2 < 0) { Qza = spring_a[e][5].Value; }
+                if (Na != 0) { k5list.Add(new GH_Number(Math.Abs(N + N_y2) / Na)); }
+                else { k5list.Add(new GH_Number(0)); }
+                if (Qya != 0) { k5list.Add(new GH_Number(Math.Abs(Qy + Qy_y2) / Qya)); }
+                else { k5list.Add(new GH_Number(0)); }
+                if (Qza != 0) { k5list.Add(new GH_Number(Math.Abs(Qz + Qz_y2) / Qza)); }
+                else { k5list.Add(new GH_Number(0)); }
+                if (Mya != 0) { k5list.Add(new GH_Number(Math.Abs(My + My_y2) / Mya)); }
+                else { k5list.Add(new GH_Number(0)); }
+                if (Mza != 0) { k5list.Add(new GH_Number(Math.Abs(Mz + Mz_y2) / Mza)); }
+                else { k5list.Add(new GH_Number(0)); }
+                //kentei.AppendRange(k5list, new GH_Path(new int[] { 4, e }));
+                for (int i = 0; i < klist.Count; i++) { kmax1[ind] = Math.Max(kmax1[ind], klist[0].Value + klist[1].Value + klist[2].Value + klist[3].Value + klist[4].Value); }
+                for (int i = 0; i < k2list.Count; i++) { kmax2[ind] = Math.Max(kmax2[ind], k2list[0].Value + k2list[1].Value + k2list[2].Value + k2list[3].Value + k2list[4].Value); }
+                for (int i = 0; i < k3list.Count; i++) { kmax2[ind] = Math.Max(kmax2[ind], k3list[0].Value + k3list[1].Value + k3list[2].Value + k3list[3].Value + k3list[4].Value); }
+                for (int i = 0; i < k4list.Count; i++) { kmax2[ind] = Math.Max(kmax2[ind], k4list[0].Value + k4list[1].Value + k4list[2].Value + k4list[3].Value + k4list[4].Value); }
+                for (int i = 0; i < k5list.Count; i++) { kmax2[ind] = Math.Max(kmax2[ind], k5list[0].Value + k5list[1].Value + k5list[2].Value + k5list[3].Value + k5list[4].Value); }
+                if (on_off_12 == 1)
+                {
+                    if (on_off_21 == 1)
                     {
-                        N_x2 = spring_f[e][12 + 6 + 0].Value; Qy_x2 = spring_f[e][12 + 6 + 1].Value; Qz_x2 = spring_f[e][12 + 6 + 2].Value; My_x2 = spring_f[e][12 + 6 + 4].Value; Mz_x2 = spring_f[e][12 + 6 + 5].Value;
-                        N_y2 = spring_f[e][12 + 12 + 0].Value; Qy_y2 = spring_f[e][12 + 12 + 1].Value; Qz_y2 = spring_f[e][12 + 12 + 2].Value; My_y2 = spring_f[e][12 + 12 + 4].Value; Mz_y2 = spring_f[e][12 + 12 + 5].Value;
+                        var k = Math.Max(Math.Max(k2list[0].Value, k3list[0].Value), Math.Max(k4list[0].Value, k5list[0].Value));
+                        var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                        if (k > 0.01) { _text.Add(k.ToString("F").Substring(0, digit)); _p.Add(rc); _c.Add(color); }
                     }
-                    var k2list = new List<GH_Number>();
-                    Na = spring_a[e][0].Value; Qya = spring_a[e][2].Value; Qza = spring_a[e][4].Value;
-                    if (N + N_x1 < 0) { Na = spring_a[e][1].Value; }
-                    if (Qy + Qy_x1 < 0) { Qya = spring_a[e][3].Value; }
-                    if (Qz + Qz_x1 < 0) { Qza = spring_a[e][5].Value; }
-                    if (Na != 0) { k2list.Add(new GH_Number(Math.Abs(N+N_x1) / Na)); }
-                    else { k2list.Add(new GH_Number(0)); }
-                    if (Qya != 0) { k2list.Add(new GH_Number(Math.Abs(Qy+Qy_x1) / Qya)); }
-                    else { k2list.Add(new GH_Number(0)); }
-                    if (Qza != 0) { k2list.Add(new GH_Number(Math.Abs(Qz+Qz_x1) / Qza)); }
-                    else { k2list.Add(new GH_Number(0)); }
-                    if (Mya != 0) { k2list.Add(new GH_Number(Math.Abs(My+My_x1) / Mya)); }
-                    else { k2list.Add(new GH_Number(0)); }
-                    if (Mza != 0) { k2list.Add(new GH_Number(Math.Abs(Mz+Mz_x1) / Mza)); }
-                    else { k2list.Add(new GH_Number(0)); }
-                    kentei.AppendRange(k2list, new GH_Path(new int[] { 1, e }));
-                    var k3list = new List<GH_Number>();
-                    Na = spring_a[e][0].Value; Qya = spring_a[e][2].Value; Qza = spring_a[e][4].Value;
-                    if (N + N_y1 < 0) { Na = spring_a[e][1].Value; }
-                    if (Qy + Qy_y1 < 0) { Qya = spring_a[e][3].Value; }
-                    if (Qz + Qz_y1 < 0) { Qza = spring_a[e][5].Value; }
-                    if (Na != 0) { k3list.Add(new GH_Number(Math.Abs(N + N_y1) / Na)); }
-                    else { k3list.Add(new GH_Number(0)); }
-                    if (Qya != 0) { k3list.Add(new GH_Number(Math.Abs(Qy + Qy_y1) / Qya)); }
-                    else { k3list.Add(new GH_Number(0)); }
-                    if (Qza != 0) { k3list.Add(new GH_Number(Math.Abs(Qz + Qz_y1) / Qza)); }
-                    else { k3list.Add(new GH_Number(0)); }
-                    if (Mya != 0) { k3list.Add(new GH_Number(Math.Abs(My + My_y1) / Mya)); }
-                    else { k3list.Add(new GH_Number(0)); }
-                    if (Mza != 0) { k3list.Add(new GH_Number(Math.Abs(Mz + Mz_y1) / Mza)); }
-                    else { k3list.Add(new GH_Number(0)); }
-                    kentei.AppendRange(k3list, new GH_Path(new int[] { 2, e }));
-                    var k4list = new List<GH_Number>();
-                    Na = spring_a[e][0].Value; Qya = spring_a[e][2].Value; Qza = spring_a[e][4].Value;
-                    if (N + N_x2 < 0) { Na = spring_a[e][1].Value; }
-                    if (Qy + Qy_x2 < 0) { Qya = spring_a[e][3].Value; }
-                    if (Qz + Qz_x2 < 0) { Qza = spring_a[e][5].Value; }
-                    if (Na != 0) { k4list.Add(new GH_Number(Math.Abs(N + N_x2) / Na)); }
-                    else { k4list.Add(new GH_Number(0)); }
-                    if (Qya != 0) { k4list.Add(new GH_Number(Math.Abs(Qy + Qy_x2) / Qya)); }
-                    else { k4list.Add(new GH_Number(0)); }
-                    if (Qza != 0) { k4list.Add(new GH_Number(Math.Abs(Qz + Qz_x2) / Qza)); }
-                    else { k4list.Add(new GH_Number(0)); }
-                    if (Mya != 0) { k4list.Add(new GH_Number(Math.Abs(My + My_x2) / Mya)); }
-                    else { k4list.Add(new GH_Number(0)); }
-                    if (Mza != 0) { k4list.Add(new GH_Number(Math.Abs(Mz + Mz_x2) / Mza)); }
-                    else { k4list.Add(new GH_Number(0)); }
-                    kentei.AppendRange(k4list, new GH_Path(new int[] { 3, e }));
-                    var k5list = new List<GH_Number>();
-                    Na = spring_a[e][0].Value; Qya = spring_a[e][2].Value; Qza = spring_a[e][4].Value;
-                    if (N + N_y2 < 0) { Na = spring_a[e][1].Value; }
-                    if (Qy + Qy_y2 < 0) { Qya = spring_a[e][3].Value; }
-                    if (Qz + Qz_y2 < 0) { Qza = spring_a[e][5].Value; }
-                    if (Na != 0) { k5list.Add(new GH_Number(Math.Abs(N + N_y2) / Na)); }
-                    else { k5list.Add(new GH_Number(0)); }
-                    if (Qya != 0) { k5list.Add(new GH_Number(Math.Abs(Qy + Qy_y2) / Qya)); }
-                    else { k5list.Add(new GH_Number(0)); }
-                    if (Qza != 0) { k5list.Add(new GH_Number(Math.Abs(Qz + Qz_y2) / Qza)); }
-                    else { k5list.Add(new GH_Number(0)); }
-                    if (Mya != 0) { k5list.Add(new GH_Number(Math.Abs(My + My_y2) / Mya)); }
-                    else { k5list.Add(new GH_Number(0)); }
-                    if (Mza != 0) { k5list.Add(new GH_Number(Math.Abs(Mz + Mz_y2) / Mza)); }
-                    else { k5list.Add(new GH_Number(0)); }
-                    kentei.AppendRange(k5list, new GH_Path(new int[] { 4, e }));
-
-                    if (on_off_12 == 1)
+                    else if (on_off_22 == 1)
                     {
-                        if (on_off_21 == 1)
-                        {
-                            var k = Math.Max(Math.Max(k2list[0].Value, k3list[0].Value), Math.Max(k4list[0].Value, k5list[0].Value));
-                            var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
-                            if (k > 0.01) { _text.Add(k.ToString("F").Substring(0, digit)); _p.Add(rc); _c.Add(color); }
-                        }
-                        else if (on_off_22 == 1)
-                        {
-                            var ky2 = k2list[1].Value; var kz2 = k2list[2].Value;
-                            var ky3 = k3list[1].Value; var kz3 = k3list[2].Value;
-                            var ky4 = k4list[1].Value; var kz4 = k4list[2].Value;
-                            var ky5 = k5list[1].Value; var kz5 = k5list[2].Value;
-                            var k = Math.Max(Math.Max(ky2 + kz2, ky3 + kz3), Math.Max(ky4 + kz4, ky5 + kz5));
-                            var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
-                            if (k > 0.01) { _text.Add(k.ToString("F").Substring(0, digit)); _p.Add(rc); _c.Add(color); }
-                        }
-                        else if (on_off_23 == 1)
-                        {
-                            var ky2 = k2list[3].Value; var kz2 = k2list[4].Value;
-                            var ky3 = k3list[3].Value; var kz3 = k3list[4].Value;
-                            var ky4 = k4list[3].Value; var kz4 = k4list[4].Value;
-                            var ky5 = k5list[3].Value; var kz5 = k5list[4].Value;
-                            var k = Math.Max(Math.Max(ky2 + kz2, ky3 + kz3), Math.Max(ky4 + kz4, ky5 + kz5));
-                            var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
-                            if (k > 0.01) { _text.Add(k.ToString("F").Substring(0, digit)); _p.Add(rc); _c.Add(color); }
-                        }
-                        else if (on_off_24 == 1)
-                        {
-                            //var ky2 = k2list[1].Value; var kz2 = k2list[2].Value;
-                            //var ky3 = k3list[1].Value; var kz3 = k3list[2].Value;
-                            //var ky4 = k4list[1].Value; var kz4 = k4list[2].Value;
-                            //var ky5 = k5list[1].Value; var kz5 = k5list[2].Value;
-                            //var ky6 = k2list[3].Value; var kz6 = k2list[4].Value;
-                            //var ky7 = k3list[3].Value; var kz7 = k3list[4].Value;
-                            //var ky8 = k4list[3].Value; var kz8 = k4list[4].Value;
-                            //var ky9 = k5list[3].Value; var kz9 = k5list[4].Value;
-                            //var k1 = Math.Max(Math.Max(ky2 + kz2, ky3 + kz3), Math.Max(ky4 + kz4, ky5 + kz5));
-                            //var k2 = Math.Max(Math.Max(ky6 + kz6, ky7 + kz7), Math.Max(ky8 + kz8, ky9 + kz9));
-                            //var k = Math.Max(k1, k2);
-                            var k2 = k2list[0].Value + k2list[1].Value + k2list[2].Value + k2list[3].Value + k2list[4].Value;
-                            var k3 = k3list[0].Value + k3list[1].Value + k3list[2].Value + k3list[3].Value + k3list[4].Value;
-                            var k4 = k4list[0].Value + k4list[1].Value + k4list[2].Value + k4list[3].Value + k4list[4].Value;
-                            var k5 = k5list[0].Value + k5list[1].Value + k5list[2].Value + k5list[3].Value + k5list[4].Value;
-                            var k = Math.Max(Math.Max(k2, k3), Math.Max(k4, k5));
-                            var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
-                            if (k > 0.01) { _text.Add(k.ToString("F").Substring(0, digit)); _p.Add(rc); _c.Add(color); }
-                        }
+                        var ky2 = k2list[1].Value; var kz2 = k2list[2].Value;
+                        var ky3 = k3list[1].Value; var kz3 = k3list[2].Value;
+                        var ky4 = k4list[1].Value; var kz4 = k4list[2].Value;
+                        var ky5 = k5list[1].Value; var kz5 = k5list[2].Value;
+                        var k = Math.Max(Math.Max(ky2 + kz2, ky3 + kz3), Math.Max(ky4 + kz4, ky5 + kz5));
+                        var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                        if (k > 0.01) { _text.Add(k.ToString("F").Substring(0, digit)); _p.Add(rc); _c.Add(color); }
+                    }
+                    else if (on_off_23 == 1)
+                    {
+                        var ky2 = k2list[3].Value; var kz2 = k2list[4].Value;
+                        var ky3 = k3list[3].Value; var kz3 = k3list[4].Value;
+                        var ky4 = k4list[3].Value; var kz4 = k4list[4].Value;
+                        var ky5 = k5list[3].Value; var kz5 = k5list[4].Value;
+                        var k = Math.Max(Math.Max(ky2 + kz2, ky3 + kz3), Math.Max(ky4 + kz4, ky5 + kz5));
+                        var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                        if (k > 0.01) { _text.Add(k.ToString("F").Substring(0, digit)); _p.Add(rc); _c.Add(color); }
+                    }
+                    else if (on_off_24 == 1)
+                    {
+                        //var ky2 = k2list[1].Value; var kz2 = k2list[2].Value;
+                        //var ky3 = k3list[1].Value; var kz3 = k3list[2].Value;
+                        //var ky4 = k4list[1].Value; var kz4 = k4list[2].Value;
+                        //var ky5 = k5list[1].Value; var kz5 = k5list[2].Value;
+                        //var ky6 = k2list[3].Value; var kz6 = k2list[4].Value;
+                        //var ky7 = k3list[3].Value; var kz7 = k3list[4].Value;
+                        //var ky8 = k4list[3].Value; var kz8 = k4list[4].Value;
+                        //var ky9 = k5list[3].Value; var kz9 = k5list[4].Value;
+                        //var k1 = Math.Max(Math.Max(ky2 + kz2, ky3 + kz3), Math.Max(ky4 + kz4, ky5 + kz5));
+                        //var k2 = Math.Max(Math.Max(ky6 + kz6, ky7 + kz7), Math.Max(ky8 + kz8, ky9 + kz9));
+                        //var k = Math.Max(k1, k2);
+                        var k2 = k2list[0].Value + k2list[1].Value + k2list[2].Value + k2list[3].Value + k2list[4].Value;
+                        var k3 = k3list[0].Value + k3list[1].Value + k3list[2].Value + k3list[3].Value + k3list[4].Value;
+                        var k4 = k4list[0].Value + k4list[1].Value + k4list[2].Value + k4list[3].Value + k4list[4].Value;
+                        var k5 = k5list[0].Value + k5list[1].Value + k5list[2].Value + k5list[3].Value + k5list[4].Value;
+                        var k = Math.Max(Math.Max(k2, k3), Math.Max(k4, k5));
+                        var color = new ColorHSL((1 - Math.Min(k, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                        if (k > 0.01) { _text.Add(k.ToString("F").Substring(0, digit)); _p.Add(rc); _c.Add(color); }
                     }
                 }
+                kentei.AppendRange(new List<GH_Number> { new GH_Number(index[ind]), new GH_Number(kmax1[ind]), new GH_Number(kmax2[ind]) }, new GH_Path(ind));
             }
-            DA.SetDataList("pts", pts);
             DA.SetDataTree(0, kentei);
         }
 

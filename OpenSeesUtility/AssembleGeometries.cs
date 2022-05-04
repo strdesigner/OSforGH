@@ -47,7 +47,7 @@ namespace AssembleGeometries
             pManager.AddNumberParameter("nodal_coordinates", "R", "[[x1,y1,z1],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("element_node_relationship", "IJ", "[[No.i,No.j,material No.,section No.,angle],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("element_node_relationship(shell)", "IJKL", "[[No.i,No.j,No.k,No.l(if triangle:-1),material No.,thickness],...](DataTree)", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("element_node_relationship(spring)", "spring", "[[No.i,No.j,kx+,kx-,ky+,ky-,kz+,kz-,kmx,kmy,kmz],...](DataTree)", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("element_node_relationship(spring)", "spring", "[[No.i,No.j,kx+,kx-,ky+,ky-,kz+,kz-,kmx,kmy,kmz,angle],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("damper", "damper", "[[No.i, No.j, Kd[kN/m], ad, Cd[kN/(m/sec)^(1/ad)]],...](DataTree)", GH_ParamAccess.tree);///
         }
 

@@ -463,6 +463,16 @@ namespace OpenSeesUtility.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap rcbucklingcheck {
+            get {
+                object obj = ResourceManager.GetObject("rcbucklingcheck", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap rccolumncheck {
             get {
                 object obj = ResourceManager.GetObject("rccolumncheck", resourceCulture);
@@ -803,6 +813,16 @@ namespace OpenSeesUtility.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap VisPdf2 {
+            get {
+                object obj = ResourceManager.GetObject("VisPdf2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap VisResult {
             get {
                 object obj = ResourceManager.GetObject("VisResult", resourceCulture);
@@ -826,6 +846,16 @@ namespace OpenSeesUtility.Properties {
         internal static System.Drawing.Bitmap VisResultShell {
             get {
                 object obj = ResourceManager.GetObject("VisResultShell", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap VisRoofPDF {
+            get {
+                object obj = ResourceManager.GetObject("VisRoofPDF", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

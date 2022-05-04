@@ -27,8 +27,8 @@ namespace StripFooting
     public class StripFooting : GH_Component
     {
         static int BaseShape = 0; static int BaseNo = 0; static int BaseWidth = 0; static int BaseThick = 0; static int Pressure = 0;
-        double fontsize =10.0;
-        string unit_of_force = "kN"; string unit_of_length = "m"; int digit = 4; static int on_off = 0;
+        public static double fontsize =10.0;
+        string unit_of_force = "kN"; string unit_of_length = "m"; int digit = 4; public static int on_off = 0;
         public static PdfCreate.JapaneseFontResolver fontresolver = new PdfCreate.JapaneseFontResolver();
         public static XGraphics gfx;
         public static void SetButton_for_StripFooting(string s, int i)
@@ -85,6 +85,7 @@ namespace StripFooting
             pManager.AddNumberParameter("FS", "FS", "font size for display texts", GH_ParamAccess.item, 10.0);///
             pManager.AddTextParameter("outputname", "outputname", "output file name", GH_ParamAccess.item, "StripBase");///
             pManager.AddNumberParameter("offset", "offset", "boundary level from base line", GH_ParamAccess.item, 0.0);
+            pManager.AddIntegerParameter("option", "option", "1:floating check", GH_ParamAccess.item, 0);
         }
 
         /// <summary>
@@ -95,6 +96,7 @@ namespace StripFooting
             pManager.AddCurveParameter("base", "base", "base lines", GH_ParamAccess.list);
             pManager.AddNumberParameter("N/A", "N/A", "N/A", GH_ParamAccess.list);
             pManager.AddNumberParameter("e_load", "e_load", "[[element No.,Wx,Wy,Wz],...](DataTree)", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("B number", "B number", "Boundary numbers of each footing", GH_ParamAccess.tree);///
         }
 
         /// <summary>
@@ -105,8 +107,10 @@ namespace StripFooting
         {
             int Digit(int num)//数字の桁数を求める関数
             {
+                var keta = (int)Math.Log10(num) + 1;
+                if (num < 0) { keta = (int)Math.Log10(-num) + 1; }
                 // Mathf.Log10(0)はNegativeInfinityを返すため、別途処理する。
-                return (num == 0) ? 1 : ((int)Math.Log10(num) + 1);
+                return (num == 0) ? 1 : (keta);
             }
             XColor RGB(double h, double s, double l)//convert HSL to RGB
             {
@@ -174,90 +178,122 @@ namespace StripFooting
                 return new Vector3d(Vector3d.Multiply(m1, a), Vector3d.Multiply(m2, a), Vector3d.Multiply(m3, a));
             }
             var doc = RhinoDoc.ActiveDoc;
-            DA.GetDataTree("R", out GH_Structure<GH_Number> _r); var r = _r.Branches;
+            DA.GetDataTree("R", out GH_Structure<GH_Number> _r); var r = _r.Branches; var option = 0; DA.GetData("option", ref option);
             DA.GetDataTree("reac_f", out GH_Structure<GH_Number> _reac_f); var reac_f = _reac_f.Branches; var m = reac_f.Count;
             List<string> layer = new List<string>(); var nameB = "布基礎"; var namet = "t"; var namerho = "ρ"; var nameD = "D"; var namepitch = "@"; var nameft = "ft"; var namew = "w"; var nameac = "as";
             DA.GetDataList("layer", layer); DA.GetData("name B", ref nameB); DA.GetData("name t", ref namet); DA.GetData("name rho", ref namerho); DA.GetData("name bar", ref nameD); DA.GetData("name pitch", ref namepitch); DA.GetData("name ft", ref nameft); DA.GetData("name w", ref namew); DA.GetData("name as", ref nameac);
             DA.GetData("FS", ref fontsize);
             var pdfname = "StripBase"; DA.GetData("outputname", ref pdfname);
 
-            var pressure = new List<double>(); var baseshape = new List<Curve>(); var baseline = new List<List<Point3d>>();
+            var pressure = new List<double>(); var baseshape = new List<Curve>();
             var B = new List<double>(); var T = new List<double>(); var L = new List<double>(); var Rz = new List<double>(); var Sz = new List<double>(); var A = new List<double>();
             var bar = new List<string>(); var M = new List<double>(); var Ma = new List<double>(); var LL = new List<double>(); var Ft = new List<double>(); var J = new List<double>(); var At = new List<double>(); var Ac = new List<double>();
+            var Rzx = new List<double>(); var Rzy = new List<double>(); var Rzx2 = new List<double>(); var Rzy2 = new List<double>();
+            var lines = new List<List<Curve>>(); GH_Structure<GH_Number> B_number = new GH_Structure<GH_Number>();
+            var Rz_all = new GH_Structure<GH_Number>(); var Rzx_all = new GH_Structure<GH_Number>(); var Rzy_all = new GH_Structure<GH_Number>(); var Rzx2_all = new GH_Structure<GH_Number>(); var Rzy2_all = new GH_Structure<GH_Number>();
             for (int i = 0; i < layer.Count; i++)
             {
                 var line = doc.Objects.FindByLayer(layer[i]);
                 for (int j = 0; j < line.Length; j++)
                 {
-                    var le = line[j];
-                    var re = new ObjRef(le);
-                    var l = re.Curve(); baseshape.Add(l);
-                    var r1 = l.PointAtStart; var r2 = l.PointAtEnd; var l2 = r2 - r1;
-                    baseline.Add(new List<Point3d> { r1, r2 });
-                    var N = 0.0;
+                    List<GH_Number> flist = new List<GH_Number>(); var nlist = new List<GH_Number>(); var nxlist = new List<GH_Number>(); var nylist = new List<GH_Number>(); var nx2list = new List<GH_Number>(); var ny2list = new List<GH_Number>();
+                    var obj = line[j]; Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() }; baseshape.Add(l[0]);
+                    int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
+                    if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
+                    var llist = new List<Curve>();
+                    for (int aa = 0; aa < nl; aa++) { llist.Add(l[aa]); }
+                    lines.Add(llist);
+                    var lgh = 0.0;
+                    for (int aa = 0; aa < nl; aa++) { lgh += l[aa].GetLength(); }
+                    var b = float.Parse(obj.Attributes.GetUserString(nameB));
+                    var t = float.Parse(obj.Attributes.GetUserString(namet));
+                    var rho = float.Parse(obj.Attributes.GetUserString(namerho));
+                    var N = 0.0; var Nx = 0.0; var Ny = 0.0; var Nx2 = 0.0; var Ny2 = 0.0;
                     for (int k = 0; k < m; k++)
                     {
                         int e = (int)reac_f[k][0].Value;
                         var pt = new Point3d(r[e][0].Value, r[e][1].Value, r[e][2].Value);
-                        var l1 = pt - r1;
-                        if (l2.Length - l1.Length >= -1e-8 && (l1 / l1.Length - l2 / l2.Length).Length < 1e-8)
+                        double distance = 9999;
+                        for (int aa = 0; aa < nl; aa++)
                         {
-                            N += reac_f[k][3].Value;
+                            var para = 0.0;
+                            var r1 = l[aa].PointAtStart; var r2 = l[aa].PointAtEnd; var l2 = r2 - r1;
+                            var l1 = pt - r1;
+                            if (l2.Length - l1.Length >= -1e-8 && (l1 / l1.Length - l2 / l2.Length).Length < 1e-8)
+                            {
+                                N += reac_f[k][3].Value; flist.Add(new GH_Number(e));
+                                if (reac_f[0].Count == 7 * 3)
+                                {
+                                    Nx += reac_f[k][3 + 7 * 1].Value; Ny += reac_f[k][3 + 7 * 2].Value;
+                                    Nx2 -= reac_f[k][3 + 7 * 1].Value; Ny2 -= reac_f[k][3 + 7 * 2].Value;
+                                }
+                                else if (reac_f[0].Count == 7 * 5)
+                                {
+                                    Nx += reac_f[k][3 + 7 * 1].Value; Ny += reac_f[k][3 + 7 * 2].Value;
+                                    Nx2 += reac_f[k][3 + 7 * 3].Value; Ny2 += reac_f[k][3 + 7 * 4].Value;
+                                }
+                            }
                         }
+                        nlist.Add(new GH_Number(N)); nxlist.Add(new GH_Number(Nx)); nylist.Add(new GH_Number(Ny)); nx2list.Add(new GH_Number(Nx)); ny2list.Add(new GH_Number(Ny));
                     }
-                    var b = float.Parse(le.Attributes.GetUserString(nameB));
-                    var t = float.Parse(le.Attributes.GetUserString(namet));
-                    var rho = float.Parse(le.Attributes.GetUserString(namerho));
-                    L.Add(l2.Length); A.Add(b * L[j]);
-                    B.Add(b); T.Add(t); Rz.Add(N); Sz.Add(t * A[j] * rho);
+                    L.Add(lgh); A.Add(b * L[j]);
+                    B.Add(b); T.Add(t); Rz.Add(N); Sz.Add(t * A[j] * rho); Rzx.Add(Nx); Rzy.Add(Ny); Rzx2.Add(Nx2); Rzy2.Add(Ny2);
                     var prs = (N + Sz[j]) / A[j];
                     pressure.Add(prs);
+                    var xc = 0.0; var yc = 0.0; var zc = 0.0;
+                    for (int aa = 0; aa < nl; aa++) { var pts = (l[aa].PointAtStart + l[aa].PointAtEnd) / 2.0; xc += pts[0]; yc += pts[1]; zc += pts[2]; }
+                    xc = xc / (double)nl; yc = yc / (double)nl; zc = zc / (double)nl;
                     if (BaseWidth == 1)
                     {
-                        _pt.Add(new Point3d((r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, (r1[2] + r2[2]) / 2.0));
+                        _pt.Add(new Point3d(xc, yc, zc));
                         _text.Add(b.ToString("F6").Substring(0, digit) + unit_of_length);
                         _c2.Add(Color.Blue);
                     }
                     if (BaseNo == 1)
                     {
-                        _pt.Add(new Point3d((r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, (r1[2] + r2[2]) / 2.0));
+                        _pt.Add(new Point3d(xc, yc, zc));
                         _text.Add(j.ToString());
                         _c2.Add(Color.Black);
                     }
                     if (BaseThick == 1)
                     {
-                        _pt.Add(new Point3d((r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, (r1[2] + r2[2]) / 2.0));
+                        _pt.Add(new Point3d(xc, yc, zc));
                         _text.Add(t.ToString("F6").Substring(0, digit) + unit_of_length);
                         _c2.Add(Color.Purple);
                     }
                     if (Pressure == 1)
                     {
-                        _pt.Add(new Point3d((r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, (r1[2] + r2[2]) / 2.0));
+                        _pt.Add(new Point3d(xc, yc, zc));
                         _text.Add(prs.ToString("F6").Substring(0, digit) + unit_of_force + "/" + unit_of_length + "2");
                         _c2.Add(Color.Red);
                     }
                     if (BaseShape == 1)
                     {
                         Random rand1 = new Random((i + 1) * (j + 1) * 1000); Random rand2 = new Random((i + 1) * (j + 1) * 2000); Random rand3 = new Random((i + 1) * (j + 1) * 3000);
-                        _c.Add(Color.FromArgb(rand1.Next(0, 256), rand2.Next(0, 256), rand3.Next(0, 256)));
-                        var l1 = rotation(l2, new Vector3d(0, 0, 1), 90); l1 = l1 / l1.Length;
-                        var p1 = r1 + l1 * b / 2.0; var p2 = r2 + l1 * b / 2.0; var p3 = r2 - l1 * b / 2.0; var p4 = r1 - l1 * b / 2.0;
-                        var brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { p1, p2, p3, p4, p1 }).ToNurbsCurve(), 0.001)[0];
-                        _s.Add(brep);
+                        var c = Color.FromArgb(rand1.Next(0, 256), rand2.Next(0, 256), rand3.Next(0, 256));
+                        for (int aa = 0; aa < nl; aa++)
+                        {
+                            _c.Add(c);
+                            var r1 = l[aa].PointAtStart; var r2 = l[aa].PointAtEnd;
+                            var l1 = rotation(r2-r1, new Vector3d(0, 0, 1), 90); l1 = l1 / l1.Length;
+                            var p1 = r1 + l1 * b / 2.0; var p2 = r2 + l1 * b / 2.0; var p3 = r2 - l1 * b / 2.0; var p4 = r1 - l1 * b / 2.0;
+                            var brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { p1, p2, p3, p4, p1 }).ToNurbsCurve(), 0.001)[0];
+                            _s.Add(brep);
+                        }
                     }
-                    var text = le.Attributes.GetUserString(nameD);
+                    var text = obj.Attributes.GetUserString(nameD);
                     var D = 10.0;//[mm]
                     if (text != null) { D = float.Parse(text); }
-                    text = le.Attributes.GetUserString(namepitch);
+                    text = obj.Attributes.GetUserString(namepitch);
                     var pitch = 200.0;//[mm]
                     if (text != null) { pitch = float.Parse(text); }
                     var ft = 195.0;//[mm2]
-                    text = le.Attributes.GetUserString(nameft);
+                    text = obj.Attributes.GetUserString(nameft);
                     if (text != null) { ft = float.Parse(text); }
-                    text = le.Attributes.GetUserString(namew);
+                    text = obj.Attributes.GetUserString(namew);
                     var w = 0.2;//[mm]
                     if (text != null) { w = float.Parse(text); }
-                    text = le.Attributes.GetUserString(nameac);
+                    text = obj.Attributes.GetUserString(nameac);
                     var ac = 30.0;//[kN/m2]
                     if (text != null) { ac = float.Parse(text); }
                     Ac.Add(ac);
@@ -268,10 +304,11 @@ namespace StripFooting
                     M.Add(prs * Math.Pow(span, 2) / 2.0);//[kNm]
                     Ma.Add(at * ft * dj / 1e+6);//[kNm]
                     bar.Add("D" + ((int)D).ToString() + "@" + ((int)pitch).ToString()); Ft.Add(ft);
+                    B_number.AppendRange(flist, new GH_Path(j)); Rz_all.AppendRange(nlist, new GH_Path(j)); Rzx_all.AppendRange(nxlist, new GH_Path(j)); Rzy_all.AppendRange(nylist, new GH_Path(j)); Rzx2_all.AppendRange(nx2list, new GH_Path(j)); Rzy2_all.AppendRange(ny2list, new GH_Path(j));
                 }
             }
             DA.SetDataList("base", baseshape);
-            DA.SetDataList("N/A", pressure);
+            DA.SetDataList("N/A", pressure); DA.SetDataTree(3, B_number);
             DA.GetDataTree("element_node_relationship", out GH_Structure<GH_Number> _ij);
             var ij = _ij.Branches; GH_Structure<GH_Number> e_load = new GH_Structure<GH_Number>(); int kk = 0;
             var offset = 0.0; DA.GetData("offset", ref offset);
@@ -279,25 +316,28 @@ namespace StripFooting
             {
                 for (int k = 0; k < pressure.Count; k++)
                 {
-                    var ri = baseline[k][0]; var rj = baseline[k][1];//布基礎の両端の座標
-                    ri[2] += offset; rj[2] += offset;
-                    var xi = ri[0]; var yi = ri[1]; var zi = ri[2]; var xj = rj[0]; var yj = rj[1]; var zj = rj[2];
-                    var xmin = Math.Min(xi, xj)-0.1; var xmax = Math.Max(xi, xj)+0.1; var ymin = Math.Min(yi, yj)-0.1; var ymax = Math.Max(yi, yj)+0.1; var zmin = Math.Min(zi, zj)-0.1; var zmax = Math.Max(zi, zj)+0.1;
-                    var v1 = rj - ri;
-                    for (int e = 0; e < ij.Count; e++)
+                    for (int aa = 0; aa < lines[k].Count; aa++)
                     {
-                        int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
-                        var x1 = r[ni][0].Value; var y1 = r[ni][1].Value; var z1 = r[ni][2].Value; var x2 = r[nj][0].Value; var y2 = r[nj][1].Value; var z2 = r[nj][2].Value;
-                        var r1=new Point3d(x1, y1, z1); var r2 = new Point3d(x2, y2, z2);
-                        var v2 = r2 - r1;
-                        if (Math.Abs(Math.Abs(Vector3d.VectorAngle(v1,v2))) < 1e-2 || Math.Abs(Math.Abs(Vector3d.VectorAngle(v1, v2))) + 1e-2 > Math.PI)
+                        var ri = lines[k][aa].PointAtStart; var rj = lines[k][aa].PointAtEnd;//布基礎の両端の座標
+                        ri[2] += offset; rj[2] += offset;
+                        var xi = ri[0]; var yi = ri[1]; var zi = ri[2]; var xj = rj[0]; var yj = rj[1]; var zj = rj[2];
+                        var xmin = Math.Min(xi, xj) - 0.1; var xmax = Math.Max(xi, xj) + 0.1; var ymin = Math.Min(yi, yj) - 0.1; var ymax = Math.Max(yi, yj) + 0.1; var zmin = Math.Min(zi, zj) - 0.1; var zmax = Math.Max(zi, zj) + 0.1;
+                        var v1 = rj - ri;
+                        for (int e = 0; e < ij.Count; e++)
                         {
-                            if (xmin < x1 && x1< xmax && xmin < x2 && x2 < xmax && ymin < y1 && y1 < ymax && ymin < y2 && y2 < ymax && zmin < z1 && z1 < zmax && zmin < z2 && z2 < zmax)
+                            int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
+                            var x1 = r[ni][0].Value; var y1 = r[ni][1].Value; var z1 = r[ni][2].Value; var x2 = r[nj][0].Value; var y2 = r[nj][1].Value; var z2 = r[nj][2].Value;
+                            var r1 = new Point3d(x1, y1, z1); var r2 = new Point3d(x2, y2, z2);
+                            var v2 = r2 - r1;
+                            if (Math.Abs(Math.Abs(Vector3d.VectorAngle(v1, v2))) < 1e-2 || Math.Abs(Math.Abs(Vector3d.VectorAngle(v1, v2))) + 1e-2 > Math.PI)
                             {
-                                List<GH_Number> flist = new List<GH_Number>();
-                                flist.Add(new GH_Number(e)); flist.Add(new GH_Number(0)); flist.Add(new GH_Number(0)); flist.Add(new GH_Number(pressure[k]));
-                                e_load.AppendRange(flist, new GH_Path(kk));
-                                kk += 1;
+                                if (xmin < x1 && x1 < xmax && xmin < x2 && x2 < xmax && ymin < y1 && y1 < ymax && ymin < y2 && y2 < ymax && zmin < z1 && z1 < zmax && zmin < z2 && z2 < zmax)
+                                {
+                                    List<GH_Number> flist = new List<GH_Number>();
+                                    flist.Add(new GH_Number(e)); flist.Add(new GH_Number(0)); flist.Add(new GH_Number(0)); flist.Add(new GH_Number(pressure[k] * B[k]));
+                                    e_load.AppendRange(flist, new GH_Path(kk));
+                                    kk += 1;
+                                }
                             }
                         }
                     }
@@ -309,19 +349,27 @@ namespace StripFooting
             {
                 // フォントリゾルバーのグローバル登録
                 if (PdfCreate.JapaneseFontResolver.fontset == 0) { PdfSharp.Fonts.GlobalFontSettings.FontResolver = fontresolver; PdfCreate.JapaneseFontResolver.fontset = 1; }
-                // PDFドキュメントを作成。
-                PdfDocument document = new PdfDocument();
-                document.Info.Title = pdfname;
-                document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu";
                 // フォントを作成。
                 XFont font = new XFont("Gen Shin Gothic", 9, XFontStyle.Regular);
                 XFont fontbold = new XFont("Gen Shin Gothic", 9, XFontStyle.Bold);
                 var pen = XPens.Black;
+                var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);//カレントディレクトリ
+                // PDFドキュメントを作成。
+                PdfDocument document = new PdfDocument();
+                document.Info.Title = pdfname;
+                document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu";
                 var labels = new List<string>
+                        {
+                            "基礎番号","幅B[m]","厚みt[m]","長さL[m]","底面積A[m2]","反力合計[kN]","基礎自重[kN]","接地圧N/A[kN/m2]","許容地耐力[kN/m2]","地耐力検定比","基礎出幅[m]","M[kNm]","配筋","断面積at[mm2]","ft[N/mm2]","応力中心間距離j[mm]","Ma[kNm]","曲げ検定比M/Ma","反力合計(L+X)[kN]","反力合計(L+Y)[kN]","反力合計(L-X)[kN]","反力合計(L-Y)[kN]","浮き上がり"
+                        };
+                if (option == 0)
+                {
+                    labels = new List<string>
                         {
                             "基礎番号","幅B[m]","厚みt[m]","長さL[m]","底面積A[m2]","反力合計[kN]","基礎自重[kN]","接地圧N/A[kN/m2]","許容地耐力[kN/m2]","地耐力検定比","基礎出幅[m]","M[kNm]","配筋","断面積at[mm2]","ft[N/mm2]","応力中心間距離j[mm]","Ma[kNm]","曲げ検定比M/Ma"
                         };
-                var label_width = 105; var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 20; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
+                }
+                var label_width = 105; var offset_x = 25; var offset_y = 25; var pitchy = 11; var text_width = 20; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
                 for (int e = 0; e < pressure.Count; e++)
                 {
                     var e_text = e.ToString();
@@ -344,18 +392,23 @@ namespace StripFooting
                     var k2_text = kentei2.ToString("F").Substring(0, 4); var k2_color = new XSolidBrush(RGB((1 - Math.Min(kentei2, 1.0)) * 1.9 / 3.0, 1, 0.5));
                     var kentei = M[e] / Ma[e];
                     var k_text = kentei.ToString("F").Substring(0, 4); var k_color = new XSolidBrush(RGB((1 - Math.Min(kentei, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                    var Rzx_text = (Rz[e] + Sz[e] + Rzx[e]).ToString("F10").Substring(0, Math.Min(((Rz[e] + Sz[e] + Rzx[e]).ToString().Length), Digit((int)(Rz[e] + Sz[e] + Rzx[e])) + 3));
+                    var Rzy_text = (Rz[e] + Sz[e] + Rzy[e]).ToString("F10").Substring(0, Math.Min(((Rz[e] + Sz[e] + Rzy[e]).ToString().Length), Digit((int)(Rz[e] + Sz[e] + Rzy[e])) + 3));
+                    var Rzx2_text = (Rz[e] + Sz[e] + Rzx2[e]).ToString("F10").Substring(0, Math.Min(((Rz[e] + Sz[e] + Rzx2[e]).ToString().Length), Digit((int)(Rz[e] + Sz[e] + Rzx2[e])) + 3));
+                    var Rzy2_text = (Rz[e] + Sz[e] + Rzy2[e]).ToString("F10").Substring(0, Math.Min(((Rz[e] + Sz[e] + Rzy2[e]).ToString().Length), Digit((int)(Rz[e] + Sz[e] + Rzy2[e])) + 3));
+                    var ukiagari = "なし";
+                    if (Rz[e] + Sz[e] + Rzx[e] < 0 || Rz[e] + Sz[e] + Rzy[e] < 0|| Rz[e] + Sz[e] + Rzx2[e] < 0|| Rz[e] + Sz[e] + Rzy2[e] < 0) { ukiagari = "あり"; }
                     var values = new List<string>();
                     values.Add(e_text); values.Add(B_text); values.Add(t_text); values.Add(L_text); values.Add(A_text); values.Add(Rz_text); values.Add(Sz_text); values.Add(P_text); values.Add(ac_text); values.Add(k2_text); values.Add(l_text); values.Add(M_text); values.Add(bar_text); values.Add(at_text); values.Add(ft_text); values.Add(j_text); values.Add(Ma_text);
                     values.Add(k_text);
-
+                    if (option == 1) { values.Add(Rzx_text); values.Add(Rzy_text); values.Add(Rzx2_text); values.Add(Rzy2_text); values.Add(ukiagari); }
                     var slide = 0.0;
-                    if (6 <= e % 18 && e % 18 < 12) { slide = pitchy * 20; }
-                    if (12 <= e % 18 && e % 18 < 18) { slide = pitchy * 40; }
-
-                    if (e % 6 == 0)
+                    if (6 <= e % 18 && e % 18 < 12) { slide = pitchy * 23.5; }
+                    if (12 <= e % 18 && e % 18 < 18) { slide = pitchy * 23.5 * 2; }
+                    if ((e % 18) % 6 == 0)
                     {
                         // 空白ページを作成。
-                        if (e % 18 == 0) { page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); }
+                        if ((e % 18) % (6 * 3) == 0) { page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); }
                         // 描画するためにXGraphicsオブジェクトを取得。
                         for (int i = 0; i < labels.Count; i++)//ラベル列**************************************************************************
                         {
@@ -376,24 +429,70 @@ namespace StripFooting
                         gfx.DrawLine(pen, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * (i + 1) + slide);//縦線
                         if (i == values.Count - 1)
                         {
-                            gfx.DrawString(values[i], font, k_color, new XRect(offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, text_width * 3, offset_y + pitchy * (i + 1) + slide), XStringFormats.TopCenter);
-                            i += 1;
-                            gfx.DrawLine(pen, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, offset_x + label_width + text_width * 3 * (j + 1), offset_y + pitchy * i + slide);//横線
+                            gfx.DrawLine(pen, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * (i + 1) + slide, offset_x + label_width + text_width * 3 * (j + 1), offset_y + pitchy * (i + 1) + slide);//横線
                         }
-                        else
-                        {
-                            var color = XBrushes.Black;
-                            if (i == 9) { color = k2_color; }
-                            gfx.DrawString(values[i], font, color, new XRect(offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, text_width * 3, offset_y + pitchy * (i + 1) + slide), XStringFormats.TopCenter);
-                        }
+                        var color = XBrushes.Black;
+                        if (i == 9 || i == 17) { color = k2_color; }
+                        if (values[i] == "なし") { color = XBrushes.Blue; }
+                        if (values[i] == "あり") { color = XBrushes.Red; }
+                        gfx.DrawString(values[i], font, color, new XRect(offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, text_width * 3, offset_y + pitchy * (i + 1) + slide), XStringFormats.TopCenter);
                     }
                 }
-                var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
-                // ドキュメントを保存。
                 var filename = dir + "/" + pdfname + ".pdf";
-                document.Save(filename);
-                // ビューアを起動。
-                Process.Start(filename);
+                document.Save(filename);// ドキュメントを保存。
+                Process.Start(filename);// ビューアを起動。
+                ////支点番号と反力
+                //document = new PdfDocument();
+                //document.Info.Title = pdfname;
+                //document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu";
+                //labels = new List<string> { "基礎番号", "支点番号" };
+                //RhinoApp.WriteLine("test0");
+                //label_width = 50; text_width = 11;
+                //page = new PdfPage(); page.Size = PageSize.A4;
+                //RhinoApp.WriteLine("test01");
+                //gfx = XGraphics.FromPdfPage(page);
+                //RhinoApp.WriteLine("test02");
+                //var numbers = B_number.Branches; var valuelist = new List<List<string>>(); var valuelist2 = new List<List<string>>();
+                //var maxrange = -9999; var rz = Rz_all.Branches; var slide2 = 0.0;
+                //RhinoApp.WriteLine("test1");
+                //for (int e = 0; e < numbers.Count; e++)
+                //{
+                //    var vlist = new List<string>(); var rzlist = new List<string>();
+                //    maxrange = Math.Max(maxrange, numbers[e].Count + 1); vlist.Add(e.ToString());
+                //    for (int j = 0; j < numbers[e].Count; j++)
+                //    {
+                //        vlist.Add(((int)numbers[e][j].Value).ToString());
+                //        rzlist.Add((Rz_all[e][j].Value).ToString("F").Substring(0, Math.Min(((Rz_all[e][j].Value).ToString("F")).Length, Digit((int)Rz_all[e][j].Value) + 2)));
+                //    }
+                //    valuelist.Add(vlist); valuelist2.Add(rzlist);
+                //    RhinoApp.WriteLine(e.ToString());
+                //    if (e % 12 == 0)
+                //    {
+                //        if (e != 0) { gfx.DrawLine(pen, offset_x, offset_y + pitchy * maxrange + slide2, offset_x + label_width + text_width * 3 * 12, offset_y + pitchy * maxrange + slide2); }
+                //        slide2 += (maxrange + 1.5) * pitchy;
+                //        RhinoApp.WriteLine("test2");
+                //        if (slide2 + (maxrange) * pitchy >= pitchy * 23.5 * 3) { slide2 = 0; }
+                //        RhinoApp.WriteLine("test3");
+                //        if (slide2 == 0)
+                //        { page = document.AddPage(); gfx = XGraphics.FromPdfPage(page); maxrange = 0; }
+                //        RhinoApp.WriteLine("test4");
+                //    }
+                //    for (int i = 0; i < labels.Count; i++)//ラベル列**************************************************************************
+                //    {
+                //        gfx.DrawLine(pen, offset_x, offset_y + pitchy * i + slide2, offset_x + label_width, offset_y + pitchy * i + slide2);//横線
+                //        gfx.DrawLine(pen, offset_x + label_width, offset_y + pitchy * i + slide2, offset_x + label_width, offset_y + pitchy * (i + 1) + slide2);//縦線
+                //        gfx.DrawString(labels[i], font, XBrushes.Black, new XRect(offset_x, offset_y + pitchy * i + slide2, label_width, offset_y + pitchy * (i + 1) + slide2), XStringFormats.TopCenter);
+                //    }
+                //    for (int i = 0; i < valuelist[e].Count; i++)
+                //    {
+                //        var j = e % 12;
+                //        gfx.DrawLine(pen, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide2, offset_x + label_width + text_width * 3 * (j + 1), offset_y + pitchy * i + slide2);//横線
+                //        gfx.DrawLine(pen, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide2, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * (i + 1) + slide2);//縦線
+                //    }
+                //}
+                //filename = dir + "/" + pdfname + "_number.pdf";
+                //document.Save(filename);// ドキュメントを保存。
+                //Process.Start(filename);// ビューアを起動。
             }
         }
 
