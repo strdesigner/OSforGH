@@ -59,6 +59,7 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("B", "B", "[[node No.,X,Y,Z,MX,MY,MZ],...](DataTree) 0-1 variable", GH_ParamAccess.tree, -9999);///
             pManager.AddNumberParameter("joint", "joint", "[[Ele. No., 0 or 1 or 2(means i or j or both), kx, ky, kz, rx, ry, rz(spring value)],...](DataTree)", GH_ParamAccess.tree, -9999);///
             pManager.AddNumberParameter("spring", "spring", "[[No.i,No.j,kx+,kx-,ky+,ky-,kz+,kz-,mx,my,mz,angle],...](DataTree)", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("spring_force", "spring_f", "[[N,Qy,Qz,My,Mz],...](DataTree)", GH_ParamAccess.tree, -9999);///
             pManager.AddNumberParameter("bar", "bar", "[...](name from SteelBar component)", GH_ParamAccess.list, -9999);///
             pManager.AddTextParameter("name(bar)", "name(bar)", "[...](name from SteelBar component)", GH_ParamAccess.list, "-9999");///
             pManager.AddTextParameter("name(sec)", "name(sec)", "[...](section name list)", GH_ParamAccess.list, "-9999");///
@@ -70,9 +71,9 @@ namespace OpenSeesUtility
             pManager.AddTextParameter("outputname", "outputname", "output file name", GH_ParamAccess.item, "");///
             pManager.AddNumberParameter("scaling", "scaling", "scale factor of figures", GH_ParamAccess.item, 0.85);///
             pManager.AddNumberParameter("offset", "offset", "offset value of figures", GH_ParamAccess.item, 25.0);///
-            pManager.AddNumberParameter("scale_factor_for_N", "NS", "scale factor for N", GH_ParamAccess.item, 0.1);///
-            pManager.AddNumberParameter("scale_factor_for_Q", "QS", "scale factor for Q", GH_ParamAccess.item, 0.1);///
-            pManager.AddNumberParameter("scale_factor_for_M", "MS", "scale factor for M", GH_ParamAccess.item, 0.15);///
+            pManager.AddNumberParameter("scale_factor_for_N", "NS", "scale factor for N and N(spring)", GH_ParamAccess.list, new List<double> { 0.1, 0.01 });///
+            pManager.AddNumberParameter("scale_factor_for_Q", "QS", "scale factor for Q and Q(spring)", GH_ParamAccess.list, new List<double> { 0.1, 0.01 });///
+            pManager.AddNumberParameter("scale_factor_for_M", "MS", "scale factor for M and M(spring)", GH_ParamAccess.list, new List<double> { 0.15, 0.015 });///
             pManager.AddNumberParameter("scale_factor_for_Qw", "QwS", "scale factor for Qw", GH_ParamAccess.item, 0.1);///
             pManager.AddNumberParameter("scale_factor_for_R", "RS", "scale factor for reaction force", GH_ParamAccess.item, 0.1);///
             pManager.AddTextParameter("casename", "casename", "files are named _casename.pdf", GH_ParamAccess.list, new List<string> { "L", "X", "Y", "P" });///
@@ -179,10 +180,17 @@ namespace OpenSeesUtility
                 var shear_w = new List<double>(); DA.GetDataList("shear_w", shear_w);
                 DA.GetDataTree("names", out GH_Structure<GH_String> _names); var names = _names.Branches; DA.GetDataTree("names(shell)", out GH_Structure<GH_String> _names2); var names2 = _names2.Branches; DA.GetDataTree("names(spring)", out GH_Structure<GH_String> _names3); var names3 = _names3.Branches;
                 var pdfname = "TimberCheck"; DA.GetData("outputname", ref pdfname); var scaling = 0.95; DA.GetData("scaling", ref scaling); var offset = 25.0; DA.GetData("offset", ref offset); var offsety = offset * 2; var lw = 1.0; DA.GetData("linewidth", ref lw); var js = 1.0; DA.GetData("jointsize", ref js); var ps = 1.0; DA.GetData("pointsize", ref ps);
-                var nscale = 0.1; DA.GetData("scale_factor_for_N", ref nscale); var qscale = 0.1; DA.GetData("scale_factor_for_Q", ref qscale); var mscale = 0.15; DA.GetData("scale_factor_for_M", ref mscale); var qwscale = 0.025; DA.GetData("scale_factor_for_Qw", ref qwscale); var rscale = 0.1; DA.GetData("scale_factor_for_R", ref rscale);
+                var _nscale = new List<double>(); var nscale = 0.1; var nscale2 = 0.1;
+                DA.GetDataList("scale_factor_for_N", _nscale); nscale = _nscale[0]; nscale2 = _nscale[1];
+                var _qscale = new List<double>(); var qscale = 0.1; var qscale2 = 0.1;
+                DA.GetDataList("scale_factor_for_Q", _qscale); qscale = _qscale[0]; qscale2 = _qscale[1];
+                var _mscale = new List<double>(); var mscale = 0.1; var mscale2 = 0.1;
+                DA.GetDataList("scale_factor_for_M", _mscale); mscale = _mscale[0]; mscale2 = _mscale[1];
+                var qwscale = 0.025; DA.GetData("scale_factor_for_Qw", ref qwscale); var rscale = 0.1; DA.GetData("scale_factor_for_R", ref rscale);
                 var index = new List<double>(); DA.GetDataList("index", index); DA.GetData("fontsize", ref fontsize);
                 var layer = new List<string>(); var wick = new List<string>(); var wicks = new List<List<string>>(); var wicks2 = new List<List<string>>(); var wicks3 = new List<List<string>>();
                 DA.GetDataTree("spring", out GH_Structure<GH_Number> _spring); var spring = _spring.Branches;
+                DA.GetDataTree("spring_force", out GH_Structure<GH_Number> _spring_f); var spring_f = _spring_f.Branches;
                 var index_model = new List<double>(); DA.GetDataList("index(model)", index_model);
                 var index_bar = new List<double>(); DA.GetDataList("index(bar)", index_bar);
                 var bar = new List<double>(); DA.GetDataList("bar", bar);
@@ -316,7 +324,7 @@ namespace OpenSeesUtility
                                 }
                                 ij_new.Add(list);
                                 wlist.Add(wick[j]);
-                                for (int i = 1; i < wicks[e].Count; i++)
+                                for (int i = 0; i < wicks[e].Count; i++)
                                 {
                                     if (wicks[e][i] != wick[j]) { wlist.Add(wicks[e][i]); }
                                 }
@@ -545,7 +553,7 @@ namespace OpenSeesUtility
                                         var secname = name_sec[sec];
                                         gfx.DrawString(secname, font, XBrushes.BlueViolet, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
                                     }
-                                }//配筋符号描画
+                                }//断面符号描画
                             }
                         }
                         gfx.DrawString(wick[j] + figname[k], titlefont, XBrushes.Black, offset, 842 - offset, XStringFormats.BaseLineLeft);
@@ -577,9 +585,10 @@ namespace OpenSeesUtility
                         page = document.AddPage();// 描画するためにXGraphicsオブジェクトを取得。
                         gfx = XGraphics.FromPdfPage(page);
                         var ij_new = new List<List<double>>();//その軸・通りの要素節点関係
+                        var wick_new = new List<List<string>>();//直交軸の有無
                         for (int e = 0; e < names.Count; e++)
                         {
-                            var list = new List<double>();
+                            var list = new List<double>(); var wlist = new List<string>();
                             if (wicks[e].Contains(wick[j]) == true)
                             {
                                 list.Add(e);
@@ -588,6 +597,12 @@ namespace OpenSeesUtility
                                     list.Add(ij[e][i].Value);
                                 }
                                 ij_new.Add(list);
+                                wlist.Add(wick[j]);
+                                for (int i = 0; i < wicks[e].Count; i++)
+                                {
+                                    if (wicks[e][i] != wick[j]) { wlist.Add(wicks[e][i]); }
+                                }
+                                wick_new.Add(wlist);
                             }
                         }
                         var kabe_w_new = new List<List<double>>();//その軸・通りの耐力壁
@@ -789,6 +804,16 @@ namespace OpenSeesUtility
                                 gfx.DrawPolygon(pen, pts);
                                 gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
                             }
+                            if (wick_new[e].Count >= 2)
+                            {
+                                var r3 = new List<double> { r1[0], 842 - offsety + tri * 2 };
+                                var r4 = new List<double> { r1[0], 842 - offsety + tri * 3.5 };
+                                gfx.DrawLine(penwick, r3[0], r3[1], r4[0], r4[1]);//通り芯線の描画
+                                for (int i = 1; i < wick_new[e].Count; i++)
+                                {
+                                    gfx.DrawString(wick_new[e][i], font, XBrushes.Black, r4[0], r4[1] + tri * (i - 1), XStringFormat.TopCenter);//直交軸通り芯名描画
+                                }
+                            }
                             if (e % 4 == 1) { position = XStringFormats.TopRight; }
                             if (e % 4 == 2) { position = XStringFormats.BaseLineRight; }
                             if (e % 4 == 3) { position = XStringFormats.TopLeft; }
@@ -841,7 +866,7 @@ namespace OpenSeesUtility
                             var wick_new = new List<List<string>>();//直交軸の有無
                             for (int e = 0; e < names.Count; e++)
                             {
-                                var list = new List<double>();
+                                var list = new List<double>(); var wlist = new List<string>();
                                 if (wicks[e].Contains(wick[j]) == true)
                                 {
                                     list.Add(e);
@@ -850,6 +875,12 @@ namespace OpenSeesUtility
                                         list.Add(ij[e][i].Value);
                                     }
                                     ij_new.Add(list);
+                                    wlist.Add(wick[j]);
+                                    for (int i = 0; i < wicks[e].Count; i++)
+                                    {
+                                        if (wicks[e][i] != wick[j]) { wlist.Add(wicks[e][i]); }
+                                    }
+                                    wick_new.Add(wlist);
                                 }
                             }
                             var kabe_w_new = new List<List<double>>();//その軸・通りの耐力壁
@@ -1126,9 +1157,10 @@ namespace OpenSeesUtility
                             gfx = XGraphics.FromPdfPage(page);
                             var ij_new = new List<List<double>>();//その軸・通りの要素節点関係
                             var sec_f_new = new List<List<double>>();//その軸・通りの断面力
+                            var wick_new = new List<List<string>>();//直交軸の有無
                             for (int e = 0; e < names.Count; e++)
                             {
-                                var list = new List<double>(); var flist = new List<double>();
+                                var list = new List<double>(); var flist = new List<double>(); var wlist = new List<string>();
                                 if (wicks[e].Contains(wick[j]) == true)
                                 {
                                     list.Add(e);
@@ -1137,6 +1169,12 @@ namespace OpenSeesUtility
                                         list.Add(ij[e][i].Value);
                                     }
                                     ij_new.Add(list);
+                                    wlist.Add(wick[j]);
+                                    for (int i = 0; i < wicks[e].Count; i++)
+                                    {
+                                        if (wicks[e][i] != wick[j]) { wlist.Add(wicks[e][i]); }
+                                    }
+                                    wick_new.Add(wlist);
                                     if (index.Contains(e) == true)
                                     {
                                         for (int i = 0; i < 18; i++)
@@ -1307,6 +1345,16 @@ namespace OpenSeesUtility
                                     gfx.DrawPolygon(pen, pts);
                                     gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
                                 }
+                                //if (wick_new[e].Count >= 2)
+                                //{
+                                //    var r3 = new List<double> { r1[0], 842 - offsety + tri * 2 };
+                                //    var r4 = new List<double> { r1[0], 842 - offsety + tri * 3.5 };
+                                //    gfx.DrawLine(penwick, r3[0], r3[1], r4[0], r4[1]);//通り芯線の描画
+                                //    for (int i = 1; i < wick_new[e].Count; i++)
+                                //    {
+                                //        gfx.DrawString(wick_new[e][i], font, XBrushes.Black, r4[0], r4[1] + tri * (i - 1), XStringFormat.TopCenter);//直交軸通り芯名描画
+                                //    }
+                                //}
                                 if (index_model.Contains(nel) == true)
                                 {
                                     gfx.DrawLine(pen, r1[0], r1[1], r2[0], r2[1]);//骨組の描画
@@ -1384,9 +1432,10 @@ namespace OpenSeesUtility
                             gfx = XGraphics.FromPdfPage(page);
                             var ij_new = new List<List<double>>();//その軸・通りの要素節点関係
                             var sec_f_new = new List<List<double>>();//その軸・通りの断面力
+                            var wick_new = new List<List<string>>();//直交軸の有無
                             for (int e = 0; e < names.Count; e++)
                             {
-                                var list = new List<double>(); var flist = new List<double>();
+                                var list = new List<double>(); var flist = new List<double>(); var wlist = new List<string>();
                                 if (wicks[e].Contains(wick[j]) == true)
                                 {
                                     list.Add(e);
@@ -1395,6 +1444,12 @@ namespace OpenSeesUtility
                                         list.Add(ij[e][i].Value);
                                     }
                                     ij_new.Add(list);
+                                    wlist.Add(wick[j]);
+                                    for (int i = 0; i < wicks[e].Count; i++)
+                                    {
+                                        if (wicks[e][i] != wick[j]) { wlist.Add(wicks[e][i]); }
+                                    }
+                                    wick_new.Add(wlist);
                                     if (index.Contains(e) == true)
                                     {
                                         for (int i = 0; i < 18; i++)
@@ -1553,6 +1608,16 @@ namespace OpenSeesUtility
                                     gfx.DrawPolygon(pen, pts);
                                     gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
                                 }
+                                if (wick_new[e].Count >= 2)
+                                {
+                                    var r3 = new List<double> { r1[0], 842 - offsety + tri * 2 };
+                                    var r4 = new List<double> { r1[0], 842 - offsety + tri * 3.5 };
+                                    gfx.DrawLine(penwick, r3[0], r3[1], r4[0], r4[1]);//通り芯線の描画
+                                    for (int i = 1; i < wick_new[e].Count; i++)
+                                    {
+                                        gfx.DrawString(wick_new[e][i], font, XBrushes.Black, r4[0], r4[1] + tri * (i - 1), XStringFormat.TopCenter);//直交軸通り芯名描画
+                                    }
+                                }
                                 if (index_model.Contains(nel) == true)
                                 {
                                     gfx.DrawLine(pen, r1[0], r1[1], r2[0], r2[1]);//骨組の描画
@@ -1632,9 +1697,10 @@ namespace OpenSeesUtility
                             gfx = XGraphics.FromPdfPage(page);
                             var ij_new = new List<List<double>>();//その軸・通りの要素節点関係
                             var sec_f_new = new List<List<double>>();//その軸・通りの断面力
+                            var wick_new = new List<List<string>>();//直交軸の有無
                             for (int e = 0; e < names.Count; e++)
                             {
-                                var list = new List<double>(); var flist = new List<double>();
+                                var list = new List<double>(); var flist = new List<double>(); var wlist = new List<string>();
                                 if (wicks[e].Contains(wick[j]) == true)
                                 {
                                     list.Add(e);
@@ -1643,6 +1709,12 @@ namespace OpenSeesUtility
                                         list.Add(ij[e][i].Value);
                                     }
                                     ij_new.Add(list);
+                                    wlist.Add(wick[j]);
+                                    for (int i = 0; i < wicks[e].Count; i++)
+                                    {
+                                        if (wicks[e][i] != wick[j]) { wlist.Add(wicks[e][i]); }
+                                    }
+                                    wick_new.Add(wlist);
                                     if (index.Contains(e) == true)
                                     {
                                         for (int i = 0; i < 18; i++)
@@ -1800,6 +1872,16 @@ namespace OpenSeesUtility
                                     gfx.DrawPolygon(pen, pts);
                                     gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
                                 }
+                                if (wick_new[e].Count >= 2)
+                                {
+                                    var r3 = new List<double> { r1[0], 842 - offsety + tri * 2 };
+                                    var r4 = new List<double> { r1[0], 842 - offsety + tri * 3.5 };
+                                    gfx.DrawLine(penwick, r3[0], r3[1], r4[0], r4[1]);//通り芯線の描画
+                                    for (int i = 1; i < wick_new[e].Count; i++)
+                                    {
+                                        gfx.DrawString(wick_new[e][i], font, XBrushes.Black, r4[0], r4[1] + tri * (i - 1), XStringFormat.TopCenter);//直交軸通り芯名描画
+                                    }
+                                }
                                 if (index_model.Contains(nel) == true)
                                 {
                                     gfx.DrawLine(pen, r1[0], r1[1], r2[0], r2[1]);//骨組の描画
@@ -1840,6 +1922,529 @@ namespace OpenSeesUtility
                             gfx.DrawString(wick[j] + "通り軸力図" + casememo[ii], titlefont, XBrushes.Black, offset, 842 - offset, XStringFormats.BaseLineLeft);
                         }
                         filename = dir + "/" + pdfname + "_N" + label[ii] + ".pdf";
+                        document.Save(filename);// ドキュメントを保存。
+                        Process.Start(filename);// ビューアを起動。
+                    }
+                }
+                //応力図(ばね)
+                if (spring_f[0][0].Value != -9999)
+                {
+                    var spring_vec = new List<Vector3d>();
+                    for (int e = 0; e < spring.Count; e++)
+                    {
+                        int i = (int)spring[e][0].Value; int j = (int)spring[e][1].Value; double a_e = spring[e][11].Value;
+                        Vector3d x = new Vector3d(R[j][0].Value - R[i][0].Value, R[j][1].Value - R[i][1].Value, R[j][2].Value - R[i][2].Value);
+                        if (Math.Abs(x[0]) <= 5e-3 && Math.Abs(x[1]) <= 5e-3)
+                        {
+                            Vector3d y = rotation(x, new Vector3d(0, 1, 0), 90);
+                            Vector3d z = rotation(y, x, 90 + a_e);
+                            Vector3d l = z / Math.Sqrt(Vector3d.Multiply(z, z));
+                            spring_vec.Add(l);
+                        }
+                        else
+                        {
+                            Vector3d y = rotation(x, new Vector3d(0, 0, 1), 90);
+                            y[2] = 0.0;
+                            Vector3d z = rotation(y, x, 90 + a_e);
+                            Vector3d l = z / Math.Sqrt(Vector3d.Multiply(z, z));
+                            spring_vec.Add(l);
+                        }
+                    }
+                    int nf = spring_f[0].Count; var label = new List<string> { "L", "X", "Y", "P" }; var casememo = new List<string> { "(長期荷重時)", "+X荷重時", "+Y荷重時", "接地圧作用時" };
+                    DA.GetDataList("casename", label); DA.GetDataList("casememo", casememo);
+                    int div = 30;
+                    var Tmax = 0.0; var Cmax = 0.0; var Mxmax = 0.0; var Mymax = 0.0; var Mzmax = 0.0; var Qymax = 0.0; var Qzmax = 0.0;
+                    for (int ii = 0; ii < nf / 6; ii++)
+                    {
+                        for (int i = 0; i < spring_f.Count; i++)
+                        {
+                            Tmax = Math.Max(Tmax, spring_f[i][ii * 6 + 0].Value * nscale2);
+                            Cmax = Math.Max(Cmax, -spring_f[i][ii * 6 + 0].Value * nscale2);
+                            Qymax = Math.Max(Qymax, Math.Abs(spring_f[i][ii * 6 + 1].Value) * qscale2);
+                            Qzmax = Math.Max(Qzmax, Math.Abs(spring_f[i][ii * 6 + 2].Value) * qscale2);
+                            Mxmax = Math.Max(Mxmax, Math.Abs(spring_f[i][ii * 6 + 3].Value) * mscale2);
+                            Mymax = Math.Max(Mymax, Math.Abs(spring_f[i][ii * 6 + 4].Value) * mscale2);
+                            Mzmax = Math.Max(Mzmax, Math.Abs(spring_f[i][ii * 6 + 5].Value) * mscale2);
+                        }
+                    }
+                    for (int ii = 0; ii < nf / 6; ii++)
+                    {
+                        //せん断力図///////////////////////////////////////////////////////////////////////////////////////////
+                        document = new PdfDocument();
+                        document.Info.Title = pdfname;
+                        document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu";
+                        for (int j = 0; j < wick.Count; j++)//1; j++)//
+                        {
+                            PdfPage page = new PdfPage(); page.Size = PageSize.A4;// 空白ページを作成。width x height = 594 x 842
+                            page = document.AddPage();// 描画するためにXGraphicsオブジェクトを取得。
+                            gfx = XGraphics.FromPdfPage(page);
+                            var ij_new = new List<List<double>>();//その軸・通りの要素節点関係
+                            var wick_new = new List<List<string>>();//直交軸の有無
+                            for (int e = 0; e < names.Count; e++)
+                            {
+                                var list = new List<double>(); var wlist = new List<string>();
+                                if (wicks[e].Contains(wick[j]) == true)
+                                {
+                                    list.Add(e);
+                                    for (int i = 0; i < ij[e].Count; i++)
+                                    {
+                                        list.Add(ij[e][i].Value);
+                                    }
+                                    ij_new.Add(list);
+                                    wlist.Add(wick[j]);
+                                    for (int i = 0; i < wicks[e].Count; i++)
+                                    {
+                                        if (wicks[e][i] != wick[j]) { wlist.Add(wicks[e][i]); }
+                                    }
+                                    wick_new.Add(wlist);
+                                }
+                            }
+                            var kabe_w_new = new List<List<double>>();//その軸・通りの耐力壁
+                            if (names2[0][0].Value != "" && shear_w[0] != -9999 && kabe_w[0][0].Value != -9999)
+                            {
+                                for (int e = 0; e < names2.Count; e++)
+                                {
+                                    var list = new List<double>();
+                                    if (wicks2[e].Contains(wick[j]) == true)
+                                    {
+                                        list.Add(e);
+                                        for (int i = 0; i < kabe_w[e].Count; i++)
+                                        {
+                                            list.Add(kabe_w[e][i].Value);
+                                        }
+                                        kabe_w_new.Add(list);
+                                    }
+                                }
+                            }
+                            var spring_new = new List<List<double>>();//その軸・通りのばね
+                            if (names3[0][0].Value != "" && spring[0][0].Value != -9999)
+                            {
+                                for (int e = 0; e < names3.Count; e++)
+                                {
+                                    var list = new List<double>();
+                                    if (wicks3[e].Contains(wick[j]) == true)
+                                    {
+                                        list.Add(e);
+                                        for (int i = 0; i < spring[e].Count; i++)
+                                        {
+                                            list.Add(spring[e][i].Value);
+                                        }
+                                        spring_new.Add(list);
+                                    }
+                                }
+                            }
+                            var xmin = 9999.0; var xmax = -9999.0; var ymin = 9999.0; var ymax = -9999.0; var zmin = 9999.0; var zmax = -9999.0;
+                            for (int e = 0; e < ij_new.Count; e++)
+                            {
+                                int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2];
+                                xmin = Math.Min(xmin, R[ni][0].Value); xmax = Math.Max(xmax, R[ni][0].Value); xmin = Math.Min(xmin, R[nj][0].Value); xmax = Math.Max(xmax, R[nj][0].Value);
+                                ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value); ymin = Math.Min(ymin, R[nj][1].Value); ymax = Math.Max(ymax, R[nj][1].Value);
+                                zmin = Math.Min(zmin, R[ni][2].Value); zmax = Math.Max(zmax, R[ni][2].Value); zmin = Math.Min(zmin, R[nj][2].Value); zmax = Math.Max(zmax, R[nj][2].Value);
+                            }
+                            var flag = 1;//軸が右肩上がりなら0，右肩下がりなら1とする
+                            for (int e = 0; e < ij_new.Count; e++)
+                            {
+                                int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2];
+                                if (Math.Abs(R[ni][0].Value - xmin) < 1e-2 && Math.Abs(R[ni][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                                if (Math.Abs(R[nj][0].Value - xmin) < 1e-2 && Math.Abs(R[nj][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                            }
+                            var r0 = new Vector3d(xmin, ymin, Zmin);//左下
+                            var cos = (xmax - xmin) / Math.Sqrt(Math.Pow(xmax - xmin, 2) + Math.Pow(ymax - ymin, 2));//(1,0,0)との角度
+                            var theta = -Math.Acos(cos) / Math.PI * 180.0;
+                            if (flag == 1)
+                            {
+                                theta = -theta;
+                                r0 = new Vector3d(xmin, ymax, Zmin);//左上
+                            }
+                            var r_ij = new List<List<List<double>>>(); var zvec = new Vector3d(0, 0, 1);
+                            r0 = rotation(r0, zvec, theta);//回転後の左下
+                            if (names2[0][0].Value != "")
+                            {
+                                for (int e = 0; e < kabe_w_new.Count; e++)
+                                {
+                                    int ni = (int)kabe_w_new[e][1]; int nj = (int)kabe_w_new[e][2]; int nk = (int)kabe_w_new[e][3]; int nl = (int)kabe_w_new[e][4]; int nel = (int)kabe_w_new[e][0];
+                                    var alpha = kabe_w_new[e][5];
+                                    if (alpha != 0.0)
+                                    {
+                                        var vi = rotation(new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value), zvec, theta) - r0;
+                                        var vj = rotation(new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value), zvec, theta) - r0;
+                                        var vk = rotation(new Vector3d(R[nk][0].Value, R[nk][1].Value, R[nk][2].Value), zvec, theta) - r0;
+                                        var vl = rotation(new Vector3d(R[nl][0].Value, R[nl][1].Value, R[nl][2].Value), zvec, theta) - r0;
+                                        var r1 = new List<double>(); r1.Add(offset + vi[0] * scale); r1.Add(842 - offsety - vi[2] * scale);
+                                        var r2 = new List<double>(); r2.Add(offset + vj[0] * scale); r2.Add(842 - offsety - vj[2] * scale);
+                                        var r3 = new List<double>(); r3.Add(offset + vk[0] * scale); r3.Add(842 - offsety - vk[2] * scale);
+                                        var r4 = new List<double>(); r4.Add(offset + vl[0] * scale); r4.Add(842 - offsety - vl[2] * scale);
+                                        var rp1 = new List<double>(); rp1.Add(r1[0] + (r3[0] - r1[0]) * pinwidth); rp1.Add(r1[1] + (r3[1] - r1[1]) * pinwidth);
+                                        var rp2 = new List<double>(); rp2.Add(r2[0] + (r4[0] - r2[0]) * pinwidth); rp2.Add(r2[1] + (r4[1] - r2[1]) * pinwidth);
+                                        var rp3 = new List<double>(); rp3.Add(r3[0] + (r1[0] - r3[0]) * pinwidth); rp3.Add(r3[1] + (r1[1] - r3[1]) * pinwidth);
+                                        var rp4 = new List<double>(); rp4.Add(r4[0] + (r2[0] - r4[0]) * pinwidth); rp4.Add(r4[1] + (r2[1] - r4[1]) * pinwidth);
+                                        var rc = new List<double> { (r1[0] + r2[0] + r3[0] + r4[0]) / 4.0, (r1[1] + r2[1] + r3[1] + r4[1]) / 4.0 };
+                                        gfx.DrawLine(pengray, r1[0], r1[1], r3[0], r3[1]); gfx.DrawLine(pengray, r2[0], r2[1], r4[0], r4[1]);//線材置換トラスの描画
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp1[0] - js / 2.0, rp1[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp2[0] - js / 2.0, rp2[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp3[0] - js / 2.0, rp3[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp4[0] - js / 2.0, rp4[1] - js / 2.0, js, js);//ピン記号
+                                    }
+                                }
+                            }
+                            if (names3[0][0].Value != "")
+                            {
+                                int np2 = 0;
+                                var position2 = new List<XStringFormat> { XStringFormat.TopCenter, XStringFormats.BaseLineLeft, XStringFormats.TopRight, XStringFormats.BaseLineRight, XStringFormats.TopLeft, XStringFormat.BottomCenter };
+                                for (int e = 0; e < spring_new.Count; e++)
+                                {
+                                    int ni = (int)spring_new[e][1]; int nj = (int)spring_new[e][2]; int nel = (int)spring_new[e][0];
+                                    var vi = rotation(new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value), zvec, theta) - r0;
+                                    var vj = rotation(new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value), zvec, theta) - r0;
+                                    var r1 = new List<double>(); r1.Add(offset + vi[0] * scale); r1.Add(842 - offsety - vi[2] * scale);
+                                    var r2 = new List<double>(); r2.Add(offset + vj[0] * scale); r2.Add(842 - offsety - vj[2] * scale);
+                                    gfx.DrawLine(penspring, r1[0], r1[1], r2[0], r2[1]);//ばねの描画
+                                    gfx.DrawEllipse(XBrushes.Black, r2[0] - ps / 2.0, r2[1] - ps / 2.0, ps, ps);//j節点の描画
+                                    if (B_No.Contains(ni) == true)//境界条件
+                                    {
+                                        int i = B_No.IndexOf(ni);
+                                        XPoint[] pts = new XPoint[3]; pts[0].X = r1[0]; pts[0].Y = r1[1]; pts[1].X = r1[0] - tri / 2.0; pts[1].Y = r1[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = r1[0] + tri / 2.0; pts[2].Y = r1[1] + tri / 2.0 * Math.Sqrt(3);
+                                        var pc = new XPoint(); pc.X = (pts[1].X + pts[2].X) / 2.0; pc.Y = pts[1].Y;
+                                        gfx.DrawPolygon(pen, pts);
+                                        gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
+                                    }
+                                    if (B_No.Contains(nj) == true)//境界条件
+                                    {
+                                        int i = B_No.IndexOf(nj);
+                                        XPoint[] pts = new XPoint[3]; pts[0].X = r2[0]; pts[0].Y = r2[1]; pts[1].X = r2[0] - tri / 2.0; pts[1].Y = r2[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = r2[0] + tri / 2.0; pts[2].Y = r2[1] + tri / 2.0 * Math.Sqrt(3);
+                                        var pc = new XPoint(); pc.X = (pts[1].X + pts[2].X) / 2.0; pc.Y = pts[1].Y;
+                                        gfx.DrawPolygon(pen, pts);
+                                        gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
+                                    }
+                                    var Qz = spring_f[nel][ii * 6 + 2].Value; var angle = 0.0;//spring[nel][11].Value;
+                                    if (Math.Abs(Qz) > Qbound)
+                                    {
+                                        var ri = new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                        var rj = new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                        var element = new Line(new Point3d(ri), new Point3d(rj));
+                                        var rc = (ri + rj) / 2.0;
+                                        var l_ve = rotation(spring_vec[nel], rj - ri, angle);
+                                        var p1 = ri - l_ve * Qz * qscale2; var p2 = rc - l_ve * Qz * qscale2; var p3 = rj - l_ve * Qz * qscale2;
+                                        var curve = NurbsCurve.CreateInterpolatedCurve(new Point3d[] { new Point3d(p1), new Point3d(p2), new Point3d(p3) }, 3);
+                                        curve.DivideByCount(div, true, out Point3d[] QZ);
+                                        var Qz_2D = new List<Vector2d>(); var Qz0_2D = new List<Vector2d>();
+                                        for (int i = 0; i < QZ.Length; i++) { var v = rotation(new Vector3d(QZ[i].X, QZ[i].Y, QZ[i].Z), zvec, theta) - r0; var x = offset + v[0] * scale; var y = 842 - offsety - v[2] * scale; Qz_2D.Add(new Vector2d(x, y)); }//紙面に平行に回転
+                                        var Qz0 = new Point3d[QZ.Length];//せん断力描画点から要素への法線の足の座標
+                                        for (int i = 0; i < QZ.Length; i++) { Qz0[i] = element.ClosestPoint(QZ[i], true); }
+                                        for (int i = 0; i < Qz0.Length; i++) { var v = rotation(new Vector3d(Qz0[i].X, Qz0[i].Y, Qz0[i].Z), zvec, theta) - r0; var x = offset + v[0] * scale; var y = 842 - offsety - v[2] * scale; Qz0_2D.Add(new Vector2d(x, y)); }//紙面に平行に回転
+                                        for (int i = 0; i < Qz_2D.Count; i++)//せん断力の描画(カラー分布)
+                                        {
+                                            var v = QZ[i] - Qz0[i]; var val = v.Length;
+                                            var color = RGB(Math.Max(0, (1 - val / Math.Max(1e-10, Qzmax)) * 1.9 / 3.0), 1, 0.5);
+                                            var pens = new XPen(color, lw * 0.25);
+                                            gfx.DrawLine(pens, Qz_2D[i].X, Qz_2D[i].Y, Qz0_2D[i].X, Qz0_2D[i].Y);
+                                        }
+                                        gfx.DrawString(Qz.ToString().Substring(0, Math.Min(Qz.ToString().Length, 4)), font, XBrushes.Black, Qz_2D[(int)(Qz_2D.Count / 2)].X, Qz_2D[(int)(Qz_2D.Count / 2)].Y, position2[np2 % 6]);
+                                        np2 += 1;
+                                        //var pi = ri - l_ve * Qz * qscale2; var pj = rj - l_ve * Qz * qscale2;
+                                        //var c1 = new XSolidBrush(XColor.FromArgb(200, (int)(255 * (1 - Math.Min(Math.Abs(Qz * qscale2) / Qzmax, 1.0)) * 1.9 / 3.0), 255, (int)(255 * 0.5)));//RGB((1 - Math.Min(Math.Abs(Qz) / Qzmax, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        //var pts = new XPoint[4];
+                                        //pts[0].X = ri[0]; pts[0].Y = ri[1];
+                                        //pts[1].X = pi[0]; pts[1].Y = pi[1];
+                                        //pts[2].X = pj[0]; pts[2].Y = pj[1];
+                                        //pts[3].X = rj[0]; pts[3].Y = rj[1];
+                                        //gfx.DrawPolygon(new XPen(XColors.Black, 0), c1, pts, XFillMode.Winding);
+                                        //var p1 = new Vector2d(r1[0], r1[1]); var p2 = new Vector2d(r2[0], r2[1]);
+                                        //gfx.DrawString(Qz.ToString().Substring(0, Math.Min(Qz.ToString().Length, 4)), font, XBrushes.Black, (p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0, position2[np2 % 6]); np2 += 1;
+                                    }
+                                }
+                            }
+                            int np = 0;
+                            var position = new List<XStringFormat> { XStringFormat.TopCenter, XStringFormats.BaseLineLeft, XStringFormats.TopRight, XStringFormats.BaseLineRight, XStringFormats.TopLeft, XStringFormat.BottomCenter };
+                            for (int e = 0; e < ij_new.Count; e++)//紙面に平行に回転後の骨組
+                            {
+                                int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2]; int nel = (int)ij_new[e][0];
+                                int mat = (int)ij_new[e][3]; int sec = (int)ij_new[e][4]; int angle = 0;//(int)ij_new[e][5];
+                                var ri = new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                var rj = new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                var vi = rotation(ri, zvec, theta) - r0;
+                                var vj = rotation(rj, zvec, theta) - r0;
+                                var r1 = new List<double>(); r1.Add(offset + vi[0] * scale); r1.Add(842 - offsety - vi[2] * scale);
+                                var r2 = new List<double>(); r2.Add(offset + vj[0] * scale); r2.Add(842 - offsety - vj[2] * scale);
+                                r_ij.Add(new List<List<double>> { r1, r2 });
+                                if (B_No.Contains(ni) == true)//境界条件
+                                {
+                                    int i = B_No.IndexOf(ni);
+                                    XPoint[] pts = new XPoint[3]; pts[0].X = r1[0]; pts[0].Y = r1[1]; pts[1].X = r1[0] - tri / 2.0; pts[1].Y = r1[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = r1[0] + tri / 2.0; pts[2].Y = r1[1] + tri / 2.0 * Math.Sqrt(3);
+                                    var pc = new XPoint(); pc.X = (pts[1].X + pts[2].X) / 2.0; pc.Y = pts[1].Y;
+                                    gfx.DrawPolygon(pen, pts);
+                                    gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
+                                }
+                                if (B_No.Contains(nj) == true)//境界条件
+                                {
+                                    int i = B_No.IndexOf(nj);
+                                    XPoint[] pts = new XPoint[3]; pts[0].X = r2[0]; pts[0].Y = r2[1]; pts[1].X = r2[0] - tri / 2.0; pts[1].Y = r2[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = r2[0] + tri / 2.0; pts[2].Y = r2[1] + tri / 2.0 * Math.Sqrt(3);
+                                    var pc = new XPoint(); pc.X = (pts[1].X + pts[2].X) / 2.0; pc.Y = pts[1].Y;
+                                    gfx.DrawPolygon(pen, pts);
+                                    gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
+                                }
+                                if (wick_new[e].Count >= 2)
+                                {
+                                    var r3 = new List<double> { r1[0], 842 - offsety + tri * 2 };
+                                    var r4 = new List<double> { r1[0], 842 - offsety + tri * 3.5 };
+                                    gfx.DrawLine(penwick, r3[0], r3[1], r4[0], r4[1]);//通り芯線の描画
+                                    for (int i = 1; i < wick_new[e].Count; i++)
+                                    {
+                                        gfx.DrawString(wick_new[e][i], font, XBrushes.Black, r4[0], r4[1] + tri * (i - 1), XStringFormat.TopCenter);//直交軸通り芯名描画
+                                    }
+                                }
+                                if (index_model.Contains(nel) == true)
+                                {
+                                    gfx.DrawLine(pen, r1[0], r1[1], r2[0], r2[1]);//骨組の描画
+                                    gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//i節点の描画
+                                    gfx.DrawEllipse(XBrushes.Black, r2[0] - ps / 2.0, r2[1] - ps / 2.0, ps, ps);//j節点の描画
+                                }
+                                //else { gfx.DrawLine(pengray2, r1[0], r1[1], r2[0], r2[1]);}
+                                if (joint_No.Contains(nel) == true && index_model.Contains(nel) == true)//材端ピン
+                                {
+                                    int i = joint_No.IndexOf(nel);
+                                    if (joint[i][1].Value == 0 || joint[i][1].Value == 2)
+                                    {
+                                        var rp1 = new List<double>(); rp1.Add(r1[0] + (r2[0] - r1[0]) * pinwidth); rp1.Add(r1[1] + (r2[1] - r1[1]) * pinwidth);
+                                        gfx.DrawEllipse(pen, XBrushes.White, rp1[0] - js / 2.0, rp1[1] - js / 2.0, js, js);//ピン記号
+                                    }
+                                    if (joint[i][1].Value == 1 || joint[i][1].Value == 2)
+                                    {
+                                        var rp2 = new List<double>(); rp2.Add(r2[0] + (r1[0] - r2[0]) * pinwidth); rp2.Add(r2[1] + (r1[1] - r2[1]) * pinwidth);
+                                        gfx.DrawEllipse(pen, XBrushes.White, rp2[0] - js / 2.0, rp2[1] - js / 2.0, js, js);//ピン記号
+                                    }
+                                }
+                            }
+                            gfx.DrawString(wick[j] + "通りばねせん断力図" + casememo[ii], titlefont, XBrushes.Black, offset, 842 - offset, XStringFormats.BaseLineLeft);
+                        }
+                        filename = dir + "/" + pdfname + "_Qzspring" + label[ii] + ".pdf";
+                        document.Save(filename);// ドキュメントを保存。
+                        Process.Start(filename);// ビューアを起動。
+                        //引張力図///////////////////////////////////////////////////////////////////////////////////////////
+                        document = new PdfDocument();
+                        document.Info.Title = pdfname;
+                        document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu";
+                        for (int j = 0; j < wick.Count; j++)//1; j++)//
+                        {
+                            PdfPage page = new PdfPage(); page.Size = PageSize.A4;// 空白ページを作成。width x height = 594 x 842
+                            page = document.AddPage();// 描画するためにXGraphicsオブジェクトを取得。
+                            gfx = XGraphics.FromPdfPage(page);
+                            var ij_new = new List<List<double>>();//その軸・通りの要素節点関係
+                            var wick_new = new List<List<string>>();//直交軸の有無
+                            for (int e = 0; e < names.Count; e++)
+                            {
+                                var list = new List<double>(); var wlist = new List<string>();
+                                if (wicks[e].Contains(wick[j]) == true)
+                                {
+                                    list.Add(e);
+                                    for (int i = 0; i < ij[e].Count; i++)
+                                    {
+                                        list.Add(ij[e][i].Value);
+                                    }
+                                    ij_new.Add(list);
+                                    wlist.Add(wick[j]);
+                                    for (int i = 0; i < wicks[e].Count; i++)
+                                    {
+                                        if (wicks[e][i] != wick[j]) { wlist.Add(wicks[e][i]); }
+                                    }
+                                    wick_new.Add(wlist);
+                                }
+                            }
+                            var kabe_w_new = new List<List<double>>();//その軸・通りの耐力壁
+                            if (names2[0][0].Value != "" && shear_w[0] != -9999 && kabe_w[0][0].Value != -9999)
+                            {
+                                for (int e = 0; e < names2.Count; e++)
+                                {
+                                    var list = new List<double>();
+                                    if (wicks2[e].Contains(wick[j]) == true)
+                                    {
+                                        list.Add(e);
+                                        for (int i = 0; i < kabe_w[e].Count; i++)
+                                        {
+                                            list.Add(kabe_w[e][i].Value);
+                                        }
+                                        kabe_w_new.Add(list);
+                                    }
+                                }
+                            }
+                            var spring_new = new List<List<double>>();//その軸・通りのばね
+                            if (names3[0][0].Value != "" && spring[0][0].Value != -9999)
+                            {
+                                for (int e = 0; e < names3.Count; e++)
+                                {
+                                    var list = new List<double>();
+                                    if (wicks3[e].Contains(wick[j]) == true)
+                                    {
+                                        list.Add(e);
+                                        for (int i = 0; i < spring[e].Count; i++)
+                                        {
+                                            list.Add(spring[e][i].Value);
+                                        }
+                                        spring_new.Add(list);
+                                    }
+                                }
+                            }
+                            var xmin = 9999.0; var xmax = -9999.0; var ymin = 9999.0; var ymax = -9999.0; var zmin = 9999.0; var zmax = -9999.0;
+                            for (int e = 0; e < ij_new.Count; e++)
+                            {
+                                int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2];
+                                xmin = Math.Min(xmin, R[ni][0].Value); xmax = Math.Max(xmax, R[ni][0].Value); xmin = Math.Min(xmin, R[nj][0].Value); xmax = Math.Max(xmax, R[nj][0].Value);
+                                ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value); ymin = Math.Min(ymin, R[nj][1].Value); ymax = Math.Max(ymax, R[nj][1].Value);
+                                zmin = Math.Min(zmin, R[ni][2].Value); zmax = Math.Max(zmax, R[ni][2].Value); zmin = Math.Min(zmin, R[nj][2].Value); zmax = Math.Max(zmax, R[nj][2].Value);
+                            }
+                            var flag = 1;//軸が右肩上がりなら0，右肩下がりなら1とする
+                            for (int e = 0; e < ij_new.Count; e++)
+                            {
+                                int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2];
+                                if (Math.Abs(R[ni][0].Value - xmin) < 1e-2 && Math.Abs(R[ni][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                                if (Math.Abs(R[nj][0].Value - xmin) < 1e-2 && Math.Abs(R[nj][1].Value - ymin) < 1e-2) { flag = 0; break; }
+                            }
+                            var r0 = new Vector3d(xmin, ymin, Zmin);//左下
+                            var cos = (xmax - xmin) / Math.Sqrt(Math.Pow(xmax - xmin, 2) + Math.Pow(ymax - ymin, 2));//(1,0,0)との角度
+                            var theta = -Math.Acos(cos) / Math.PI * 180.0;
+                            if (flag == 1)
+                            {
+                                theta = -theta;
+                                r0 = new Vector3d(xmin, ymax, Zmin);//左上
+                            }
+                            var r_ij = new List<List<List<double>>>(); var zvec = new Vector3d(0, 0, 1);
+                            r0 = rotation(r0, zvec, theta);//回転後の左下
+                            if (names2[0][0].Value != "")
+                            {
+                                for (int e = 0; e < kabe_w_new.Count; e++)
+                                {
+                                    int ni = (int)kabe_w_new[e][1]; int nj = (int)kabe_w_new[e][2]; int nk = (int)kabe_w_new[e][3]; int nl = (int)kabe_w_new[e][4]; int nel = (int)kabe_w_new[e][0];
+                                    var alpha = kabe_w_new[e][5];
+                                    if (alpha != 0.0)
+                                    {
+                                        var vi = rotation(new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value), zvec, theta) - r0;
+                                        var vj = rotation(new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value), zvec, theta) - r0;
+                                        var vk = rotation(new Vector3d(R[nk][0].Value, R[nk][1].Value, R[nk][2].Value), zvec, theta) - r0;
+                                        var vl = rotation(new Vector3d(R[nl][0].Value, R[nl][1].Value, R[nl][2].Value), zvec, theta) - r0;
+                                        var r1 = new List<double>(); r1.Add(offset + vi[0] * scale); r1.Add(842 - offsety - vi[2] * scale);
+                                        var r2 = new List<double>(); r2.Add(offset + vj[0] * scale); r2.Add(842 - offsety - vj[2] * scale);
+                                        var r3 = new List<double>(); r3.Add(offset + vk[0] * scale); r3.Add(842 - offsety - vk[2] * scale);
+                                        var r4 = new List<double>(); r4.Add(offset + vl[0] * scale); r4.Add(842 - offsety - vl[2] * scale);
+                                        var rp1 = new List<double>(); rp1.Add(r1[0] + (r3[0] - r1[0]) * pinwidth); rp1.Add(r1[1] + (r3[1] - r1[1]) * pinwidth);
+                                        var rp2 = new List<double>(); rp2.Add(r2[0] + (r4[0] - r2[0]) * pinwidth); rp2.Add(r2[1] + (r4[1] - r2[1]) * pinwidth);
+                                        var rp3 = new List<double>(); rp3.Add(r3[0] + (r1[0] - r3[0]) * pinwidth); rp3.Add(r3[1] + (r1[1] - r3[1]) * pinwidth);
+                                        var rp4 = new List<double>(); rp4.Add(r4[0] + (r2[0] - r4[0]) * pinwidth); rp4.Add(r4[1] + (r2[1] - r4[1]) * pinwidth);
+                                        var rc = new List<double> { (r1[0] + r2[0] + r3[0] + r4[0]) / 4.0, (r1[1] + r2[1] + r3[1] + r4[1]) / 4.0 };
+                                        gfx.DrawLine(pengray, r1[0], r1[1], r3[0], r3[1]); gfx.DrawLine(pengray, r2[0], r2[1], r4[0], r4[1]);//線材置換トラスの描画
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp1[0] - js / 2.0, rp1[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp2[0] - js / 2.0, rp2[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp3[0] - js / 2.0, rp3[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp4[0] - js / 2.0, rp4[1] - js / 2.0, js, js);//ピン記号
+                                    }
+                                }
+                            }
+                            if (names3[0][0].Value != "")
+                            {
+                                int np2 = 0;
+                                var position2 = new List<XStringFormat> { XStringFormat.TopCenter, XStringFormats.BaseLineLeft, XStringFormats.TopRight, XStringFormats.BaseLineRight, XStringFormats.TopLeft, XStringFormat.BottomCenter };
+                                for (int e = 0; e < spring_new.Count; e++)
+                                {
+                                    int ni = (int)spring_new[e][1]; int nj = (int)spring_new[e][2]; int nel = (int)spring_new[e][0];
+                                    var vi = rotation(new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value), zvec, theta) - r0;
+                                    var vj = rotation(new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value), zvec, theta) - r0;
+                                    var r1 = new List<double>(); r1.Add(offset + vi[0] * scale); r1.Add(842 - offsety - vi[2] * scale);
+                                    var r2 = new List<double>(); r2.Add(offset + vj[0] * scale); r2.Add(842 - offsety - vj[2] * scale);
+                                    gfx.DrawLine(penspring, r1[0], r1[1], r2[0], r2[1]);//ばねの描画
+                                    gfx.DrawEllipse(XBrushes.Black, r2[0] - ps / 2.0, r2[1] - ps / 2.0, ps, ps);//j節点の描画
+                                    if (B_No.Contains(ni) == true)//境界条件
+                                    {
+                                        int i = B_No.IndexOf(ni);
+                                        XPoint[] pts = new XPoint[3]; pts[0].X = r1[0]; pts[0].Y = r1[1]; pts[1].X = r1[0] - tri / 2.0; pts[1].Y = r1[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = r1[0] + tri / 2.0; pts[2].Y = r1[1] + tri / 2.0 * Math.Sqrt(3);
+                                        var pc = new XPoint(); pc.X = (pts[1].X + pts[2].X) / 2.0; pc.Y = pts[1].Y;
+                                        gfx.DrawPolygon(pen, pts);
+                                        gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
+                                    }
+                                    if (B_No.Contains(nj) == true)//境界条件
+                                    {
+                                        int i = B_No.IndexOf(nj);
+                                        XPoint[] pts = new XPoint[3]; pts[0].X = r2[0]; pts[0].Y = r2[1]; pts[1].X = r2[0] - tri / 2.0; pts[1].Y = r2[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = r2[0] + tri / 2.0; pts[2].Y = r2[1] + tri / 2.0 * Math.Sqrt(3);
+                                        var pc = new XPoint(); pc.X = (pts[1].X + pts[2].X) / 2.0; pc.Y = pts[1].Y;
+                                        gfx.DrawPolygon(pen, pts);
+                                        gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
+                                    }
+                                    var T = Math.Max(0.0, spring_f[nel][ii * 6].Value); var angle = 0.0;//spring[nel][11].Value;
+                                    if (T > Nbound)
+                                    {
+                                        var ri = new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                        var rj = new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                        var element = new Line(new Point3d(ri), new Point3d(rj));
+                                        var l_ve = rotation(spring_vec[nel], rj - ri, angle);
+                                        var p1 = new Vector2d(r1[0], r1[1]); var p2 = new Vector2d(r2[0], r2[1]);
+                                        var c1 = RGB((1 - Math.Min(T * nscale2 / Tmax, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        var pen1 = new XPen(c1, T * nscale2 / Tmax * 20); gfx.DrawLine(pen1, p1.X, p1.Y, p2.X, p2.Y);
+                                        gfx.DrawString(T.ToString().Substring(0, Math.Min(T.ToString().Length, 4)), font, XBrushes.Black, (p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0, position2[np2 % 6]); np2 += 1;
+                                    }
+                                }
+                            }
+                            int np = 0;
+                            var position = new List<XStringFormat> { XStringFormat.TopCenter, XStringFormats.BaseLineLeft, XStringFormats.TopRight, XStringFormats.BaseLineRight, XStringFormats.TopLeft, XStringFormat.BottomCenter };
+                            for (int e = 0; e < ij_new.Count; e++)//紙面に平行に回転後の骨組
+                            {
+                                int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2]; int nel = (int)ij_new[e][0];
+                                int mat = (int)ij_new[e][3]; int sec = (int)ij_new[e][4]; int angle = 0;//(int)ij_new[e][5];
+                                var ri = new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                var rj = new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                var vi = rotation(ri, zvec, theta) - r0;
+                                var vj = rotation(rj, zvec, theta) - r0;
+                                var r1 = new List<double>(); r1.Add(offset + vi[0] * scale); r1.Add(842 - offsety - vi[2] * scale);
+                                var r2 = new List<double>(); r2.Add(offset + vj[0] * scale); r2.Add(842 - offsety - vj[2] * scale);
+                                r_ij.Add(new List<List<double>> { r1, r2 });
+                                if (B_No.Contains(ni) == true)//境界条件
+                                {
+                                    int i = B_No.IndexOf(ni);
+                                    XPoint[] pts = new XPoint[3]; pts[0].X = r1[0]; pts[0].Y = r1[1]; pts[1].X = r1[0] - tri / 2.0; pts[1].Y = r1[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = r1[0] + tri / 2.0; pts[2].Y = r1[1] + tri / 2.0 * Math.Sqrt(3);
+                                    var pc = new XPoint(); pc.X = (pts[1].X + pts[2].X) / 2.0; pc.Y = pts[1].Y;
+                                    gfx.DrawPolygon(pen, pts);
+                                    gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
+                                }
+                                if (B_No.Contains(nj) == true)//境界条件
+                                {
+                                    int i = B_No.IndexOf(nj);
+                                    XPoint[] pts = new XPoint[3]; pts[0].X = r2[0]; pts[0].Y = r2[1]; pts[1].X = r2[0] - tri / 2.0; pts[1].Y = r2[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = r2[0] + tri / 2.0; pts[2].Y = r2[1] + tri / 2.0 * Math.Sqrt(3);
+                                    var pc = new XPoint(); pc.X = (pts[1].X + pts[2].X) / 2.0; pc.Y = pts[1].Y;
+                                    gfx.DrawPolygon(pen, pts);
+                                    gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
+                                }
+                                if (wick_new[e].Count >= 2)
+                                {
+                                    var r3 = new List<double> { r1[0], 842 - offsety + tri * 2 };
+                                    var r4 = new List<double> { r1[0], 842 - offsety + tri * 3.5 };
+                                    gfx.DrawLine(penwick, r3[0], r3[1], r4[0], r4[1]);//通り芯線の描画
+                                    for (int i = 1; i < wick_new[e].Count; i++)
+                                    {
+                                        gfx.DrawString(wick_new[e][i], font, XBrushes.Black, r4[0], r4[1] + tri * (i - 1), XStringFormat.TopCenter);//直交軸通り芯名描画
+                                    }
+                                }
+                                if (index_model.Contains(nel) == true)
+                                {
+                                    gfx.DrawLine(pen, r1[0], r1[1], r2[0], r2[1]);//骨組の描画
+                                    gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//i節点の描画
+                                    gfx.DrawEllipse(XBrushes.Black, r2[0] - ps / 2.0, r2[1] - ps / 2.0, ps, ps);//j節点の描画
+                                }
+                                //else { gfx.DrawLine(pengray2, r1[0], r1[1], r2[0], r2[1]);}
+                                if (joint_No.Contains(nel) == true && index_model.Contains(nel) == true)//材端ピン
+                                {
+                                    int i = joint_No.IndexOf(nel);
+                                    if (joint[i][1].Value == 0 || joint[i][1].Value == 2)
+                                    {
+                                        var rp1 = new List<double>(); rp1.Add(r1[0] + (r2[0] - r1[0]) * pinwidth); rp1.Add(r1[1] + (r2[1] - r1[1]) * pinwidth);
+                                        gfx.DrawEllipse(pen, XBrushes.White, rp1[0] - js / 2.0, rp1[1] - js / 2.0, js, js);//ピン記号
+                                    }
+                                    if (joint[i][1].Value == 1 || joint[i][1].Value == 2)
+                                    {
+                                        var rp2 = new List<double>(); rp2.Add(r2[0] + (r1[0] - r2[0]) * pinwidth); rp2.Add(r2[1] + (r1[1] - r2[1]) * pinwidth);
+                                        gfx.DrawEllipse(pen, XBrushes.White, rp2[0] - js / 2.0, rp2[1] - js / 2.0, js, js);//ピン記号
+                                    }
+                                }
+                            }
+                            gfx.DrawString(wick[j] + "通りばね引張力図" + casememo[ii], titlefont, XBrushes.Black, offset, 842 - offset, XStringFormats.BaseLineLeft);
+                        }
+                        filename = dir + "/" + pdfname + "_Tspring" + label[ii] + ".pdf";
                         document.Save(filename);// ドキュメントを保存。
                         Process.Start(filename);// ビューアを起動。
                     }

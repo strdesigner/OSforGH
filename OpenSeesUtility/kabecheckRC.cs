@@ -658,7 +658,7 @@ namespace kabecheckRC
                         };
                     var labels2 = new List<string>
                         {
-                            "","","","[mm/m2]","[mm/m2]","[mm]","","","[mm2]","[mm/m2]","","αβZLwo","Lwm"
+                            "","","","[mm/m2]","[mm/m2]","[mm]","","","[m2]","[mm/m2]","","αβZLwo","Lwm"
                         };
                     // 空白ページを作成。
                     page = document.AddPage(); gfx = XGraphics.FromPdfPage(page);

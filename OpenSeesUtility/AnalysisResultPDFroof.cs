@@ -74,11 +74,11 @@ namespace OpenSeesUtility
             pManager.AddTextParameter("outputname", "outputname", "output file name", GH_ParamAccess.item, "");///
             pManager.AddNumberParameter("scaling", "scaling", "scale factor of figures", GH_ParamAccess.item, 0.85);///
             pManager.AddNumberParameter("offset", "offset", "offset value of figures", GH_ParamAccess.item, 25.0);///
-            //pManager.AddNumberParameter("scale_factor_for_N", "NS", "scale factor for N", GH_ParamAccess.item, 0.1);///
-            //pManager.AddNumberParameter("scale_factor_for_Q", "QS", "scale factor for Q", GH_ParamAccess.item, 0.1);///
-            //pManager.AddNumberParameter("scale_factor_for_M", "MS", "scale factor for M", GH_ParamAccess.item, 0.15);///
-            //pManager.AddNumberParameter("scale_factor_for_Qw", "QwS", "scale factor for Qw", GH_ParamAccess.item, 0.1);///
-            //pManager.AddNumberParameter("scale_factor_for_R", "RS", "scale factor for reaction force", GH_ParamAccess.item, 0.1);///
+            pManager.AddNumberParameter("scale_factor_for_N", "NS", "scale factor for N and N(spring)", GH_ParamAccess.list, new List<double> { 0.1, 0.01 });///
+            pManager.AddNumberParameter("scale_factor_for_Q", "QS", "scale factor for Q and Q(spring)", GH_ParamAccess.list, new List<double> { 0.1, 0.01 });///
+            pManager.AddNumberParameter("scale_factor_for_M", "MS", "scale factor for M and M(spring)", GH_ParamAccess.list, new List<double> { 0.15, 0.015 });///
+            pManager.AddNumberParameter("scale_factor_for_Qw", "QwS", "scale factor for Qw", GH_ParamAccess.item, 0.1);///
+            pManager.AddNumberParameter("scale_factor_for_R", "RS", "scale factor for reaction force", GH_ParamAccess.item, 0.1);///
             pManager.AddTextParameter("casename", "casename", "files are named _casename.pdf", GH_ParamAccess.list, new List<string> { "L", "X", "Y", "P" });///
             pManager.AddTextParameter("casememo", "casememo", "load case name in sheets", GH_ParamAccess.list, new List<string> { "(長期荷重時)", "+X荷重時", "+Y荷重時", "接地圧作用時" });///
             pManager.AddNumberParameter("fontsize", "fontsize", "fontsize", GH_ParamAccess.item, 9);///
@@ -97,6 +97,7 @@ namespace OpenSeesUtility
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddNumberParameter("nod", "nod", "nod", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("nodall", "nodall", "nodall", GH_ParamAccess.tree);///
         }
 
         /// <summary>
@@ -183,7 +184,13 @@ namespace OpenSeesUtility
                 var shear_w = new List<double>(); DA.GetDataList("shear_w", shear_w);
                 var floorname = "floor"; DA.GetData("name floor", ref floorname);
                 var pdfname = "TimberCheck"; DA.GetData("outputname", ref pdfname); var scaling = 0.95; DA.GetData("scaling", ref scaling); var offset = 25.0; DA.GetData("offset", ref offset); var offsety = offset * 2; var lw = 1.0; DA.GetData("linewidth", ref lw); var js = 1.0; DA.GetData("jointsize", ref js); var ps = 1.0; DA.GetData("pointsize", ref ps);
-                //var nscale = 0.1; DA.GetData("scale_factor_for_N", ref nscale); var qscale = 0.1; DA.GetData("scale_factor_for_Q", ref qscale); var mscale = 0.15; DA.GetData("scale_factor_for_M", ref mscale); var qwscale = 0.025; DA.GetData("scale_factor_for_Qw", ref qwscale); var rscale = 0.1; DA.GetData("scale_factor_for_R", ref rscale);
+                var _nscale = new List<double>(); var nscale = 0.1; var nscale2 = 0.1;
+                DA.GetDataList("scale_factor_for_N", _nscale); nscale = _nscale[0]; nscale2 = _nscale[1];
+                var _qscale = new List<double>(); var qscale = 0.1; var qscale2 = 0.1;
+                DA.GetDataList("scale_factor_for_Q", _qscale); qscale = _qscale[0]; qscale2 = _qscale[1];
+                var _mscale = new List<double>(); var mscale = 0.1; var mscale2 = 0.1;
+                DA.GetDataList("scale_factor_for_M", _mscale); mscale = _mscale[0]; mscale2 = _mscale[1];
+                var qwscale = 0.025; DA.GetData("scale_factor_for_Qw", ref qwscale); var rscale = 0.1; DA.GetData("scale_factor_for_R", ref rscale);
                 var index = new List<double>(); DA.GetDataList("index", index);
                 var index_spring = new List<double>(); DA.GetDataList("index(spring)", index_spring);
                 DA.GetData("fontsize", ref fontsize);
@@ -202,7 +209,7 @@ namespace OpenSeesUtility
                 DA.GetDataTree("f_load", out GH_Structure<GH_Number> _f_load); var f_load = _f_load.Branches;
                 DA.GetDataTree("kentei", out GH_Structure<GH_Number> _kentei); var kentei = _kentei.Branches;
                 DA.GetDataTree("kentei(spring)", out GH_Structure<GH_Number> _kentei2); var kentei2 = _kentei2.Branches;
-                var nod = new GH_Structure<GH_Number>();
+                var nod = new GH_Structure<GH_Number>(); var nodall = new GH_Structure<GH_Number>();
                 var plan = new List<string>(); DA.GetDataList("plan names", plan);
                 if (plan[0] == "-9999")
                 {
@@ -255,6 +262,8 @@ namespace OpenSeesUtility
                     if (p_load[0][0].Value != -9999) { figname.Add("集中荷重伏図[kN]"); }
                     if (e_load[0][0].Value != -9999) { figname.Add("分布荷重伏図[kN/m]"); }
                     if (f_load[0][0].Value != -9999) { figname.Add("面荷重伏図[kN/m2]"); }
+                    if (bar[0] != -9999 && name_bar[0] != "-9999") { figname.Add("配筋符号伏図"); }
+                    if (name_sec[0] != "-9999") { figname.Add("断面符号伏図"); }
                     var Xmin = 9999.0; var Xmax = -9999.0; var Ymin = 9999.0; var Ymax = -9999.0;
                     for (int ii = 0; ii < R.Count; ii++)
                     {
@@ -299,8 +308,9 @@ namespace OpenSeesUtility
                                             {
                                                 flist.Add(sec_f[e][ii].Value);
                                             }
-                                            ij_new.Add(list); sec_f_new.Add(flist);
+                                            sec_f_new.Add(flist);
                                         }
+                                        ij_new.Add(list);
                                     }
                                 }
                                 if (spring[0][0].Value != -9999)
@@ -397,13 +407,15 @@ namespace OpenSeesUtility
                                 {
                                     if (figname[k] == "節点番号伏図")
                                     {
+                                        if (nod_No_all.Contains(ni) != true) { nod_No_all.Add(ni); }
+                                        if (nod_No_all.Contains(nj) != true) { nod_No_all.Add(nj); }
                                         if (nod_No.Contains(ni) != true)
                                         {
-                                            nod_No.Add(ni); nod_No_all.Add(ni); gfx.DrawString(ni.ToString(), font, XBrushes.Red, r1[0], r1[1], position);//i節点の節点番号描画
+                                            nod_No.Add(ni);  gfx.DrawString(ni.ToString(), font, XBrushes.Red, r1[0], r1[1], position);//i節点の節点番号描画
                                         }
                                         if (nod_No.Contains(nj) != true)
                                         {
-                                            nod_No.Add(nj); nod_No_all.Add(nj); gfx.DrawString(nj.ToString(), font, XBrushes.Red, r2[0], r2[1], position);//j節点の節点番号描画
+                                            nod_No.Add(nj); gfx.DrawString(nj.ToString(), font, XBrushes.Red, r2[0], r2[1], position);//j節点の節点番号描画
                                         }
                                     }
                                     if (figname[k] == "部材番号伏図") { gfx.DrawString(nel.ToString(), font, XBrushes.Blue, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position); }//要素番号描画
@@ -425,7 +437,7 @@ namespace OpenSeesUtility
                                             var secname = name_sec[sec];
                                             gfx.DrawString(secname, font, XBrushes.BlueViolet, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
                                         }
-                                    }//配筋符号描画
+                                    }//断面符号描画
                                 }
                                 else if (figname[k] == "節点番号伏図")
                                 {
@@ -475,7 +487,7 @@ namespace OpenSeesUtility
                                             position = XStringFormats.TopCenter;
                                         }
                                         gfx.DrawPolygon(new XPen(XColors.Black, 0), XBrushes.Green, pts, XFillMode.Winding);
-                                        gfx.DrawString(Math.Abs(fz).ToString().Substring(0, Math.Min(Math.Abs(fz).ToString().Length, 4)), font, XBrushes.Blue, (pts[1].X + pts[2].X) / 2.0, (pts[1].Y + pts[2].Y) / 2.0, position);//鉛直分布荷重値
+                                        gfx.DrawString(Math.Abs(fz).ToString("F").Substring(0, Math.Min(Math.Abs(fz).ToString().Length, 4)), font, XBrushes.Blue, (pts[1].X + pts[2].X) / 2.0, (pts[1].Y + pts[2].Y) / 2.0, position);//鉛直分布荷重値
                                     }
                                 }
                             }
@@ -507,17 +519,171 @@ namespace OpenSeesUtility
                             }
                             gfx.DrawString(figname[k] + "(" + plan[i] + ")", titlefont, XBrushes.Black, offset, 842 - offset, XStringFormats.BaseLineLeft);
                         }
-                        var nlist = new List<GH_Number>();
+                        var nlist = new List<GH_Number>(); var nlist2 = new List<GH_Number>();
                         for (int ii = 0; ii < nod_No.Count; ii++)
                         {
                             nlist.Add(new GH_Number(nod_No[ii]));
                         }
-                        nod.AppendRange(nlist, new GH_Path(i));
+                        for (int ii = 0; ii < nod_No_all.Count; ii++)
+                        {
+                            nlist2.Add(new GH_Number(nod_No_all[ii]));
+                        }
+                        nod.AppendRange(nlist, new GH_Path(i)); nodall.AppendRange(nlist2, new GH_Path(i));
                     }
-                    DA.SetDataTree(0, nod);
+                    DA.SetDataTree(0, nod); DA.SetDataTree(1, nodall);
                     var filename = dir + "/" + pdfname + "_planmodel.pdf";
                     document.Save(filename);// ドキュメントを保存。
                     Process.Start(filename);// ビューアを起動。
+                    //反力図
+                    if (reac_f[0][0].Value != -9999)
+                    {
+                        int nf = reac_f[0].Count; var label = new List<string> { "L", "X", "Y", "P" }; var casememo = new List<string> { "(長期荷重時)", "+X荷重時", "+Y荷重時", "接地圧作用時" };
+                        for (int kkk = 0; kkk < nf / 7; kkk++)
+                        {
+                            //鉛直反力図///////////////////////////////////////////////////////////////////////////////////////////
+                            document = new PdfDocument();
+                            document.Info.Title = pdfname;
+                            document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu";
+                            var reac_f_index = new List<int>();
+                            for (int i = 0; i < reac_f.Count; i++) { reac_f_index.Add((int)reac_f[i][0].Value); }
+                            for (int i = 0; i < 20; i++)
+                            {
+                                List<Curve> lines = new List<Curve>();
+                                var ij_new = new List<List<double>>();//その面の要素節点関係
+                                var sec_f_new = new List<List<double>>();//その面の断面力
+                                var spring_new = new List<List<double>>();//その面の要素節点関係(ばね)
+                                var spring_f_new = new List<List<double>>();//その面の断面力(ばね)
+                                var line = doc.Objects.FindByUserString(floorname, i.ToString(), true); if (line.Length == 0) { break; }
+                                for (int j = 0; j < line.Length; j++)
+                                {
+                                    var obj = line[j]; Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() };
+                                    int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
+                                    if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
+                                    for (int jj = 0; jj < nl; jj++)
+                                    {
+                                        lines.Add(l[jj]);
+                                        var p0 = l[jj].PointAtStart; var p1 = l[jj].PointAtEnd; var lgh = l[jj].GetLength();
+                                        for (int e = 0; e < ij.Count; e++)
+                                        {
+                                            var list = new List<double>(); var flist = new List<double>();
+                                            int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
+                                            var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                            var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                            if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                            {
+                                                list.Add(e);
+                                                for (int a = 0; a < ij[e].Count; a++) { list.Add(ij[e][a].Value); }
+                                                if (index.Contains(e) == true && sec_f[0][0].Value != -9999)
+                                                {
+                                                    flist.Add(e);
+                                                    for (int ii = 0; ii < sec_f[0].Count; ii++)
+                                                    {
+                                                        flist.Add(sec_f[e][ii].Value);
+                                                    }
+                                                    ij_new.Add(list); sec_f_new.Add(flist);
+                                                }
+                                            }
+                                        }
+                                        if (spring[0][0].Value != -9999)
+                                        {
+                                            for (int ind = 0; ind < index_spring.Count; ind++)
+                                            {
+                                                var slist = new List<double>(); var sflist = new List<double>();
+                                                int e = (int)index_spring[ind];
+                                                int ni = (int)spring[e][0].Value; int nj = (int)spring[e][1].Value;
+                                                var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                                var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                                if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                                {
+                                                    sflist.Add(e); slist.Add(e);
+                                                    for (int ii = 0; ii < spring_f[0].Count; ii++)
+                                                    {
+                                                        sflist.Add(spring_f[e][ii].Value);
+                                                    }
+                                                    for (int ii = 0; ii < spring[0].Count; ii++)
+                                                    {
+                                                        slist.Add(spring[e][ii].Value);
+                                                    }
+                                                    spring_f_new.Add(sflist); spring_new.Add(slist);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                PdfPage page = new PdfPage(); page.Size = PageSize.A4;// 空白ページを作成。width x height = 594 x 842
+                                page = document.AddPage();// 描画するためにXGraphicsオブジェクトを取得。
+                                gfx = XGraphics.FromPdfPage(page);
+                                var xmin = 9999.0; var xmax = -9999.0; var ymin = 9999.0; var ymax = -9999.0; var zmin = 9999.0; var zmax = -9999.0;
+                                for (int e = 0; e < ij_new.Count; e++)
+                                {
+                                    int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2];
+                                    xmin = Math.Min(xmin, R[ni][0].Value); xmax = Math.Max(xmax, R[ni][0].Value); xmin = Math.Min(xmin, R[nj][0].Value); xmax = Math.Max(xmax, R[nj][0].Value);
+                                    ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value); ymin = Math.Min(ymin, R[nj][1].Value); ymax = Math.Max(ymax, R[nj][1].Value);
+                                }
+                                var nod_No = new List<int>();
+                                for (int e = 0; e < spring_new.Count; e++)
+                                {
+                                    var position = XStringFormats.BaseLineLeft;
+                                    if (e % 4 == 1) { position = XStringFormats.TopRight; }
+                                    if (e % 4 == 2) { position = XStringFormats.BaseLineRight; }
+                                    if (e % 4 == 3) { position = XStringFormats.TopLeft; }
+                                    int ni = (int)spring_new[e][1]; int nj = (int)spring_new[e][2]; int nel = (int)spring_new[e][0];
+                                    var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
+                                    var r2 = new List<double>(); r2.Add(offset + (R[nj][0].Value - xmin) * scale); r2.Add(842 - offsety - (R[nj][1].Value - ymin) * scale);
+                                    gfx.DrawLine(penspring, r1[0], r1[1], r2[0], r2[1]);//ばねの描画
+                                    gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//i節点の描画
+                                    gfx.DrawEllipse(XBrushes.Black, r2[0] - ps / 2.0, r2[1] - ps / 2.0, ps, ps);//j節点の描画
+                                    if (nod_No.Contains(ni) != true) { nod_No.Add(ni); }
+                                    if (nod_No.Contains(nj) != true) { nod_No.Add(nj); }
+                                }
+                                for (int e = 0; e < ij_new.Count; e++)
+                                {
+                                    int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2]; int nel = (int)ij_new[e][0]; int mat = (int)ij_new[e][3]; int sec = (int)ij_new[e][4];
+                                    var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
+                                    var r2 = new List<double>(); r2.Add(offset + (R[nj][0].Value - xmin) * scale); r2.Add(842 - offsety - (R[nj][1].Value - ymin) * scale);
+                                    var pencil = pen;
+                                    if (index_model.Contains(nel) != true) { gfx.DrawLine(pengray2, r1[0], r1[1], r2[0], r2[1]); }
+                                    else
+                                    {
+                                        gfx.DrawLine(pen, r1[0], r1[1], r2[0], r2[1]);//骨組の描画
+                                        gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//i節点の描画
+                                        gfx.DrawEllipse(XBrushes.Black, r2[0] - ps / 2.0, r2[1] - ps / 2.0, ps, ps);//j節点の描画
+                                    }
+                                    if (index_model.Contains(nel) != true) { pencil = pengray2; }
+                                    if (joint_No.Contains(nel) == true)//材端ピン
+                                    {
+                                        int ii = joint_No.IndexOf(nel);
+                                        if (joint[ii][1].Value == 0 || joint[ii][1].Value == 2)
+                                        {
+                                            var rp1 = new List<double>(); rp1.Add(r1[0] + (r2[0] - r1[0]) * pinwidth); rp1.Add(r1[1] + (r2[1] - r1[1]) * pinwidth);
+                                            gfx.DrawEllipse(pencil, XBrushes.White, rp1[0] - js / 2.0, rp1[1] - js / 2.0, js, js);//ピン記号
+                                        }
+                                        if (joint[ii][1].Value == 1 || joint[ii][1].Value == 2)
+                                        {
+                                            var rp2 = new List<double>(); rp2.Add(r2[0] + (r1[0] - r2[0]) * pinwidth); rp2.Add(r2[1] + (r1[1] - r2[1]) * pinwidth);
+                                            gfx.DrawEllipse(pencil, XBrushes.White, rp2[0] - js / 2.0, rp2[1] - js / 2.0, js, js);//ピン記号
+                                        }
+                                    }
+                                    if (nod_No.Contains(ni) != true) { nod_No.Add(ni); }
+                                    if (nod_No.Contains(nj) != true) { nod_No.Add(nj); }
+                                }
+                                for (int e = 0; e < reac_f_index.Count; e++)
+                                {
+                                    if (nod_No.Contains(reac_f_index[e]) == true)
+                                    {
+                                        int ni = (int)reac_f[e][0].Value;
+                                        var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
+                                        gfx.DrawString(ni.ToString(), font, XBrushes.Red, r1[0], r1[1], XStringFormats.BottomCenter);
+                                        gfx.DrawString(reac_f[e][kkk*7+3].Value.ToString().Substring(0, Math.Min(reac_f[e][kkk * 7 + 3].Value.ToString().Length, 4)), font, XBrushes.Black, r1[0], r1[1], XStringFormats.TopCenter);
+                                    }
+                                }
+                                gfx.DrawString("反力図" + casememo[kkk] + "(" + plan[i] + ")", titlefont, XBrushes.Black, offset, 842 - offset, XStringFormats.BaseLineLeft);
+                            }
+                            filename = dir + "/" + pdfname + "_planR" + label[kkk] + ".pdf";
+                            document.Save(filename);// ドキュメントを保存。
+                            Process.Start(filename);// ビューアを起動。
+                        }
+                    }
                     //検定比図
                     document = new PdfDocument();// PDFドキュメントを作成。
                     document.Info.Title = pdfname;
@@ -594,7 +760,6 @@ namespace OpenSeesUtility
                                 }
                             }
                         }
-                        var nod_No = new List<int>(); var nod_No_all = new List<int>();
                         for (int k = 0; k < figname.Count; k++)
                         {
                             PdfPage page = new PdfPage(); page.Size = PageSize.A4;// 空白ページを作成。width x height = 594 x 842
@@ -704,17 +869,160 @@ namespace OpenSeesUtility
                             }
                             gfx.DrawString(figname[k] + "(" + plan[i] + ")".ToString(), titlefont, XBrushes.Black, offset, 842 - offset, XStringFormats.BaseLineLeft);
                         }
-                        var nlist = new List<GH_Number>();
-                        for (int ii = 0; ii < nod_No.Count; ii++)
-                        {
-                            nlist.Add(new GH_Number(nod_No[ii]));
-                        }
-                        nod.AppendRange(nlist, new GH_Path(i));
                     }
-                    DA.SetDataTree(0, nod);
                     filename = dir + "/" + pdfname + "_plankentei.pdf";
                     document.Save(filename);// ドキュメントを保存。
                     Process.Start(filename);// ビューアを起動。
+                    //引張力図
+                    if (spring_f[0][0].Value != -9999)
+                    {
+                        int nf = spring_f[0].Count; var label = new List<string> { "L", "X", "Y", "P" }; var casememo = new List<string> { "(長期荷重時)", "+X荷重時", "+Y荷重時", "接地圧作用時" };
+                        DA.GetDataList("casename", label); DA.GetDataList("casememo", casememo);
+                        var Tmax = 0.0; var Cmax = 0.0; var Mxmax = 0.0; var Mymax = 0.0; var Mzmax = 0.0; var Qymax = 0.0; var Qzmax = 0.0;
+                        for (int ii = 0; ii < nf / 6; ii++)
+                        {
+                            for (int i = 0; i < spring_f.Count; i++)
+                            {
+                                Tmax = Math.Max(Tmax, spring_f[i][ii * 6 + 0].Value * nscale2);
+                            }
+                        }
+                        for (int ii = 0; ii < nf / 6; ii++)
+                        {
+                            document = new PdfDocument();// PDFドキュメントを作成。
+                            document.Info.Title = pdfname;
+                            document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
+                            for (int i = 0; i < 20; i++)
+                            {
+                                List<Curve> lines = new List<Curve>();
+                                var ij_new = new List<List<double>>();//その面の要素節点関係
+                                var spring_new = new List<List<double>>();//その面の要素節点関係(ばね)
+                                var spring_f_new = new List<List<double>>();//その面の断面力(ばね)
+                                var line = doc.Objects.FindByUserString(floorname, i.ToString(), true);
+                                if (line.Length == 0) { break; }
+                                for (int j = 0; j < line.Length; j++)
+                                {
+                                    var obj = line[j]; Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() };
+                                    int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
+                                    if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
+                                    for (int jj = 0; jj < nl; jj++)
+                                    {
+                                        lines.Add(l[jj]);
+                                        var p0 = l[jj].PointAtStart; var p1 = l[jj].PointAtEnd; var lgh = l[jj].GetLength();
+                                        for (int e = 0; e < ij.Count; e++)
+                                        {
+                                            var list = new List<double>(); var flist = new List<double>();
+                                            int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
+                                            var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                            var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                            if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                            {
+                                                list.Add(e);
+                                                for (int a = 0; a < ij[e].Count; a++) { list.Add(ij[e][a].Value); }
+                                                if (index.Contains(e) == true)
+                                                {
+                                                    ij_new.Add(list);
+                                                }
+                                            }
+                                        }
+                                        if (spring[0][0].Value != -9999)
+                                        {
+                                            for (int ind = 0; ind < index_spring.Count; ind++)
+                                            {
+                                                var slist = new List<double>(); var sflist = new List<double>();
+                                                int e = (int)index_spring[ind];
+                                                int ni = (int)spring[e][0].Value; int nj = (int)spring[e][1].Value;
+                                                var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                                var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                                if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                                {
+                                                    sflist.Add(e); slist.Add(e);
+                                                    for (int iii = 0; iii < spring_f[0].Count; iii++)
+                                                    {
+                                                        sflist.Add(spring_f[e][iii].Value);
+                                                    }
+                                                    for (int iii = 0; iii < spring[0].Count; iii++)
+                                                    {
+                                                        slist.Add(spring[e][iii].Value);
+                                                    }
+                                                    spring_f_new.Add(sflist); spring_new.Add(slist);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                PdfPage page = new PdfPage(); page.Size = PageSize.A4;// 空白ページを作成。width x height = 594 x 842
+                                page = document.AddPage();// 描画するためにXGraphicsオブジェクトを取得。
+                                gfx = XGraphics.FromPdfPage(page);
+                                var xmin = 9999.0; var xmax = -9999.0; var ymin = 9999.0; var ymax = -9999.0; var zmin = 9999.0; var zmax = -9999.0;
+                                for (int e = 0; e < ij_new.Count; e++)
+                                {
+                                    int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2];
+                                    xmin = Math.Min(xmin, R[ni][0].Value); xmax = Math.Max(xmax, R[ni][0].Value); xmin = Math.Min(xmin, R[nj][0].Value); xmax = Math.Max(xmax, R[nj][0].Value);
+                                    ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value); ymin = Math.Min(ymin, R[nj][1].Value); ymax = Math.Max(ymax, R[nj][1].Value);
+                                }
+                                for (int e = 0; e < spring_new.Count; e++)
+                                {
+                                    var position = XStringFormats.BaseLineLeft;
+                                    if (e % 4 == 1) { position = XStringFormats.TopRight; }
+                                    if (e % 4 == 2) { position = XStringFormats.BaseLineRight; }
+                                    if (e % 4 == 3) { position = XStringFormats.TopLeft; }
+                                    int ni = (int)spring_new[e][1]; int nj = (int)spring_new[e][2]; int nel = (int)spring_new[e][0];
+                                    var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
+                                    var r2 = new List<double>(); r2.Add(offset + (R[nj][0].Value - xmin) * scale); r2.Add(842 - offsety - (R[nj][1].Value - ymin) * scale);
+                                    gfx.DrawLine(penspring, r1[0], r1[1], r2[0], r2[1]);//ばねの描画
+                                    gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//i節点の描画
+                                    gfx.DrawEllipse(XBrushes.Black, r2[0] - ps / 2.0, r2[1] - ps / 2.0, ps, ps);//j節点の描画
+                                    var T = Math.Max(0.0, spring_f[nel][ii * 6].Value); var angle = 0.0;//spring[nel][11].Value;
+                                    if (T > Nbound)
+                                    {
+                                        var ri = new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                        var rj = new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                        var p1 = new Vector2d(r1[0], r1[1]); var p2 = new Vector2d(r2[0], r2[1]);
+                                        var c1 = RGB((1 - Math.Min(T * nscale2 / Tmax, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        var pen1 = new XPen(c1, T * nscale2 / Tmax * 20); gfx.DrawLine(pen1, p1.X, p1.Y, p2.X, p2.Y);
+                                        gfx.DrawString(T.ToString().Substring(0, Math.Min(T.ToString().Length, 4)), font, XBrushes.Black, (p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0, position);
+                                    }
+                                }
+                                for (int e = 0; e < ij_new.Count; e++)
+                                {
+                                    int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2]; int nel = (int)ij_new[e][0]; int mat = (int)ij_new[e][3]; int sec = (int)ij_new[e][4];
+                                    var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
+                                    var r2 = new List<double>(); r2.Add(offset + (R[nj][0].Value - xmin) * scale); r2.Add(842 - offsety - (R[nj][1].Value - ymin) * scale);
+                                    var pencil = pen;
+                                    if (index_model.Contains(nel) != true) { gfx.DrawLine(pengray2, r1[0], r1[1], r2[0], r2[1]); }
+                                    else
+                                    {
+                                        gfx.DrawLine(pen, r1[0], r1[1], r2[0], r2[1]);//骨組の描画
+                                        gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//i節点の描画
+                                        gfx.DrawEllipse(XBrushes.Black, r2[0] - ps / 2.0, r2[1] - ps / 2.0, ps, ps);//j節点の描画
+                                    }
+                                    if (index_model.Contains(nel) != true) { pencil = pengray2; }
+                                    if (joint_No.Contains(nel) == true)//材端ピン
+                                    {
+                                        int iii = joint_No.IndexOf(nel);
+                                        if (joint[iii][1].Value == 0 || joint[iii][1].Value == 2)
+                                        {
+                                            var rp1 = new List<double>(); rp1.Add(r1[0] + (r2[0] - r1[0]) * pinwidth); rp1.Add(r1[1] + (r2[1] - r1[1]) * pinwidth);
+                                            gfx.DrawEllipse(pencil, XBrushes.White, rp1[0] - js / 2.0, rp1[1] - js / 2.0, js, js);//ピン記号
+                                        }
+                                        if (joint[iii][1].Value == 1 || joint[iii][1].Value == 2)
+                                        {
+                                            var rp2 = new List<double>(); rp2.Add(r2[0] + (r1[0] - r2[0]) * pinwidth); rp2.Add(r2[1] + (r1[1] - r2[1]) * pinwidth);
+                                            gfx.DrawEllipse(pencil, XBrushes.White, rp2[0] - js / 2.0, rp2[1] - js / 2.0, js, js);//ピン記号
+                                        }
+                                    }
+                                    var position = XStringFormats.BaseLineLeft;
+                                    if (e % 4 == 1) { position = XStringFormats.CenterRight; }
+                                    if (e % 4 == 2) { position = XStringFormats.BaseLineRight; }
+                                    if (e % 4 == 3) { position = XStringFormats.CenterLeft; }
+                                }
+                                gfx.DrawString(plan[i] + "ばね引張力図" + casememo[ii], titlefont, XBrushes.Black, offset, 842 - offset, XStringFormats.BaseLineLeft);
+                            }
+                            filename = dir + "/" + pdfname + "_planTspring" + label[ii] + ".pdf";
+                            document.Save(filename);// ドキュメントを保存。
+                            Process.Start(filename);// ビューアを起動。
+                        }
+                    }
                 }
             }
         }

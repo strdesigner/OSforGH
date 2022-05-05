@@ -88,6 +88,7 @@
     <Compile Include="DataOutput.cs" />
     <Compile Include="AnalysisResultPDF2.cs" />
     <Compile Include="AnalysisResultPDFroof.cs" />
+    <Compile Include="AssembleTreeText.cs" />
     <Compile Include="RcBucklingCheck.cs" />
     <Compile Include="VisualizeResult2.cs" />
     <Compile Include="VisualizeResultSpring.cs" />
@@ -389,6 +390,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\rcbucklingcheck.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\assembletreetext.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

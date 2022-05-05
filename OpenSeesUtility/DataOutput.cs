@@ -1258,6 +1258,9 @@ namespace OpenSeesUtility
                     var labels = new List<string> { "No.", "Fx", "Fy", "Fz", "Mx", "My", "Mz" };
                     var labels2 = new List<string> { "", "", "", "        (L)", "", "", "" };
                     var labels3 = new List<string> { "", "[kN]", "[kN]", "[kN]", "[kNm]", "[kNm]", "[kNm]" };
+                    var FxL = 0.0; var FyL = 0.0; var FzL = 0.0; var MxL = 0.0; var MyL = 0.0; var MzL = 0.0;
+                    var FxX = 0.0; var FyX = 0.0; var FzX = 0.0; var MxX = 0.0; var MyX = 0.0; var MzX = 0.0;
+                    var FxY = 0.0; var FyY = 0.0; var FzY = 0.0; var MxY = 0.0; var MyY = 0.0; var MzY = 0.0;
                     if (reac_f[0].Count >= 21)
                     {
                         labels.Add("Fx"); labels.Add("Fy"); labels.Add("Fz"); labels.Add("Mx"); labels.Add("My"); labels.Add("Mz"); labels.Add("Fx"); labels.Add("Fy"); labels.Add("Fz"); labels.Add("Mx"); labels.Add("My"); labels.Add("Mz");
@@ -1294,10 +1297,16 @@ namespace OpenSeesUtility
                         }
                         count += 1;
                         var values = new List<string> { reac_f[i][0].Value.ToString("G"), reac_f[i][1].Value.ToString("F1"), reac_f[i][2].Value.ToString("F1"), reac_f[i][3].Value.ToString("F1"), reac_f[i][4].Value.ToString("F1"), reac_f[i][5].Value.ToString("F1"), reac_f[i][6].Value.ToString("F1") };
+                        FxL += reac_f[i][1].Value; FyL += reac_f[i][2].Value; FzL += reac_f[i][3].Value;
+                        MxL += reac_f[i][4].Value; MyL += reac_f[i][5].Value; MzL += reac_f[i][6].Value;
                         if (reac_f[0].Count >= 21)
                         {
                             values.Add(reac_f[i][7 + 1].Value.ToString("F1")); values.Add(reac_f[i][7 + 2].Value.ToString("F1")); values.Add(reac_f[i][7 + 3].Value.ToString("F1")); values.Add(reac_f[i][7 + 4].Value.ToString("F1")); values.Add(reac_f[i][7 + 5].Value.ToString("F1")); values.Add(reac_f[i][7 + 6].Value.ToString("F1"));
                             values.Add(reac_f[i][14 + 1].Value.ToString("F1")); values.Add(reac_f[i][14 + 2].Value.ToString("F1")); values.Add(reac_f[i][14 + 3].Value.ToString("F1")); values.Add(reac_f[i][14 + 4].Value.ToString("F1")); values.Add(reac_f[i][14 + 5].Value.ToString("F1")); values.Add(reac_f[i][14 + 6].Value.ToString("F1"));
+                            FxX += reac_f[i][8].Value; FyX += reac_f[i][9].Value; FzX += reac_f[i][10].Value;
+                            MxX += reac_f[i][11].Value; MyX += reac_f[i][12].Value; MzX += reac_f[i][13].Value;
+                            FxY += reac_f[i][15].Value; FyY += reac_f[i][16].Value; FzY += reac_f[i][17].Value;
+                            MxY += reac_f[i][18].Value; MyY += reac_f[i][19].Value; MzY += reac_f[i][20].Value;
                         }
                         for (int j = 0; j < values.Count; j++)
                         {
@@ -1311,6 +1320,20 @@ namespace OpenSeesUtility
                             }
                         }
                     }
+                    //count += 1;
+                    //var total_values = new List<string> { "sum", ((int)FxL).ToString("D"), ((int)FyL).ToString("D"), ((int)FzL).ToString("D"), ((int)MxL).ToString("D"), ((int)MyL).ToString("D"), ((int)MzL).ToString("D") };
+                    //if (reac_f[0].Count >= 21) { total_values.Add(((int)FxX).ToString("D")); total_values.Add(((int)FyX).ToString("D")); total_values.Add(((int)FzX).ToString("D")); total_values.Add(((int)MxX).ToString("D")); total_values.Add(((int)MyX).ToString("D")); total_values.Add(((int)MzX).ToString("D")); total_values.Add(((int)FxY).ToString("D")); total_values.Add(((int)FyY).ToString("D")); total_values.Add(((int)FzY).ToString("D")); total_values.Add(((int)MxY).ToString("D")); total_values.Add(((int)MyY).ToString("D")); total_values.Add(((int)MzY).ToString("D")); }
+                    //for (int j = 0; j < total_values.Count; j++)
+                    //{
+                    //    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1), offset_x + label_width * (j + 1) + slide, offset_y + pitchy * (count + 1));//横線
+                    //    gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                    //    gfx.DrawString(total_values[j], font, XBrushes.Black, new XRect(offset_x + label_width * j + slide, offset_y + pitchy * count, label_width, offset_y + pitchy * (count + 1)), XStringFormats.TopCenter);
+                    //    if (j == labels.Count - 1)
+                    //    {
+                    //        j += 1;
+                    //        gfx.DrawLine(pen, offset_x + label_width * j + slide, offset_y + pitchy * count, offset_x + label_width * j + slide, offset_y + pitchy * (count + 1));//縦線
+                    //    }
+                    //}
                     var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);
                     // ドキュメントを保存。
                     var filename = dir + "/" + pdfname + "_reac_f.pdf";

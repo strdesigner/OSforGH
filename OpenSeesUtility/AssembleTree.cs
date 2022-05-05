@@ -57,9 +57,10 @@ namespace AssembleTree
                 else if(_T.Branches[0][0].Value != -9999) 
                 {
                     var T = _T.Branches;
-                    var ni = T.Count; var nj = T[0].Count;
+                    var ni = T.Count;
                     for(int i = 0; i < ni; i++)
                     {
+                        var nj = T[0].Count;
                         var tlist = new List<GH_Number>();
                         for (int j = 0; j < nj; j++) { tlist.Add(new GH_Number(T[i][j].Value)); }
                         A.AppendRange(tlist, new GH_Path(e));
