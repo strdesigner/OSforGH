@@ -85,6 +85,7 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("Nmin", "Nmin", "lower bound to show N value", GH_ParamAccess.item, 0.1);///
             pManager.AddNumberParameter("Qmin", "Qmin", "lower bound to show Q value", GH_ParamAccess.item, 0.1);///
             pManager.AddNumberParameter("Mmin", "Mmin", "lower bound to show M value", GH_ParamAccess.item, 0.1);///
+            pManager.AddNumberParameter("kenteimin", "kenteimin", "lower bound to show kenteihi", GH_ParamAccess.item, 0.01);///
         }
 
         /// <summary>
@@ -196,8 +197,8 @@ namespace OpenSeesUtility
                 var bar = new List<double>(); DA.GetDataList("bar", bar);
                 var name_bar = new List<string>(); DA.GetDataList("name(bar)", name_bar);
                 var name_sec = new List<string>(); DA.GetDataList("name(sec)", name_sec);
-                var Nbound = 0.1; var Qbound = 0.1; var Mbound = 0.1;
-                DA.GetData("Nmin", ref Nbound); DA.GetData("Qmin", ref Qbound); DA.GetData("Mmin", ref Mbound);
+                var Nbound = 0.1; var Qbound = 0.1; var Mbound = 0.1; var kbound = 0.1;
+                DA.GetData("Nmin", ref Nbound); DA.GetData("Qmin", ref Qbound); DA.GetData("Mmin", ref Mbound); DA.GetData("kenteimin", ref kbound);
                 if (index[0] == -9999)
                 {
                     index = new List<double>();
@@ -732,8 +733,8 @@ namespace OpenSeesUtility
                                     int aa = kentei2_index.IndexOf(nel);
                                     if (aa != -1)
                                     {
-                                        var kk = kentei2[aa][1].Value;
-                                        if (kk > 0.01)
+                                        var kk = Math.Round(kentei2[aa][1].Value,2);
+                                        if (kk > kbound)
                                         {
                                             var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
                                             gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
@@ -745,8 +746,8 @@ namespace OpenSeesUtility
                                     int aa = kentei2_index.IndexOf(nel);
                                     if (aa != -1)
                                     {
-                                        var kk = kentei2[aa][2].Value;
-                                        if (kk > 0.01)
+                                        var kk = Math.Round(kentei2[aa][2].Value, 2);
+                                        if (kk > kbound)
                                         {
                                             var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
                                             gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
@@ -822,9 +823,12 @@ namespace OpenSeesUtility
                                 int aa = kentei_index.IndexOf(nel);
                                 if (aa != -1)
                                 {
-                                    var kk = kentei[aa][1].Value;
-                                    var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
-                                    gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
+                                    var kk = Math.Round(kentei[aa][1].Value,2);
+                                    if (kk > kbound)
+                                    {
+                                        var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                                        gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
+                                    }
                                 }
                                 }
                                 if (figname[k] == "通り短期最大検定比図")
@@ -832,9 +836,12 @@ namespace OpenSeesUtility
                                 int aa = kentei_index.IndexOf(nel);
                                 if (aa != -1)
                                 {
-                                    var kk = kentei[aa][2].Value;
-                                    var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
-                                    gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
+                                    var kk = Math.Round(kentei[aa][2].Value, 2);
+                                    if (kk> kbound)
+                                    {
+                                        var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                                        gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
+                                    }
                                 }
                             }
                         }
@@ -1345,16 +1352,16 @@ namespace OpenSeesUtility
                                     gfx.DrawPolygon(pen, pts);
                                     gfx.DrawString(((int)B[i][1].Value).ToString() + ((int)B[i][2].Value).ToString() + ((int)B[i][3].Value).ToString() + ((int)B[i][4].Value).ToString() + ((int)B[i][5].Value).ToString() + ((int)B[i][6].Value).ToString(), font, XBrushes.LightGray, pc.X, pc.Y, XStringFormat.TopCenter);
                                 }
-                                //if (wick_new[e].Count >= 2)
-                                //{
-                                //    var r3 = new List<double> { r1[0], 842 - offsety + tri * 2 };
-                                //    var r4 = new List<double> { r1[0], 842 - offsety + tri * 3.5 };
-                                //    gfx.DrawLine(penwick, r3[0], r3[1], r4[0], r4[1]);//通り芯線の描画
-                                //    for (int i = 1; i < wick_new[e].Count; i++)
-                                //    {
-                                //        gfx.DrawString(wick_new[e][i], font, XBrushes.Black, r4[0], r4[1] + tri * (i - 1), XStringFormat.TopCenter);//直交軸通り芯名描画
-                                //    }
-                                //}
+                                if (wick_new[e].Count >= 2)
+                                {
+                                    var r3 = new List<double> { r1[0], 842 - offsety + tri * 2 };
+                                    var r4 = new List<double> { r1[0], 842 - offsety + tri * 3.5 };
+                                    gfx.DrawLine(penwick, r3[0], r3[1], r4[0], r4[1]);//通り芯線の描画
+                                    for (int i = 1; i < wick_new[e].Count; i++)
+                                    {
+                                        gfx.DrawString(wick_new[e][i], font, XBrushes.Black, r4[0], r4[1] + tri * (i - 1), XStringFormat.TopCenter);//直交軸通り芯名描画
+                                    }
+                                }
                                 if (index_model.Contains(nel) == true)
                                 {
                                     gfx.DrawLine(pen, r1[0], r1[1], r2[0], r2[1]);//骨組の描画

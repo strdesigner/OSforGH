@@ -102,6 +102,7 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("QaS(L-X)", "QaS(L-X)", "[[Qai,Qac,Qaj],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("QaS(L-Y)", "QaS(L-Y)", "[[Qai,Qac,Qaj],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("kentei(max)", "kentei(max)", "[[element.No, long-term, short-term],...]", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("kmax", "kmax", "[[ele. No.,Long-term max],[ele. No.,Short-term max]](DataTree)", GH_ParamAccess.tree);///
         }
 
         /// <summary>
@@ -708,7 +709,18 @@ namespace OpenSeesUtility
                 DA.SetDataTree(2, MaS);
                 DA.SetDataTree(3, QaLpX); DA.SetDataTree(4, QaLpY); DA.SetDataTree(5, QaLmX); DA.SetDataTree(6, QaLmY);
                 DA.SetDataTree(7, kentei);
-
+                var _kentei = kentei.Branches; var kmax = new GH_Structure<GH_Number>(); var Lmax = 0.0; int L = 0; var Smax = 0.0; int S = 0;
+                for (int i = 0; i < _kentei.Count; i++)
+                {
+                    Lmax = Math.Max(Lmax, _kentei[i][1].Value);
+                    if (Lmax == _kentei[i][1].Value) { L = (int)_kentei[i][0].Value; }
+                    Smax = Math.Max(Smax, _kentei[i][2].Value);
+                    if (Smax == _kentei[i][2].Value) { S = (int)_kentei[i][0].Value; }
+                }
+                List<GH_Number> llist = new List<GH_Number>(); List<GH_Number> slist = new List<GH_Number>();
+                llist.Add(new GH_Number(L)); llist.Add(new GH_Number(Lmax)); slist.Add(new GH_Number(S)); slist.Add(new GH_Number(Smax));
+                kmax.AppendRange(llist, new GH_Path(0)); kmax.AppendRange(slist, new GH_Path(1));
+                DA.SetDataTree(8, kmax);
                 if (on_off == 1)
                 {
                     var pdfname = "RcBeamCheck"; DA.GetData("outputname", ref pdfname);

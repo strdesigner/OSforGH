@@ -85,10 +85,11 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("linewidth", "linewidth", "linewidth", GH_ParamAccess.item, 1);///
             pManager.AddNumberParameter("pointsize", "pointsize", "pointsize", GH_ParamAccess.item, 2);///
             pManager.AddNumberParameter("jointsize", "jointsize", "jointsize", GH_ParamAccess.item, 3);///
-            //pManager.AddNumberParameter("Nmin", "Nmin", "lower bound to show N value", GH_ParamAccess.item, 0.1);///
-            //pManager.AddNumberParameter("Qmin", "Qmin", "lower bound to show Q value", GH_ParamAccess.item, 0.1);///
-            //pManager.AddNumberParameter("Mmin", "Mmin", "lower bound to show M value", GH_ParamAccess.item, 0.1);///
             pManager.AddTextParameter("plan names", "plan names", "title name of each plan", GH_ParamAccess.list, "-9999");///
+            pManager.AddNumberParameter("Nmin", "Nmin", "lower bound to show N value", GH_ParamAccess.item, 0.1);///
+            pManager.AddNumberParameter("Qmin", "Qmin", "lower bound to show Q value", GH_ParamAccess.item, 0.1);///
+            pManager.AddNumberParameter("Mmin", "Mmin", "lower bound to show M value", GH_ParamAccess.item, 0.1);///
+            pManager.AddNumberParameter("kenteimin", "kenteimin", "lower bound to show kenteihi", GH_ParamAccess.item, 0.01);///
         }
 
         /// <summary>
@@ -202,8 +203,8 @@ namespace OpenSeesUtility
                 var bar = new List<double>(); DA.GetDataList("bar", bar);
                 var name_bar = new List<string>(); DA.GetDataList("name(bar)", name_bar);
                 var name_sec = new List<string>(); DA.GetDataList("name(sec)", name_sec);
-                var Nbound = 0.1; var Qbound = 0.1; var Mbound = 0.1;
-                //DA.GetData("Nmin", ref Nbound); DA.GetData("Qmin", ref Qbound); DA.GetData("Mmin", ref Mbound);
+                var Nbound = 0.1; var Qbound = 0.1; var Mbound = 0.1; var kbound = 0.1;
+                DA.GetData("Nmin", ref Nbound); DA.GetData("Qmin", ref Qbound); DA.GetData("Mmin", ref Mbound); DA.GetData("kenteimin", ref kbound);
                 DA.GetDataTree("p_load", out GH_Structure<GH_Number> _p_load); var p_load = _p_load.Branches;
                 DA.GetDataTree("e_load", out GH_Structure<GH_Number> _e_load); var e_load = _e_load.Branches;
                 DA.GetDataTree("f_load", out GH_Structure<GH_Number> _f_load); var f_load = _f_load.Branches;
@@ -790,7 +791,7 @@ namespace OpenSeesUtility
                                     if (aa != -1)
                                     {
                                         var kk = kentei2[aa][1].Value;
-                                        if (kk > 0.01)
+                                        if (kk > kbound)
                                         {
                                             var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
                                             gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
@@ -803,7 +804,7 @@ namespace OpenSeesUtility
                                     if (aa != -1)
                                     {
                                         var kk = kentei2[aa][2].Value;
-                                        if (kk > 0.01)
+                                        if (kk > kbound)
                                         {
                                             var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
                                             gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
@@ -851,8 +852,11 @@ namespace OpenSeesUtility
                                         if (aa != -1)
                                         {
                                             var kk = kentei[aa][1].Value;
-                                            var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
-                                            gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
+                                            if (kk > kbound)
+                                            {
+                                                var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                                                gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
+                                            }
                                         }
                                     }
                                     if (figname[k] == "短期検定比伏図")
@@ -861,8 +865,11 @@ namespace OpenSeesUtility
                                         if (aa != -1)
                                         {
                                             var kk = kentei[aa][2].Value;
-                                            var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
-                                            gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
+                                            if (kk > kbound)
+                                            {
+                                                var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                                                gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
+                                            }
                                         }
                                     }
                                 }

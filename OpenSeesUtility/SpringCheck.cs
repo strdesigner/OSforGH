@@ -91,6 +91,7 @@ namespace OpenSeesUtility
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddNumberParameter("kentei(max)", "kentei(max)", "[[element.No, long-term, short-term],...]", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("kmax", "kmax", "[[ele. No.,Long-term max],[ele. No.,Short-term max]](DataTree)", GH_ParamAccess.tree);///
         }
 
         /// <summary>
@@ -602,7 +603,7 @@ namespace OpenSeesUtility
                 var rc = (r1 + r2) / 2.0; pts.Add(rc);
                 List<GH_Number> klist = new List<GH_Number>();
                 var N = spring_f[e][0].Value; var Qy = spring_f[e][1].Value; var Qz = spring_f[e][2].Value; var My = spring_f[e][4].Value; var Mz = spring_f[e][5].Value;
-                var Na = spring_a[e][0].Value; var Qya= spring_a[e][2].Value; var Qza = spring_a[e][4].Value; var Mya = spring_a[e][6].Value; var Mza = spring_a[e][7].Value;
+                var Na = spring_a[e][0].Value; var Qya= spring_a[e][2].Value; var Qza = spring_a[e][4].Value; var Mya = spring_a[e][7].Value; var Mza = spring_a[e][8].Value;
                 if (N < 0) { Na = spring_a[e][1].Value; }
                 if (Qy < 0) { Qya = spring_a[e][3].Value; }
                 if (Qz < 0) { Qza = spring_a[e][5].Value; }
@@ -785,6 +786,18 @@ namespace OpenSeesUtility
                 kentei.AppendRange(new List<GH_Number> { new GH_Number(index[ind]), new GH_Number(kmax1[ind]), new GH_Number(kmax2[ind]) }, new GH_Path(ind));
             }
             DA.SetDataTree(0, kentei);
+            var _kentei = kentei.Branches; var kmax = new GH_Structure<GH_Number>(); var Lmax = 0.0; int L = 0; var Smax = 0.0; int S = 0;
+            for (int i = 0; i < _kentei.Count; i++)
+            {
+                Lmax = Math.Max(Lmax, _kentei[i][1].Value);
+                if (Lmax == _kentei[i][1].Value) { L = (int)_kentei[i][0].Value; }
+                Smax = Math.Max(Smax, _kentei[i][2].Value);
+                if (Smax == _kentei[i][2].Value) { S = (int)_kentei[i][0].Value; }
+            }
+            List<GH_Number> llist = new List<GH_Number>(); List<GH_Number> slist = new List<GH_Number>();
+            llist.Add(new GH_Number(L)); llist.Add(new GH_Number(Lmax)); slist.Add(new GH_Number(S)); slist.Add(new GH_Number(Smax));
+            kmax.AppendRange(llist, new GH_Path(0)); kmax.AppendRange(slist, new GH_Path(1));
+            DA.SetDataTree(1, kmax);
         }
 
         /// <summary>

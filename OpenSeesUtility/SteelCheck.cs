@@ -97,6 +97,7 @@ namespace SteelCheck
             pManager.AddNumberParameter("kentei_hi", "kentei", "[[for Ni,for Qyi,for Qzi,for Myi,for Mzi,for Nj,for Qyj,for Qzj,for Myj,for Mzj,for Nc,for Qyc,for Qzc,for Myc,for Mzc],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddLineParameter("lines", "BEAM", "Line of elements", GH_ParamAccess.list);
             pManager.AddNumberParameter("kentei(max)", "kentei(max)", "[[element.No, long-term, short-term],...]", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("kmax", "kmax", "[[ele. No.,Long-term max],[ele. No.,Short-term max]](DataTree)", GH_ParamAccess.tree);///
         }
         /// <summary>
         /// This is the method that actually does the work.
@@ -715,6 +716,18 @@ namespace SteelCheck
                     DA.SetDataList("lambda", lambda);
                 }
                 DA.SetDataList("lines", lines); DA.SetDataTree(14, kentei_max);
+                var _kentei = kentei_max.Branches; var kmax = new GH_Structure<GH_Number>(); var Lmax = 0.0; int nL = 0; var Smax = 0.0; int nS = 0;
+                for (int i = 0; i < _kentei.Count; i++)
+                {
+                    Lmax = Math.Max(Lmax, _kentei[i][1].Value);
+                    if (Lmax == _kentei[i][1].Value) { nL = (int)_kentei[i][0].Value; }
+                    Smax = Math.Max(Smax, _kentei[i][2].Value);
+                    if (Smax == _kentei[i][2].Value) { nS = (int)_kentei[i][0].Value; }
+                }
+                List<GH_Number> llist = new List<GH_Number>(); List<GH_Number> slist = new List<GH_Number>();
+                llist.Add(new GH_Number(nL)); llist.Add(new GH_Number(Lmax)); slist.Add(new GH_Number(nS)); slist.Add(new GH_Number(Smax));
+                kmax.AppendRange(llist, new GH_Path(0)); kmax.AppendRange(slist, new GH_Path(1));
+                DA.SetDataTree(15, kmax);
             }
         }
 

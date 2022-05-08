@@ -88,6 +88,7 @@ namespace OpenSeesUtility
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddNumberParameter("kentei(max)", "kentei(max)", "[[element.No, long-term, short-term],...]", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("kmax", "kmax", "[[ele. No.,Long-term max],[ele. No.,Short-term max]](DataTree)", GH_ParamAccess.tree);///
         }
 
         /// <summary>
@@ -108,7 +109,7 @@ namespace OpenSeesUtility
             var Nod = new List<List<string>>(); var Ele = new List<List<string>>();
             var FC = new List<List<string>>(); var Size = new List<List<string>>();
             var N = new List<List<double>>(); var Nx = new List<List<double>>(); var Ny = new List<List<double>>(); var Nx2 = new List<List<double>>(); var Ny2 = new List<List<double>>();
-            var NaL = new List<double>(); var NaS = new List<double>(); var omega = new List<double>(); var H = new List<double>(); var H_per_D = new List<double>();
+            var NaL = new List<double>(); var NaS = new List<double>(); var omega = new List<double>(); var H = new List<double>(); var H_per_D = new List<double>(); var kmax1 = new List<double>(); var kmax2 = new List<double>();
             double Omega(double h_bar_D)
             {
                 var _omega = 1.0;
@@ -227,6 +228,11 @@ namespace OpenSeesUtility
                     var length = (r2 - r1).Length; H.Add(length);
                     var h_bar_D = length * 1000 / Math.Min(b, D); H_per_D.Add(h_bar_D);
                     omega.Add(Omega(h_bar_D));
+                    kmax1.Add(omega[ind] * Nc / NaL[ind]);
+                    var ki = omega[ind] * Math.Max(Math.Max(Ni + Ni_x, Ni + Ni_y), Math.Max(Ni + Ni_x2, Ni + Ni_y2)) / NaS[ind];
+                    var kj = omega[ind] * Math.Max(Math.Max(Nj + Nj_x, Nj + Nj_y), Math.Max(Nj + Nj_x2, Nj + Nj_y2)) / NaS[ind];
+                    var kc = omega[ind] * Math.Max(Math.Max(Nc + Nc_x, Nc + Nc_y), Math.Max(Nc + Nc_x2, Nc + Nc_y2)) / NaS[ind];
+                    kmax2.Add(Math.Max(kc, Math.Max(ki, kj)));
                     if (on_off_11 == 1)
                     {
                         if (on_off_21 == 1)
@@ -302,6 +308,28 @@ namespace OpenSeesUtility
                         }
                     }
                 }
+                for (int ind = 0; ind < index.Count; ind++)
+                {
+                    int e = (int)index[ind];
+                    if (sec_f[0].Count / 18 >= 3)
+                    {
+                        kentei.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1[ind]), new GH_Number(kmax2[ind]) }, new GH_Path(ind));
+                    }
+                    else { kentei.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1[ind]), new GH_Number(0.0) }, new GH_Path(ind)); }
+                }
+                DA.SetDataTree(0, kentei);
+                var _kentei = kentei.Branches; var kmax = new GH_Structure<GH_Number>(); var Lmax = 0.0; int L = 0; var Smax = 0.0; int S = 0;
+                for (int i = 0; i < _kentei.Count; i++)
+                {
+                    Lmax = Math.Max(Lmax, _kentei[i][1].Value);
+                    if (Lmax == _kentei[i][1].Value) { L = (int)_kentei[i][0].Value; }
+                    Smax = Math.Max(Smax, _kentei[i][2].Value);
+                    if (Smax == _kentei[i][2].Value) { S = (int)_kentei[i][0].Value; }
+                }
+                List<GH_Number> llist = new List<GH_Number>(); List<GH_Number> slist = new List<GH_Number>();
+                llist.Add(new GH_Number(L)); llist.Add(new GH_Number(Lmax)); slist.Add(new GH_Number(S)); slist.Add(new GH_Number(Smax));
+                kmax.AppendRange(llist, new GH_Path(0)); kmax.AppendRange(slist, new GH_Path(1));
+                DA.SetDataTree(1, kmax);
                 if (on_off == 1)
                 {
                     var pdfname = "RcBeamCheck"; DA.GetData("outputname", ref pdfname);

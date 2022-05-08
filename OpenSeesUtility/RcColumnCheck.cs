@@ -104,7 +104,8 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("QaS(L+Y)", "QaS(L+Y)", "[[Qai,Qac,Qaj],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("QaS(L-X)", "QaS(L-X)", "[[Qai,Qac,Qaj],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("QaS(L-Y)", "QaS(L-Y)", "[[Qai,Qac,Qaj],...](DataTree)", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("kentei_hi", "kentei", "[[for Myi,for Myj,for Myc, for Qzi,for Qzj,for Qzc],...](DataTree)", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("kentei(max)", "kentei(max)", "[[ele. No.,for Long-term, for Short-term],...](DataTree)", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("kmax", "kmax", "[[ele. No.,Long-term max],[ele. No.,Short-term max]](DataTree)", GH_ParamAccess.tree);///
         }
 
         /// <summary>
@@ -123,7 +124,7 @@ namespace OpenSeesUtility
             var barNo = new List<double>(); DA.GetDataList("bar", barNo); var Fc = new List<double>(); DA.GetDataList("Standard allowable stress (compression)[N/mm2]", Fc); var N = 2.0; DA.GetData("n", ref N);
             DA.GetData("fontsize", ref fontsize); var barname = new List<string>(); DA.GetDataList("name", barname);
             var P1 = new List<double>(); DA.GetDataList("P1", P1); var P2 = new List<double>(); DA.GetDataList("P2", P2);
-            var kentei = new GH_Structure<GH_Number>(); int digit = 4;
+            var kentei = new GH_Structure<GH_Number>(); int digit = 4; var kmaxL = new List<double>(); var kmaxS = new List<double>();
             var unitl = 1.0 / 1000.0; var unitf = 1.0 / 1000.0;///単位合わせのための係数
             List<double> index = new List<double>(); DA.GetDataList("index", index);
             int Digit(int num)//数字の桁数を求める関数
@@ -1841,8 +1842,17 @@ namespace OpenSeesUtility
                     if (Mzc < 0) { klist2.Add(new GH_Number(Math.Abs(Mzc) / Ma_cRL)); }
                     else { klist2.Add(new GH_Number(Math.Abs(Mzc) / Ma_cLL)); }
                     klist.Add(new GH_Number(Math.Abs(Qzi) / Qa_iL)); klist.Add(new GH_Number(Math.Abs(Qzj) / Qa_jL)); klist.Add(new GH_Number(Math.Abs(Qzc) / Qa_cL)); klist2.Add(new GH_Number(Math.Abs(Qyi) / Qa_iL2)); klist2.Add(new GH_Number(Math.Abs(Qyj) / Qa_jL2)); klist2.Add(new GH_Number(Math.Abs(Qyc) / Qa_cL2));
-                    kentei.AppendRange(klist, new GH_Path(e,0)); kentei.AppendRange(klist2, new GH_Path(e, 1));
-
+                    //kentei.AppendRange(klist, new GH_Path(e,0)); kentei.AppendRange(klist2, new GH_Path(e, 1));
+                    var maxval = 0.0;
+                    for (int i = 0; i < klist.Count; i++)
+                    {
+                        maxval = Math.Max(maxval, klist[i].Value);
+                    }
+                    for (int i = 0; i < klist2.Count; i++)
+                    {
+                        maxval = Math.Max(maxval, klist2[i].Value);
+                    }
+                    kmaxL.Add(maxval);
                     var ki = new List<double>(); var kj = new List<double>(); var kc = new List<double>();
                     if (Myi + Myi_x < 0) { ki.Add(Math.Abs(Myi + Myi_x) / Ma_iTLpX); }
                     else { ki.Add(Math.Abs(Myi + Myi_x) / Ma_iBLpX); }
@@ -1906,8 +1916,17 @@ namespace OpenSeesUtility
                     k2list2.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qyi + Qyi_x * N) / Qa_iLpX2, Math.Abs(Qyi + Qyi_x2 * N) / Qa_iLmX2), Math.Max(Math.Abs(Qyi + Qyi_y * N) / Qa_iLpY2, Math.Abs(Qyi + Qyi_y2 * N) / Qa_iLpY2))));
                     k2list2.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qyj + Qyj_x * N) / Qa_jLpX2, Math.Abs(Qyj + Qyj_x2 * N) / Qa_jLmX2), Math.Max(Math.Abs(Qyj + Qyj_y * N) / Qa_jLpY2, Math.Abs(Qyj + Qyj_y2 * N) / Qa_jLpY2))));
                     k2list2.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qyc + Qyc_x * N) / Qa_cLpX2, Math.Abs(Qyc + Qyc_x2 * N) / Qa_cLmX2), Math.Max(Math.Abs(Qyc + Qyc_y * N) / Qa_cLpY2, Math.Abs(Qyc + Qyc_y2 * N) / Qa_cLpY2))));
-                    kentei.AppendRange(k2list, new GH_Path(e, 2)); kentei.AppendRange(k2list2, new GH_Path(e, 3));
-
+                    //kentei.AppendRange(k2list, new GH_Path(e, 2)); kentei.AppendRange(k2list2, new GH_Path(e, 3));
+                    maxval = 0.0;
+                    for (int i = 0; i < k2list.Count; i++)
+                    {
+                        maxval = Math.Max(maxval, k2list[i].Value);
+                    }
+                    for (int i = 0; i < k2list2.Count; i++)
+                    {
+                        maxval = Math.Max(maxval, k2list2[i].Value);
+                    }
+                    kmaxS.Add(maxval);
                     var r1 = new Point3d(r[ni][0].Value, r[ni][1].Value, r[ni][2].Value); var r2 = new Point3d(r[nj][0].Value, r[nj][1].Value, r[nj][2].Value);
                     var rc = (r1 + r2) / 2.0; var ri = (r1 + rc) / 2.0; var rj = (r2 + rc) / 2.0;
                     if (on_off_11 == 1)
@@ -2027,7 +2046,24 @@ namespace OpenSeesUtility
                 }
                 DA.SetDataTree(0, MaL); DA.SetDataTree(2, MaLpX); DA.SetDataTree(3, MaLpY); DA.SetDataTree(4, MaLmX); DA.SetDataTree(5, MaLmY);
                 DA.SetDataTree(1, QaL); DA.SetDataTree(6, QaLpX); DA.SetDataTree(7, QaLpY); DA.SetDataTree(8, QaLmX); DA.SetDataTree(9, QaLmY);
+                for (int i = 0; i < index.Count; i++)
+                {
+                    int e = (int)index[i];
+                    kentei.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmaxL[i]), new GH_Number(kmaxS[i]) }, new GH_Path(i));
+                }
                 DA.SetDataTree(10, kentei);
+                var _kentei = kentei.Branches; var kmax = new GH_Structure<GH_Number>(); var Lmax = 0.0; int L = 0; var Smax = 0.0; int S = 0;
+                for (int i = 0; i < _kentei.Count; i++)
+                {
+                    Lmax = Math.Max(Lmax, _kentei[i][1].Value);
+                    if (Lmax == _kentei[i][1].Value) { L = (int)_kentei[i][0].Value; }
+                    Smax = Math.Max(Smax, _kentei[i][2].Value);
+                    if (Smax == _kentei[i][2].Value) { S = (int)_kentei[i][0].Value; }
+                }
+                List<GH_Number> llist = new List<GH_Number>(); List<GH_Number> slist = new List<GH_Number>();
+                llist.Add(new GH_Number(L)); llist.Add(new GH_Number(Lmax)); slist.Add(new GH_Number(S)); slist.Add(new GH_Number(Smax));
+                kmax.AppendRange(llist, new GH_Path(0)); kmax.AppendRange(slist, new GH_Path(1));
+                DA.SetDataTree(11, kmax);
                 if (on_off == 1)
                 {
                     var pdfname = "RcColumnCheck"; DA.GetData("outputname", ref pdfname);
