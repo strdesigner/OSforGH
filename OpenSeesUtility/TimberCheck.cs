@@ -99,21 +99,23 @@ namespace TimberCheck
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("index", "index", "[...](element No. List to show)", GH_ParamAccess.list);///
-            pManager.AddNumberParameter("IJ", "IJ", "[[No.i,No.j,material No.,section No.,angle],...](DataTree)", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("lambda", "lambda", "elongation ratio[...](DataList)", GH_ParamAccess.list);///
-            pManager.AddNumberParameter("fk", "fk", "[[Long-Terrm...],[Short-Term...]](DataTree)[N/mm2]", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("ft", "ft", "[[Long-Terrm...],[Short-Term...]](DataTree)[N/mm2]", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("fb", "fb", "[[Long-Terrm...],[Short-Term...]](DataTree)[N/mm2]", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("fs", "fs", "[[Long-Terrm...],[Short-Term...]](DataTree)[N/mm2]", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("safe factor", "alpha", "Reduction rate taking into account cross-sectional defects", GH_ParamAccess.item);///
-            pManager.AddNumberParameter("sec_f", "sec_f", "[[Pxi,Pyi,Pzi,Mxi,Myi,Mzi,Pxj,Pyj,Pzj,Mxj,Myj,Mzj,Pxc,Pyc,Pzc,Mxc,Myc,Mzc],...](DataTree)", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("burnB", "burnB", "[double,double,...](Datalist)[m]", GH_ParamAccess.list);///
-            pManager.AddNumberParameter("burnD", "burnD", "[double,double,...](Datalist)[m]", GH_ParamAccess.list);///
-            pManager.AddNumberParameter("kentei(max)", "kentei(max)", "[[ele. No.,for Long-term, for Short-term],...](DataTree)", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("kentei2(max)", "kentei2(max)", "[[Kabe. No.,for Long-term, for Short-term],...](DataTree)", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("kmax", "kmax", "[[ele. No.,Long-term max],[ele. No.,Short-term max]](DataTree)", GH_ParamAccess.tree);///
-            pManager.AddNumberParameter("kmax2", "kmax2", "[[ele. No.,Long-term max],[ele. No.,Short-term max]](DataTree)", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("index", "index", "[...](element No. List to show)", GH_ParamAccess.list);///0
+            pManager.AddNumberParameter("IJ", "IJ", "[[No.i,No.j,material No.,section No.,angle],...](DataTree)", GH_ParamAccess.tree);///1
+            pManager.AddNumberParameter("lambda", "lambda", "elongation ratio[...](DataList)", GH_ParamAccess.list);///2
+            pManager.AddNumberParameter("fk", "fk", "[[Long-Terrm...],[Short-Term...]](DataTree)[N/mm2]", GH_ParamAccess.tree);///3
+            pManager.AddNumberParameter("ft", "ft", "[[Long-Terrm...],[Short-Term...]](DataTree)[N/mm2]", GH_ParamAccess.tree);///4
+            pManager.AddNumberParameter("fb", "fb", "[[Long-Terrm...],[Short-Term...]](DataTree)[N/mm2]", GH_ParamAccess.tree);///5
+            pManager.AddNumberParameter("fs", "fs", "[[Long-Terrm...],[Short-Term...]](DataTree)[N/mm2]", GH_ParamAccess.tree);///6
+            pManager.AddNumberParameter("safe factor", "alpha", "Reduction rate taking into account cross-sectional defects", GH_ParamAccess.item);///7
+            pManager.AddNumberParameter("sec_f", "sec_f", "[[Pxi,Pyi,Pzi,Mxi,Myi,Mzi,Pxj,Pyj,Pzj,Mxj,Myj,Mzj,Pxc,Pyc,Pzc,Mxc,Myc,Mzc],...](DataTree)", GH_ParamAccess.tree);///8
+            pManager.AddNumberParameter("burnB", "burnB", "[double,double,...](Datalist)[m]", GH_ParamAccess.list);///9
+            pManager.AddNumberParameter("burnD", "burnD", "[double,double,...](Datalist)[m]", GH_ParamAccess.list);///10
+            pManager.AddNumberParameter("kentei", "kentei", "[[ele. No.,for Long-term, for Short-term],...](DataTree)", GH_ParamAccess.tree);///11
+            pManager.AddNumberParameter("kentei2", "kentei2", "[[Kabe. No.,for Long-term, for Short-term],...](DataTree)", GH_ParamAccess.tree);///12
+            pManager.AddNumberParameter("kentei(max)", "kentei(max)", "[[ele. No.,for Long-term, for Short-term],...](DataTree)", GH_ParamAccess.tree);///13
+            pManager.AddNumberParameter("kentei2(max)", "kentei2(max)", "[[Kabe. No.,for Long-term, for Short-term],...](DataTree)", GH_ParamAccess.tree);///14
+            pManager.AddNumberParameter("kmax", "kmax", "[[ele. No.,Long-term max],[ele. No.,Short-term max]](DataTree)", GH_ParamAccess.tree);///15
+            pManager.AddNumberParameter("kmax2", "kmax2", "[[ele. No.,Long-term max],[ele. No.,Short-term max]](DataTree)", GH_ParamAccess.tree);///16
         }
         /// <summary>
         /// This is the method that actually does the work.
@@ -152,6 +154,7 @@ namespace TimberCheck
             List<double> index = new List<double>(); List<double> index2 = new List<double>(); List<double> index3 = new List<double>(); int L = 0; int S = 0;
             DA.GetDataList("index", index); DA.GetDataList("index(kabe)", index2); DA.GetDataList("index(burn)", index3);
             var kentei = new GH_Structure<GH_Number>(); var kentei2 = new GH_Structure<GH_Number>();
+            var kenteimax = new GH_Structure<GH_Number>(); var kentei2max = new GH_Structure<GH_Number>();
             if (index[0] == -9999)
             {
                 index = new List<double>();
@@ -228,12 +231,12 @@ namespace TimberCheck
                             klist.Add(new GH_Number(Myc / zy / fb2[mat] * unit)); klist.Add(new GH_Number(Mzc / zz / fb2[mat] * unit));
                             var flist = new List<GH_Number>();
                             for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][i].Value)); }
-                            //kentei.AppendRange(klist, new GH_Path(new int[] { 0, ind }));
+                            kentei.AppendRange(klist, new GH_Path(new int[] { 0, ind }));
                             var _kmax1 = 0.0; var _kmax2 = 0.0;
                             _kmax2=Math.Max(_kmax2, Math.Max(Math.Max(klist[3].Value, klist[4].Value) + klist[0].Value, Math.Max(Math.Max(klist[1].Value, klist[2].Value), klist[0].Value)));
                             _kmax2 = Math.Max(_kmax2, Math.Max(Math.Max(klist[8].Value, klist[9].Value) + klist[5].Value, Math.Max(Math.Max(klist[6].Value, klist[7].Value), klist[5].Value)));
                             _kmax2 = Math.Max(_kmax2, Math.Max(Math.Max(klist[13].Value, klist[14].Value) + klist[10].Value, Math.Max(Math.Max(klist[11].Value, klist[12].Value), klist[10].Value)));
-                            kentei.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(_kmax1), new GH_Number(_kmax2) }, new GH_Path(ind));
+                            kenteimax.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(_kmax1), new GH_Number(_kmax2) }, new GH_Path(ind));
                             maxvalS = Math.Max(maxvalS, _kmax2); if (maxvalS == _kmax2) { S = e; }
                             sec_f_new.AppendRange(flist, new GH_Path(new int[] { 0, ind })); ij_new.AppendRange(ij[e], new GH_Path(ind));
                             if (on_off_12 == 1)
@@ -317,7 +320,7 @@ namespace TimberCheck
                         f_ttree.AppendRange(f_tlist, new GH_Path(0));
                         f_btree.AppendRange(f_blist, new GH_Path(0));
                         f_stree.AppendRange(f_slist, new GH_Path(0));
-                        DA.SetDataTree(3, f_ktree); DA.SetDataTree(4, f_ttree); DA.SetDataTree(5, f_btree); DA.SetDataTree(6, f_stree); DA.SetDataTree(8, sec_f_new); DA.SetDataTree(11, kentei);
+                        DA.SetDataTree(3, f_ktree); DA.SetDataTree(4, f_ttree); DA.SetDataTree(5, f_btree); DA.SetDataTree(6, f_stree); DA.SetDataTree(8, sec_f_new); DA.SetDataTree(11, kentei); DA.SetDataTree(13, kenteimax);
                     }
                     else
                     {
@@ -729,16 +732,16 @@ namespace TimberCheck
                         for (int i = 0; i < index.Count; i++)
                         {
                             int e = (int)index[i];
-                            kentei.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1[i]), new GH_Number(kmax2[i]) }, new GH_Path(i));
+                            kenteimax.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1[i]), new GH_Number(kmax2[i]) }, new GH_Path(i));
                         }
                         DA.SetDataTree(1, ij_new); DA.SetDataTree(8, sec_f_new); DA.SetDataTree(11, kentei); DA.SetDataList("lambda", Lambda);
-                        DA.SetDataTree(3, f_ktree); DA.SetDataTree(4, f_ttree); DA.SetDataTree(5, f_btree); DA.SetDataTree(6, f_stree); DA.SetDataList("index", index);
+                        DA.SetDataTree(3, f_ktree); DA.SetDataTree(4, f_ttree); DA.SetDataTree(5, f_btree); DA.SetDataTree(6, f_stree); DA.SetDataList("index", index); DA.SetDataTree(13, kenteimax);
                     }
                     var kmax = new GH_Structure<GH_Number>();
                     List<GH_Number> llist = new List<GH_Number>(); List<GH_Number> slist = new List<GH_Number>();
                     llist.Add(new GH_Number(L)); llist.Add(new GH_Number(maxvalL)); slist.Add(new GH_Number(S)); slist.Add(new GH_Number(maxvalS));
                     kmax.AppendRange(llist, new GH_Path(0)); kmax.AppendRange(slist, new GH_Path(1));
-                    DA.SetDataTree(13, kmax);
+                    DA.SetDataTree(15, kmax);
                 }
                 int L2 = 0; int S2 = 0; var kmaxL = 0.0; var kmaxS = 0.0;
                 if (KABE_W[0][0].Value!=-9999 && shear_w[0]!=-9999 && index2[0]!=9999)
@@ -746,7 +749,7 @@ namespace TimberCheck
                     int jj = 0;
                     var kk = new List<double>(); var rclist = new List<Point3d>();
                     var k2max1 = new List<double>(); var k2max2 = new List<double>();
-                    for (int ii = 0; ii<KABE_W[0].Count / 7; ii++)
+                    for (int ii = 0; ii < KABE_W[0].Count / 7; ii++)
                     {
                         jj = 0;
                         for (int ind = 0; ind < index2.Count; ind++)
@@ -765,6 +768,7 @@ namespace TimberCheck
                                 List<GH_Number> klist = new List<GH_Number>();
                                 klist.Add(new GH_Number(n1)); klist.Add(new GH_Number(n2)); klist.Add(new GH_Number(n3)); klist.Add(new GH_Number(n4));
                                 klist.Add(new GH_Number(l)); klist.Add(new GH_Number(Q)); klist.Add(new GH_Number(Qa * l)); klist.Add(new GH_Number(k));
+                                kentei2.AppendRange(klist, new GH_Path(jj));
                                 kk.Add(k); rclist.Add(rc);
                                 if (ii == 0) { k2max1.Add(k); kmaxL = Math.Max(kmaxL, k); if (kmaxL == k) { L2 = e; } }
                                 else { kmaxS = Math.Max(kmaxS, k); if (kmaxS == k) { S2 = e; } }
@@ -774,19 +778,27 @@ namespace TimberCheck
                             }
                         }
                     }
+                    int jjj = 0;
                     for (int i = 0; i < index2.Count; i++)
                     {
                         int e = (int)index2[i];
                         if (KABE_W[e][4].Value > 0)
                         {
-                            kentei2.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(k2max1[i]), new GH_Number(k2max2[i]) }, new GH_Path(i));
+                            if (KABE_W[0].Count / 7 >= 3)
+                            {
+                                kentei2max.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(k2max1[i]), new GH_Number(0.0) }, new GH_Path(jjj)); jjj += 1;
+                            }
+                            else
+                            {
+                                kentei2max.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(k2max1[i]), new GH_Number(k2max2[i]) }, new GH_Path(jjj)); jjj += 1;
+                            }
                         }
                     }
-                    DA.SetDataTree(12, kentei2);
+                    DA.SetDataTree(12, kentei2); DA.SetDataTree(14, kentei2max);
                     var kmax = new GH_Structure<GH_Number>();
                     List<GH_Number> llist = new List<GH_Number>(); List<GH_Number> slist = new List<GH_Number>();
                     llist.Add(new GH_Number(L2)); llist.Add(new GH_Number(kmaxL)); slist.Add(new GH_Number(S2)); slist.Add(new GH_Number(kmaxS));
-                    kmax.AppendRange(llist, new GH_Path(0)); kmax.AppendRange(slist, new GH_Path(1)); DA.SetDataTree(14, kmax);
+                    kmax.AppendRange(llist, new GH_Path(0)); kmax.AppendRange(slist, new GH_Path(1)); DA.SetDataTree(16, kmax);
                     if (on_off_31 == 1 && on_off_11 == 1)
                     {
                         for (int ind = 0; ind < jj; ind++)

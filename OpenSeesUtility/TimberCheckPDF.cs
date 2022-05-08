@@ -254,8 +254,8 @@ namespace TimberCheckPDF
                     var Qkc_text = Qkc.ToString("F").Substring(0, 4); Qkc_color.Add(new XSolidBrush(RGB((1 - Math.Min(Qkc, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                     var OKi_text = "O.K."; var OKj_text = "O.K."; var OKc_text = "O.K.";
                     if(Mki>1 || Qki > 1) { OKi_text = "N.G."; }
-                    if (Mkj > 1 || Qkj > 1) { OKc_text = "N.G."; }
-                    if (Mkc > 1 || Qkc > 1) { OKj_text = "N.G."; }
+                    if (Mkj > 1 || Qkj > 1) { OKj_text = "N.G."; }
+                    if (Mkc > 1 || Qkc > 1) { OKc_text = "N.G."; }
                     var values = new List<List<string>>();
                     values.Add(new List<string> { ele_text }); values.Add(new List<string> { name_text });
                     if (burnB.Count != 0 && burnD.Count != 0)
@@ -313,8 +313,8 @@ namespace TimberCheckPDF
                             Qkc_text = Qkc.ToString("F").Substring(0, 4); Qkc_color.Add(new XSolidBrush(RGB((1 - Math.Min(Qkc, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             OKi_text = "O.K."; OKj_text = "O.K."; OKc_text = "O.K.";
                             if (Mki > 1 || Qki > 1) { OKi_text = "N.G."; }
-                            if (Mkj > 1 || Qkj > 1) { OKc_text = "N.G."; }
-                            if (Mkc > 1 || Qkc > 1) { OKj_text = "N.G."; }
+                            if (Mkj > 1 || Qkj > 1) { OKj_text = "N.G."; }
+                            if (Mkc > 1 || Qkc > 1) { OKc_text = "N.G."; }
                             values.Add(new List<string> { Ni_text, Nc_text, Nj_text }); values.Add(new List<string> { Myi_text, Myc_text, Myj_text }); values.Add(new List<string> { Mzi_text, Mzc_text, Mzj_text });
                             values.Add(new List<string> { Qyi_text, Qyc_text, Qyj_text }); values.Add(new List<string> { Qzi_text, Qzc_text, Qzj_text });
                             values.Add(new List<string> { Mki_text, Mkc_text, Mkj_text }); values.Add(new List<string> { Qki_text, Qkc_text, Qkj_text });

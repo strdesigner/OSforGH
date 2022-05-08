@@ -163,6 +163,7 @@ namespace SurfAutoCreation
             var t = new List<double>(); if (!DA.GetDataList("thick", t)) { };
             var b = new List<double>(); if (!DA.GetDataList("bairitsu", b)) { }; var kabe_w = new GH_Structure<GH_Number>();
             var r = new List<double>(); if (!DA.GetDataList("rad", r)) { };
+            int ee = 0;
             for (int e = 0; e < breps.Length; e++)
             {
                 if (sz.Count == 1)
@@ -171,21 +172,26 @@ namespace SurfAutoCreation
                 }
                 else if (sz.Count != 0) { s_load.AppendRange(new List<GH_Number> { new GH_Number(ijkl[e][0]), new GH_Number(ijkl[e][1]), new GH_Number(ijkl[e][2]), new GH_Number(ijkl[e][3]), new GH_Number(sz[e]) }, new GH_Path(e)); }
                 var slist = new List<GH_Number>(); var klist = new List<GH_Number>();
-                slist.Add(new GH_Number(ijkl[e][0])); slist.Add(new GH_Number(ijkl[e][1])); slist.Add(new GH_Number(ijkl[e][2])); slist.Add(new GH_Number(ijkl[e][3])); klist.Add(new GH_Number(ijkl[e][0])); klist.Add(new GH_Number(ijkl[e][1])); klist.Add(new GH_Number(ijkl[e][2])); klist.Add(new GH_Number(ijkl[e][3]));
+                slist.Add(new GH_Number(ijkl[e][0])); slist.Add(new GH_Number(ijkl[e][1])); slist.Add(new GH_Number(ijkl[e][2])); slist.Add(new GH_Number(ijkl[e][3])); 
                 if (m.Count == 1) { slist.Add(new GH_Number(m[0])); }
                 else if (m.Count != 0) { slist.Add(new GH_Number(m[e])); }
                 else { slist.Add(new GH_Number(0)); }
                 if (t.Count == 1) { slist.Add(new GH_Number(t[0])); }
                 else if (t.Count != 0) { slist.Add(new GH_Number(t[e])); }
                 else { slist.Add(new GH_Number(0.2)); }
-                if (b.Count == 1) { klist.Add(new GH_Number(b[0])); }
-                else if (b.Count != 0) { klist.Add(new GH_Number(b[e])); }
-                else { klist.Add(new GH_Number(2.5)); }
-                if (r.Count == 1) { klist.Add(new GH_Number(r[0])); }
-                else if (r.Count != 0) { klist.Add(new GH_Number(r[e])); }
-                else { klist.Add(new GH_Number(120)); }
                 IJKL.AppendRange(slist, new GH_Path(e));
-                kabe_w.AppendRange(klist, new GH_Path(e));
+                if (ijkl[e][3] != -1)
+                {
+                    klist.Add(new GH_Number(ijkl[e][0])); klist.Add(new GH_Number(ijkl[e][1])); klist.Add(new GH_Number(ijkl[e][2])); klist.Add(new GH_Number(ijkl[e][3]));
+                    if (b.Count == 1) { klist.Add(new GH_Number(b[0])); }
+                    else if (b.Count != 0) { klist.Add(new GH_Number(b[e])); }
+                    else { klist.Add(new GH_Number(2.5)); }
+                    if (r.Count == 1) { klist.Add(new GH_Number(r[0])); }
+                    else if (r.Count != 0) { klist.Add(new GH_Number(r[e])); }
+                    else { klist.Add(new GH_Number(120)); }
+                    kabe_w.AppendRange(klist, new GH_Path(ee));
+                    ee += 1;
+                }
             }
             DA.SetDataTree(2, s_load);
             DA.SetDataTree(3, IJKL);
