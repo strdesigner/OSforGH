@@ -395,20 +395,20 @@ namespace OpenSeesUtility
                     var d_cb = ((kB + S_c + D_ct1 / 2.0) * a_cb1 + (kB + S_c + D_cb1 + 25.0 + D_cb2 / 2.0) * a_cb2) / a_cb;//中央の右端より鉄筋重心までの距離
 
                     var gamma_ct = a_cb / a_ct; var D_ct = D - d_ct; var dc1_ct = d_cb / D_ct; var pt_ct = a_ct / (b * D_ct);
-                    var C1_ctL = (40.0 / 3.0 * (1.0 - 1.2 * Ni * 1000 / b / D / fcL) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * Ni * 1000 / b / D / fcL)) * fcL;
-                    var C2_ctL = (0.8 * pt_ct + 0.37 * Ni * 1000 / b / D / ft_ctL) * ft_ctL;
+                    var C1_ctL = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcL, Nc) * 1000 / b / D / fcL) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcL, Nc) * 1000 / b / D / fcL)) * fcL;
+                    var C2_ctL = (0.8 * pt_ct + 0.37 * Math.Min(0.4 * b * D * fcL, Nc) * 1000 / b / D / ft_ctL) * ft_ctL;
                     var C_ctL = Math.Min(C1_ctL, C2_ctL);
-                    var C1_ctLpX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS)) * fcS;
-                    var C2_ctLpX = (0.8 * pt_ct + 0.37 * (Ni + Ni_x) * 1000 / b / D / ft_ctS) * ft_ctS;
+                    var C1_ctLpX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nc + Nc_x) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * Math.Min(0.4 * b * D * fcS, 1 + 1.2 * (Nc + Nc_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ctLpX = (0.8 * pt_ct + 0.37 * Math.Min(0.4 * b * D * fcS, Nc + Nc_x) * 1000 / b / D / ft_ctS) * ft_ctS;
                     var C_ctLpX = Math.Min(C1_ctLpX, C2_ctLpX);
-                    var C1_ctLpY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS)) * fcS;
-                    var C2_ctLpY = (0.8 * pt_ct + 0.37 * (Ni + Ni_y) * 1000 / b / D / ft_ctS) * ft_ctS;
+                    var C1_ctLpY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nc + Nc_y) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nc + Nc_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ctLpY = (0.8 * pt_ct + 0.37 * Math.Min(0.4 * b * D * fcS, Nc + Nc_y) * 1000 / b / D / ft_ctS) * ft_ctS;
                     var C_ctLpY = Math.Min(C1_ctLpY, C2_ctLpY);
-                    var C1_ctLmX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS)) * fcS;
-                    var C2_ctLmX = (0.8 * pt_ct + 0.37 * (Ni - Ni_x) * 1000 / b / D / ft_ctS) * ft_ctS;
+                    var C1_ctLmX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nc - Nc_x) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nc - Nc_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ctLmX = (0.8 * pt_ct + 0.37 * Math.Min(0.4 * b * D * fcS, Nc - Nc_x) * 1000 / b / D / ft_ctS) * ft_ctS;
                     var C_ctLmX = Math.Min(C1_ctLmX, C2_ctLmX);
-                    var C1_ctLmY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS)) * fcS;
-                    var C2_ctLmY = (0.8 * pt_ct + 0.37 * (Ni - Ni_y) * 1000 / b / D / ft_ctS) * ft_ctS;
+                    var C1_ctLmY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nc - Nc_y) * 1000 / b / D / fcS) * pt_ct + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nc - Nc_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_ctLmY = (0.8 * pt_ct + 0.37 * Math.Min(0.4 * b * D * fcS, Nc - Nc_y) * 1000 / b / D / ft_ctS) * ft_ctS;
                     var C_ctLmY = Math.Min(C1_ctLmY, C2_ctLmY);
 
                     var Ma_ctL = C_ctL * b * Math.Pow(D_ct, 2) * unitl * unitf;
@@ -418,20 +418,20 @@ namespace OpenSeesUtility
                     var Ma_ctLmY = C_ctLmY * b * Math.Pow(D_ct, 2) * unitl * unitf;
 
                     var gamma_cb = a_ct / a_cb; var D_cb = D - d_cb; var dc1_cb = d_ct / D_cb; var pt_cb = a_cb / (b * D_cb);
-                    var C1_cbL = (40.0 / 3.0 * (1.0 - 1.2 * Ni * 1000 / b / D / fcL) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * Ni * 1000 / b / D / fcL)) * fcL;
-                    var C2_cbL = (0.8 * pt_cb + 0.37 * Ni * 1000 / b / D / ft_cbL) * ft_cbL;
+                    var C1_cbL = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcL, Nc) * 1000 / b / D / fcL) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcL, Nc) * 1000 / b / D / fcL)) * fcL;
+                    var C2_cbL = (0.8 * pt_cb + 0.37 * Math.Min(0.4 * b * D * fcL, Nc) * 1000 / b / D / ft_cbL) * ft_cbL;
                     var C_cbL = Math.Min(C1_cbL, C2_cbL);
-                    var C1_cbLpX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS)) * fcS;
-                    var C2_cbLpX = (0.8 * pt_cb + 0.37 * (Ni + Ni_x) * 1000 / b / D / ft_cbS) * ft_cbS;
+                    var C1_cbLpX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nc + Nc_x) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nc + Nc_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_cbLpX = (0.8 * pt_cb + 0.37 * Math.Min(0.4 * b * D * fcS, Nc + Nc_x) * 1000 / b / D / ft_cbS) * ft_cbS;
                     var C_cbLpX = Math.Min(C1_cbLpX, C2_cbLpX);
-                    var C1_cbLpY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS)) * fcS;
-                    var C2_cbLpY = (0.8 * pt_cb + 0.37 * (Ni + Ni_y) * 1000 / b / D / ft_cbS) * ft_cbS;
+                    var C1_cbLpY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nc + Nc_y) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nc + Nc_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_cbLpY = (0.8 * pt_cb + 0.37 * Math.Min(0.4 * b * D * fcS, Nc + Nc_y) * 1000 / b / D / ft_cbS) * ft_cbS;
                     var C_cbLpY = Math.Min(C1_cbLpY, C2_cbLpY);
-                    var C1_cbLmX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS)) * fcS;
-                    var C2_cbLmX = (0.8 * pt_cb + 0.37 * (Ni - Ni_x) * 1000 / b / D / ft_cbS) * ft_cbS;
+                    var C1_cbLmX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nc - Nc_x) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nc - Nc_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_cbLmX = (0.8 * pt_cb + 0.37 * Math.Min(0.4 * b * D * fcS, Nc - Nc_x) * 1000 / b / D / ft_cbS) * ft_cbS;
                     var C_cbLmX = Math.Min(C1_cbLmX, C2_cbLmX);
-                    var C1_cbLmY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS)) * fcS;
-                    var C2_cbLmY = (0.8 * pt_cb + 0.37 * (Ni - Ni_y) * 1000 / b / D / ft_cbS) * ft_cbS;
+                    var C1_cbLmY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nc - Nc_y) * 1000 / b / D / fcS) * pt_cb + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nc - Nc_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_cbLmY = (0.8 * pt_cb + 0.37 * Math.Min(0.4 * b * D * fcS, Nc - Nc_y) * 1000 / b / D / ft_cbS) * ft_cbS;
                     var C_cbLmY = Math.Min(C1_cbLmY, C2_cbLmY);
 
                     var Ma_cbL = C_cbL * b * Math.Pow(D_cb, 2) * unitl * unitf;
@@ -475,20 +475,20 @@ namespace OpenSeesUtility
                     var d_jb = ((kB + S_j + D_jt1 / 2.0) * a_jb1 + (kB + S_j + D_jb1 + 25.0 + D_jb2 / 2.0) * a_jb2) / a_jb;//j端の右端より鉄筋重心までの距離
 
                     var gamma_jt = a_jb / a_jt; var D_jt = D - d_jt; var dc1_jt = d_jb / D_jt; var pt_jt = a_jt / (b * D_jt);
-                    var C1_jtL = (40.0 / 3.0 * (1.0 - 1.2 * Ni * 1000 / b / D / fcL) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * Ni * 1000 / b / D / fcL)) * fcL;
-                    var C2_jtL = (0.8 * pt_jt + 0.37 * Ni * 1000 / b / D / ft_jtL) * ft_jtL;
+                    var C1_jtL = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcL, Nj) * 1000 / b / D / fcL) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcL, Nj) * 1000 / b / D / fcL)) * fcL;
+                    var C2_jtL = (0.8 * pt_jt + 0.37 * Math.Min(0.4 * b * D * fcL, Nj) * 1000 / b / D / ft_jtL) * ft_jtL;
                     var C_jtL = Math.Min(C1_jtL, C2_jtL);
-                    var C1_jtLpX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS)) * fcS;
-                    var C2_jtLpX = (0.8 * pt_jt + 0.37 * (Ni + Ni_x) * 1000 / b / D / ft_jtS) * ft_jtS;
+                    var C1_jtLpX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nj + Nj_x) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nj + Nj_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jtLpX = (0.8 * pt_jt + 0.37 * Math.Min(0.4 * b * D * fcS, Nj + Nj_x) * 1000 / b / D / ft_jtS) * ft_jtS;
                     var C_jtLpX = Math.Min(C1_jtLpX, C2_jtLpX);
-                    var C1_jtLpY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS)) * fcS;
-                    var C2_jtLpY = (0.8 * pt_jt + 0.37 * (Ni + Ni_y) * 1000 / b / D / ft_jtS) * ft_jtS;
+                    var C1_jtLpY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nj + Nj_y) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nj + Nj_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jtLpY = (0.8 * pt_jt + 0.37 * Math.Min(0.4 * b * D * fcS, Nj + Nj_y) * 1000 / b / D / ft_jtS) * ft_jtS;
                     var C_jtLpY = Math.Min(C1_jtLpY, C2_jtLpY);
-                    var C1_jtLmX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS)) * fcS;
-                    var C2_jtLmX = (0.8 * pt_jt + 0.37 * (Ni - Ni_x) * 1000 / b / D / ft_jtS) * ft_jtS;
+                    var C1_jtLmX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nj - Nj_x) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nj - Nj_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jtLmX = (0.8 * pt_jt + 0.37 * Math.Min(0.4 * b * D * fcS, Nj - Nj_x) * 1000 / b / D / ft_jtS) * ft_jtS;
                     var C_jtLmX = Math.Min(C1_jtLmX, C2_jtLmX);
-                    var C1_jtLmY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS)) * fcS;
-                    var C2_jtLmY = (0.8 * pt_jt + 0.37 * (Ni - Ni_y) * 1000 / b / D / ft_jtS) * ft_jtS;
+                    var C1_jtLmY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nj - Nj_y) * 1000 / b / D / fcS) * pt_jt + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nj - Nj_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jtLmY = (0.8 * pt_jt + 0.37 * Math.Min(0.4 * b * D * fcS, Nj - Nj_y) * 1000 / b / D / ft_jtS) * ft_jtS;
                     var C_jtLmY = Math.Min(C1_jtLmY, C2_jtLmY);
 
                     var Ma_jtL = C_jtL * b * Math.Pow(D_jt, 2) * unitl * unitf;
@@ -498,20 +498,20 @@ namespace OpenSeesUtility
                     var Ma_jtLmY = C_jtLmY * b * Math.Pow(D_jt, 2) * unitl * unitf;
 
                     var gamma_jb = a_jt / a_jb; var D_jb = D - d_jb; var dc1_jb = d_jt / D_jb; var pt_jb = a_jb / (b * D_jb);
-                    var C1_jbL = (40.0 / 3.0 * (1.0 - 1.2 * Ni * 1000 / b / D / fcL) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * Ni * 1000 / b / D / fcL)) * fcL;
-                    var C2_jbL = (0.8 * pt_jb + 0.37 * Ni * 1000 / b / D / ft_jbL) * ft_jbL;
+                    var C1_jbL = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcL, Nj) * 1000 / b / D / fcL) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcL, Nj) * 1000 / b / D / fcL)) * fcL;
+                    var C2_jbL = (0.8 * pt_jb + 0.37 * Math.Min(0.4 * b * D * fcL, Nj) * 1000 / b / D / ft_jbL) * ft_jbL;
                     var C_jbL = Math.Min(C1_jbL, C2_jbL);
-                    var C1_jbLpX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_x) * 1000 / b / D / fcS)) * fcS;
-                    var C2_jbLpX = (0.8 * pt_jb + 0.37 * (Ni + Ni_x) * 1000 / b / D / ft_jbS) * ft_jbS;
+                    var C1_jbLpX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nj + Nj_x) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nj + Nj_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jbLpX = (0.8 * pt_jb + 0.37 * Math.Min(0.4 * b * D * fcS, Nj + Nj_x) * 1000 / b / D / ft_jbS) * ft_jbS;
                     var C_jbLpX = Math.Min(C1_jbLpX, C2_jbLpX);
-                    var C1_jbLpY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * (Ni + Ni_y) * 1000 / b / D / fcS)) * fcS;
-                    var C2_jbLpY = (0.8 * pt_jb + 0.37 * (Ni + Ni_y) * 1000 / b / D / ft_jbS) * ft_jbS;
+                    var C1_jbLpY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nj + Nj_y) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nj + Nj_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jbLpY = (0.8 * pt_jb + 0.37 * Math.Min(0.4 * b * D * fcS, Nj + Nj_y) * 1000 / b / D / ft_jbS) * ft_jbS;
                     var C_jbLpY = Math.Min(C1_jbLpY, C2_jbLpY);
-                    var C1_jbLmX = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_x) * 1000 / b / D / fcS)) * fcS;
-                    var C2_jbLmX = (0.8 * pt_jb + 0.37 * (Ni - Ni_x) * 1000 / b / D / ft_jbS) * ft_jbS;
+                    var C1_jbLmX = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nj - Nj_x) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nj - Nj_x) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jbLmX = (0.8 * pt_jb + 0.37 * Math.Min(0.4 * b * D * fcS, Nj - Nj_x) * 1000 / b / D / ft_jbS) * ft_jbS;
                     var C_jbLmX = Math.Min(C1_jbLmX, C2_jbLmX);
-                    var C1_jbLmY = (40.0 / 3.0 * (1.0 - 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * (Ni - Ni_y) * 1000 / b / D / fcS)) * fcS;
-                    var C2_jbLmY = (0.8 * pt_jb + 0.37 * (Ni - Ni_y) * 1000 / b / D / ft_jbS) * ft_jbS;
+                    var C1_jbLmY = (40.0 / 3.0 * (1.0 - 1.2 * Math.Min(0.4 * b * D * fcS, Nj - Nj_y) * 1000 / b / D / fcS) * pt_jb + 1.0 / 15.0 * (1 + 1.2 * Math.Min(0.4 * b * D * fcS, Nj - Nj_y) * 1000 / b / D / fcS)) * fcS;
+                    var C2_jbLmY = (0.8 * pt_jb + 0.37 * Math.Min(0.4 * b * D * fcS, Nj - Nj_y) * 1000 / b / D / ft_jbS) * ft_jbS;
                     var C_jbLmY = Math.Min(C1_jbLmY, C2_jbLmY);
 
                     var Ma_jbL = C_jbL * b * Math.Pow(D_jb, 2) * unitl * unitf;
