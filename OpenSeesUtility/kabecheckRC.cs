@@ -571,9 +571,18 @@ namespace kabecheckRC
                             values.Add(floor[i] + "-"+j.ToString());//階-番号
                             values.Add(Math.Round(t[i][j]*1000,0).ToString()); values.Add(Math.Round(L0[i][j],3).ToString()); values.Add(Math.Round(theta1[i][j], 0).ToString()); values.Add(Math.Round(theta2[i][j], 0).ToString()); values.Add(Math.Round(H[i][j], 3).ToString()); values.Add(Math.Round(Lx[i][j], 3).ToString()); values.Add(Math.Round(Ly[i][j], 3).ToString()); values.Add(Math.Round(Ax[i][j], 3).ToString()); values.Add(Math.Round(Ay[i][j], 3).ToString());
                             sumLxi += Lx[i][j]; sumLyi += Ly[i][j]; sumAxi += Ax[i][j]; sumAyi += Ay[i][j]; sumL0i += L0[i][j];
+                            for (int k = 0; k < values.Count; k++)
+                            {
+                                gfx.DrawLine(pen, offset_x + text_width * k, offset_y + pitchy * (j % n + 1), offset_x + text_width * k, offset_y + pitchy * (j % n + 2));//縦線
+                                if (k == values.Count - 1)
+                                {
+                                    gfx.DrawLine(pen, offset_x + text_width * (k + 1), offset_y + pitchy * (j % n + 1), offset_x + text_width * (k + 1), offset_y + pitchy * (j % n + 2));//縦線
+                                }
+                                gfx.DrawString(values[k], font, XBrushes.Black, new XRect(offset_x + text_width * k, offset_y + pitchy * (j % n + 1), text_width, offset_y + pitchy * (j % n + 1)), XStringFormats.TopCenter);
+                            }
                             if (e == n - 1)
                             {
-                                gfx.DrawLine(pen, offset_x, offset_y + pitchy, offset_x + text_width * (labels.Count - 1), offset_y + pitchy);//横線
+                                gfx.DrawLine(pen, offset_x, offset_y + pitchy * (j % n + 2), offset_x + text_width * (labels.Count), offset_y + pitchy * (j % n + 2));//横線
                                 // 空白ページを作成。
                                 page = document.AddPage(); gfx = XGraphics.FromPdfPage(page);
                                 // 描画するためにXGraphicsオブジェクトを取得。
@@ -585,19 +594,7 @@ namespace kabecheckRC
                                     gfx.DrawLine(pen, offset_x + text_width * ii, offset_y + pitchy, offset_x + text_width * (ii + 1), offset_y + pitchy);//横線
                                 }
                                 gfx.DrawLine(pen, offset_x + text_width * labels.Count, offset_y, offset_x + text_width * labels.Count, offset_y + pitchy);//縦線
-                                e = 0;
-                            }
-                            else
-                            {
-                                for (int k = 0; k < values.Count; k++)
-                                {
-                                    gfx.DrawLine(pen, offset_x + text_width * k, offset_y + pitchy * (j % n + 1), offset_x + text_width * k, offset_y + pitchy * (j % n + 2));//縦線
-                                    if (k == values.Count - 1)
-                                    {
-                                        gfx.DrawLine(pen, offset_x + text_width * (k + 1), offset_y + pitchy * (j % n + 1), offset_x + text_width * (k + 1), offset_y + pitchy * (j % n + 2));//縦線
-                                    }
-                                    gfx.DrawString(values[k], font, XBrushes.Black, new XRect(offset_x + text_width * k, offset_y + pitchy * (j % n + 1), text_width, offset_y + pitchy * (j % n + 1)), XStringFormats.TopCenter);
-                                }
+                                e = -1;
                             }
                             e += 1;
                         }
