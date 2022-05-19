@@ -784,13 +784,13 @@ namespace TimberCheck
                         int e = (int)index2[i];
                         if (KABE_W[e][4].Value > 0)
                         {
-                            if (KABE_W[0].Count / 7 >= 3)
+                            if (KABE_W[0].Count / 7 == 1)
                             {
-                                kentei2max.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(k2max1[i]), new GH_Number(0.0) }, new GH_Path(jjj)); jjj += 1;
+                                kentei2max.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(k2max1[jjj]), new GH_Number(0.0) }, new GH_Path(jjj)); jjj += 1;
                             }
                             else
                             {
-                                kentei2max.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(k2max1[i]), new GH_Number(k2max2[i]) }, new GH_Path(jjj)); jjj += 1;
+                                kentei2max.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(k2max1[jjj]), new GH_Number(k2max2[jjj]) }, new GH_Path(jjj)); jjj += 1;
                             }
                         }
                     }
