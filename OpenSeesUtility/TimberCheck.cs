@@ -717,6 +717,210 @@ namespace TimberCheck
                                 }
                             }
                         }
+                        else if (m2 / 18 == 5)
+                        {
+                            for (int ind = 0; ind < index.Count; ind++)
+                            {
+                                int e = (int)index[ind];
+                                int mat = (int)ij[e][2].Value; int sec = (int)ij[e][3].Value;
+                                var iy = Iy[sec]; var iz = Iz[sec]; var a = A[sec];
+                                var iby = Math.Sqrt(iy / a); var ibz = Math.Sqrt(iz / a);
+                                var lam = Math.Max(Lby[e] / iby, Lbz[e] / ibz);
+                                var zy = Zy[sec]; var zz = Zz[sec];
+                                var k1list = new List<GH_Number>(); var k2list = new List<GH_Number>(); var k3list = new List<GH_Number>(); var k4list = new List<GH_Number>();
+                                //=[0:sigma_c or sigma_t, 1:tau_y, 2:tau_z, 3:sigma_by, 4:sigma_zy, 5:sigma_c or sigma_t, 6:tau_y, 7:tau_z, 8:sigma_by, 9:sigma_zy, 10:sigma_c or sigma_t, 11:tau_y, 12:tau_z, 13:sigma_by, 14:sigma_zy]
+                                var Ni = -sec_f[e][0].Value; var Qyi = Math.Abs(sec_f[e][1].Value); var Qzi = Math.Abs(sec_f[e][2].Value);
+                                var Myi = Math.Abs(sec_f[e][4].Value); var Mzi = Math.Abs(sec_f[e][5].Value);
+                                var Nj = sec_f[e][6].Value; var Qyj = Math.Abs(sec_f[e][7].Value); var Qzj = Math.Abs(sec_f[e][8].Value);
+                                var Myj = Math.Abs(sec_f[e][10].Value); var Mzj = Math.Abs(sec_f[e][11].Value);
+                                var Nc = -sec_f[e][12].Value; var Qyc = Math.Abs(sec_f[e][13].Value); var Qzc = Math.Abs(sec_f[e][14].Value);
+                                var Myc = Math.Abs(sec_f[e][16].Value); var Mzc = Math.Abs(sec_f[e][17].Value);
+                                var NXi = -sec_f[e][18 + 0].Value; var QXyi = Math.Abs(sec_f[e][18 + 1].Value); var QXzi = Math.Abs(sec_f[e][18 + 2].Value);
+                                var MXyi = Math.Abs(sec_f[e][18 + 4].Value); var MXzi = Math.Abs(sec_f[e][18 + 5].Value);
+                                var NXj = sec_f[e][18 + 6].Value; var QXyj = Math.Abs(sec_f[e][18 + 7].Value); var QXzj = Math.Abs(sec_f[e][18 + 8].Value);
+                                var MXyj = Math.Abs(sec_f[e][18 + 10].Value); var MXzj = Math.Abs(sec_f[e][18 + 11].Value);
+                                var NXc = -sec_f[e][18 + 12].Value; var QXyc = Math.Abs(sec_f[e][18 + 13].Value); var QXzc = Math.Abs(sec_f[e][18 + 14].Value);
+                                var MXyc = Math.Abs(sec_f[e][18 + 16].Value); var MXzc = Math.Abs(sec_f[e][18 + 17].Value);
+                                var NYi = -sec_f[e][18 * 2 + 0].Value; var QYyi = Math.Abs(sec_f[e][18 * 2 + 1].Value); var QYzi = Math.Abs(sec_f[e][18 * 2 + 2].Value);
+                                var MYyi = Math.Abs(sec_f[e][18 * 2 + 4].Value); var MYzi = Math.Abs(sec_f[e][18 * 2 + 5].Value);
+                                var NYj = sec_f[e][18 * 2 + 6].Value; var QYyj = Math.Abs(sec_f[e][18 * 2 + 7].Value); var QYzj = Math.Abs(sec_f[e][18 * 2 + 8].Value);
+                                var MYyj = Math.Abs(sec_f[e][18 * 2 + 10].Value); var MYzj = Math.Abs(sec_f[e][18 * 2 + 11].Value);
+                                var NYc = -sec_f[e][18 * 2 + 12].Value; var QYyc = Math.Abs(sec_f[e][18 * 2 + 13].Value); var QYzc = Math.Abs(sec_f[e][18 * 2 + 14].Value);
+                                var MYyc = Math.Abs(sec_f[e][18 * 2 + 16].Value); var MYzc = Math.Abs(sec_f[e][18 * 2 + 17].Value);
+
+                                if (Ni + NXi < 0) { k1list.Add(new GH_Number(Math.Abs(Ni + NXi) / a / f_k2[ind] * unit)); }
+                                else { k1list.Add(new GH_Number(Math.Abs(Ni + NXi) / a / ft2[mat] * unit)); }
+                                k1list.Add(new GH_Number((Qyi + QXyi) / a / fs2[mat] * unit * 1.5)); k1list.Add(new GH_Number((Qzi + QXzi) / a / fs2[mat] * unit * 1.5));
+                                k1list.Add(new GH_Number((Myi + MXyi) / zy / fb2[mat] * unit)); k1list.Add(new GH_Number((Mzi + MXzi) / zz / fb2[mat] * unit));
+                                if (Nj + NXj < 0) { k1list.Add(new GH_Number(Math.Abs(Nj + NXj) / a / f_k2[ind] * unit)); }
+                                else { k1list.Add(new GH_Number(Math.Abs(Nj + NXj) / a / ft2[mat] * unit)); }
+                                k1list.Add(new GH_Number((Qyj + QXyj) / a / fs2[mat] * unit * 1.5)); k1list.Add(new GH_Number((Qzj + QXzj) / a / fs2[mat] * unit * 1.5));
+                                k1list.Add(new GH_Number((Myj + MXyj) / zy / fb2[mat] * unit)); k1list.Add(new GH_Number((Mzj + MXzj) / zz / fb2[mat] * unit));
+                                if (Nc + NXc < 0) { k1list.Add(new GH_Number(Math.Abs(Nc + NXc) / a / f_k2[ind] * unit)); }
+                                else { k1list.Add(new GH_Number(Math.Abs(Nc + NXc) / a / ft2[mat] * unit)); }
+                                k1list.Add(new GH_Number((Qyc + QXyc) / a / fs2[mat] * unit * 1.5)); k1list.Add(new GH_Number((Qzc + QXzc) / a / fs2[mat] * unit * 1.5));
+                                k1list.Add(new GH_Number((Myc + MXyc) / zy / fb2[mat] * unit)); k1list.Add(new GH_Number((Mzc + MXzc) / zz / fb2[mat] * unit));
+                                var flist = new List<GH_Number>();
+                                for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][18 + i].Value)); }//+X
+                                kentei.AppendRange(k1list, new GH_Path(new int[] { 1, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 1, ind }));
+
+                                if (Ni + NYi < 0) { k2list.Add(new GH_Number(Math.Abs(Ni + NYi) / a / f_k2[ind] * unit)); }
+                                else { k2list.Add(new GH_Number(Math.Abs(Ni + NYi) / a / ft2[mat] * unit)); }
+                                k2list.Add(new GH_Number((Qyi + QYyi) / a / fs2[mat] * unit * 1.5)); k2list.Add(new GH_Number((Qzi + QYzi) / a / fs2[mat] * unit * 1.5));
+                                k2list.Add(new GH_Number((Myi + MYyi) / zy / fb2[mat] * unit)); k2list.Add(new GH_Number((Mzi + MYzi) / zz / fb2[mat] * unit));
+                                if (Nj + NYj < 0) { k2list.Add(new GH_Number(Math.Abs(Nj + NYj) / a / f_k2[ind] * unit)); }
+                                else { k2list.Add(new GH_Number(Math.Abs(Nj + NYj) / a / ft2[mat] * unit)); }
+                                k2list.Add(new GH_Number((Qyj + QYyj) / a / fs2[mat] * unit * 1.5)); k2list.Add(new GH_Number((Qzj + QYzj) / a / fs2[mat] * unit * 1.5));
+                                k2list.Add(new GH_Number((Myj + MYyj) / zy / fb2[mat] * unit)); k2list.Add(new GH_Number((Mzj + MYzj) / zz / fb2[mat] * unit));
+                                if (Nc + NYc < 0) { k2list.Add(new GH_Number(Math.Abs(Nc + NYc) / a / f_k2[ind] * unit)); }
+                                else { k2list.Add(new GH_Number(Math.Abs(Nc + NYc) / a / ft2[mat] * unit)); }
+                                k2list.Add(new GH_Number((Qyc + QYyc) / a / fs2[mat] * unit * 1.5)); k2list.Add(new GH_Number((Qzc + QYzc) / a / fs2[mat] * unit * 1.5));
+                                k2list.Add(new GH_Number((Myc + MYyc) / zy / fb2[mat] * unit)); k2list.Add(new GH_Number((Mzc + MYzc) / zz / fb2[mat] * unit));
+                                flist = new List<GH_Number>();
+                                for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][18 * 2 + i].Value)); }//+Y
+                                kentei.AppendRange(k2list, new GH_Path(new int[] { 2, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 2, ind }));
+
+                                if (Ni - NXi < 0) { k3list.Add(new GH_Number(Math.Abs(Ni - NXi) / a / f_k2[ind] * unit)); }
+                                else { k3list.Add(new GH_Number(Math.Abs(Ni - NXi) / a / ft2[mat] * unit)); }
+                                k3list.Add(new GH_Number((Qyi - QXyi) / a / fs2[mat] * unit * 1.5)); k3list.Add(new GH_Number((Qzi - QXzi) / a / fs2[mat] * unit * 1.5));
+                                k3list.Add(new GH_Number((Myi - MXyi) / zy / fb2[mat] * unit)); k3list.Add(new GH_Number((Mzi - MXzi) / zz / fb2[mat] * unit));
+                                if (Nj - NXj < 0) { k3list.Add(new GH_Number(Math.Abs(Nj - NXj) / a / f_k2[ind] * unit)); }
+                                else { k3list.Add(new GH_Number(Math.Abs(Nj - NXj) / a / ft2[mat] * unit)); }
+                                k3list.Add(new GH_Number((Qyj - QXyj) / a / fs2[mat] * unit * 1.5)); k3list.Add(new GH_Number((Qzj - QXzj) / a / fs2[mat] * unit * 1.5));
+                                k3list.Add(new GH_Number((Myj - MXyj) / zy / fb2[mat] * unit)); k3list.Add(new GH_Number((Mzj - MXzj) / zz / fb2[mat] * unit));
+                                if (Nc - NXc < 0) { k3list.Add(new GH_Number(Math.Abs(Nc + NXc) / a / f_k2[ind] * unit)); }
+                                else { k3list.Add(new GH_Number(Math.Abs(Nc - NXc) / a / ft2[mat] * unit)); }
+                                k3list.Add(new GH_Number((Qyc - QXyc) / a / fs2[mat] * unit * 1.5)); k3list.Add(new GH_Number((Qzc - QXzc) / a / fs2[mat] * unit * 1.5));
+                                k3list.Add(new GH_Number((Myc - MXyc) / zy / fb2[mat] * unit)); k3list.Add(new GH_Number((Mzc - MXzc) / zz / fb2[mat] * unit));
+                                flist = new List<GH_Number>();
+                                for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(-sec_f[e][18 + i].Value)); }//-X
+                                kentei.AppendRange(k3list, new GH_Path(new int[] { 3, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 3, ind }));
+
+                                if (Ni - NYi < 0) { k4list.Add(new GH_Number(Math.Abs(Ni - NYi) / a / f_k2[ind] * unit)); }
+                                else { k4list.Add(new GH_Number(Math.Abs(Ni - NYi) / a / ft2[mat] * unit)); }
+                                k4list.Add(new GH_Number((Qyi - QYyi) / a / fs2[mat] * unit * 1.5)); k4list.Add(new GH_Number((Qzi - QYzi) / a / fs2[mat] * unit * 1.5));
+                                k4list.Add(new GH_Number((Myi - MYyi) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzi - MYzi) / zz / fb2[mat] * unit));
+                                if (Nj - NYj < 0) { k4list.Add(new GH_Number(Math.Abs(Nj - NYj) / a / f_k2[ind] * unit)); }
+                                else { k4list.Add(new GH_Number(Math.Abs(Nj - NYj) / a / ft2[mat] * unit)); }
+                                k4list.Add(new GH_Number((Qyj - QYyj) / a / fs2[mat] * unit * 1.5)); k4list.Add(new GH_Number((Qzj - QYzj) / a / fs2[mat] * unit * 1.5));
+                                k4list.Add(new GH_Number((Myj - MYyj) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzj - MYzj) / zz / fb2[mat] * unit));
+                                if (Nc - NYc < 0) { k4list.Add(new GH_Number(Math.Abs(Nc + NYc) / a / f_k2[ind] * unit)); }
+                                else { k4list.Add(new GH_Number(Math.Abs(Nc - NYc) / a / ft2[mat] * unit)); }
+                                k4list.Add(new GH_Number((Qyc - QYyc) / a / fs2[mat] * unit * 1.5)); k4list.Add(new GH_Number((Qzc - QYzc) / a / fs2[mat] * unit * 1.5));
+                                k4list.Add(new GH_Number((Myc - MYyc) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzc - MYzc) / zz / fb2[mat] * unit));
+                                flist = new List<GH_Number>();
+                                for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(-sec_f[e][18 * 2 + i].Value)); }//-Y
+                                kentei.AppendRange(k4list, new GH_Path(new int[] { 4, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 4, ind }));
+
+                                var k1 = Math.Max(Math.Max(k1list[3].Value, k1list[4].Value) + k1list[0].Value, Math.Max(Math.Max(k1list[1].Value, k1list[2].Value), k1list[0].Value));
+                                var k2 = Math.Max(Math.Max(k2list[3].Value, k2list[4].Value) + k2list[0].Value, Math.Max(Math.Max(k2list[1].Value, k2list[2].Value), k2list[0].Value));
+                                var k3 = Math.Max(Math.Max(k3list[3].Value, k3list[4].Value) + k3list[0].Value, Math.Max(Math.Max(k3list[1].Value, k3list[2].Value), k3list[0].Value));
+                                var k4 = Math.Max(Math.Max(k4list[3].Value, k4list[4].Value) + k4list[0].Value, Math.Max(Math.Max(k4list[1].Value, k4list[2].Value), k4list[0].Value));
+                                var ki = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                k1 = Math.Max(Math.Max(k1list[8].Value, k1list[9].Value) + k1list[5].Value, Math.Max(Math.Max(k1list[6].Value, k1list[7].Value), k1list[5].Value));
+                                k2 = Math.Max(Math.Max(k2list[8].Value, k2list[9].Value) + k2list[5].Value, Math.Max(Math.Max(k2list[6].Value, k2list[7].Value), k2list[5].Value));
+                                k3 = Math.Max(Math.Max(k3list[8].Value, k3list[9].Value) + k3list[5].Value, Math.Max(Math.Max(k3list[6].Value, k3list[7].Value), k3list[5].Value));
+                                k4 = Math.Max(Math.Max(k4list[8].Value, k4list[9].Value) + k4list[5].Value, Math.Max(Math.Max(k4list[6].Value, k4list[7].Value), k4list[5].Value));
+                                var kj = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                k1 = Math.Max(Math.Max(k1list[13].Value, k1list[14].Value) + k1list[10].Value, Math.Max(Math.Max(k1list[11].Value, k1list[12].Value), k1list[10].Value));
+                                k2 = Math.Max(Math.Max(k2list[13].Value, k2list[14].Value) + k2list[10].Value, Math.Max(Math.Max(k2list[11].Value, k2list[12].Value), k2list[10].Value));
+                                k3 = Math.Max(Math.Max(k3list[13].Value, k3list[14].Value) + k3list[10].Value, Math.Max(Math.Max(k3list[11].Value, k3list[12].Value), k3list[10].Value));
+                                k4 = Math.Max(Math.Max(k4list[13].Value, k4list[14].Value) + k4list[10].Value, Math.Max(Math.Max(k4list[11].Value, k4list[12].Value), k4list[10].Value));
+                                var kc = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                kmax2.Add(Math.Max(Math.Max(ki, kj), kc));
+                                maxvalS = Math.Max(kc, Math.Max(kj, Math.Max(maxvalS, ki)));
+                                if (maxvalS == ki || maxvalS == kj || maxvalS == kc) { S = e; }
+                                if (on_off_12 == 1)
+                                {
+                                    var ni = (int)ij[e][0].Value; var nj = (int)ij[e][1].Value;
+                                    var r1 = new Point3d(r[ni][0].Value, r[ni][1].Value, r[ni][2].Value); var r2 = new Point3d(r[nj][0].Value, r[nj][1].Value, r[nj][2].Value);
+                                    var rc = (r1 + r2) / 2.0; var ri = (r1 + rc) / 2.0; var rj = (r2 + rc) / 2.0;
+                                    if (on_off_21 == 1)
+                                    {
+                                        k1 = Math.Max(k1list[3].Value, k1list[4].Value) + k1list[0].Value;//i端の検定比
+                                        k2 = Math.Max(k2list[3].Value, k2list[4].Value) + k2list[0].Value;
+                                        k3 = Math.Max(k3list[3].Value, k3list[4].Value) + k3list[0].Value;
+                                        k4 = Math.Max(k4list[3].Value, k4list[4].Value) + k4list[0].Value;
+                                        ki = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                        _text.Add(ki.ToString("F").Substring(0, digit));
+                                        _p.Add(ri);
+                                        var color = new ColorHSL((1 - Math.Min(ki, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        _c.Add(color);
+                                        k1 = Math.Max(k1list[8].Value, k1list[9].Value) + k1list[5].Value;//j端の検定比
+                                        k2 = Math.Max(k2list[8].Value, k2list[9].Value) + k2list[5].Value;
+                                        k3 = Math.Max(k3list[8].Value, k3list[9].Value) + k3list[5].Value;
+                                        k4 = Math.Max(k4list[8].Value, k4list[9].Value) + k4list[5].Value;
+                                        kj = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                        _text.Add(kj.ToString("F").Substring(0, digit));
+                                        _p.Add(rj);
+                                        color = new ColorHSL((1 - Math.Min(kj, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        _c.Add(color);
+                                        k1 = Math.Max(k1list[13].Value, k1list[14].Value) + k1list[10].Value;//中央の検定比
+                                        k2 = Math.Max(k2list[13].Value, k2list[14].Value) + k2list[10].Value;
+                                        k3 = Math.Max(k3list[13].Value, k3list[14].Value) + k3list[10].Value;
+                                        k4 = Math.Max(k4list[13].Value, k4list[14].Value) + k4list[10].Value;
+                                        kc = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                        _text.Add(kc.ToString("F").Substring(0, digit));
+                                        _p.Add(rc);
+                                        color = new ColorHSL((1 - Math.Min(kc, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        _c.Add(color);
+                                    }
+                                    else if (on_off_22 == 1)
+                                    {
+                                        k1 = Math.Max(k1list[1].Value, k1list[2].Value);
+                                        k2 = Math.Max(k2list[1].Value, k2list[2].Value);
+                                        k3 = Math.Max(k3list[1].Value, k3list[2].Value);
+                                        k4 = Math.Max(k4list[1].Value, k4list[2].Value);
+                                        ki = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                        _text.Add(ki.ToString("F").Substring(0, digit));
+                                        _p.Add(ri);
+                                        var color = new ColorHSL((1 - Math.Min(ki, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        _c.Add(color);
+                                        k1 = Math.Max(k1list[6].Value, k1list[7].Value);
+                                        k2 = Math.Max(k2list[6].Value, k2list[7].Value);
+                                        k3 = Math.Max(k3list[6].Value, k3list[7].Value);
+                                        k4 = Math.Max(k4list[6].Value, k4list[7].Value);
+                                        kj = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                        _text.Add(kj.ToString("F").Substring(0, digit));
+                                        _p.Add(rj);
+                                        color = new ColorHSL((1 - Math.Min(kj, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        _c.Add(color);
+                                        k1 = Math.Max(k1list[11].Value, k1list[12].Value);
+                                        k2 = Math.Max(k2list[11].Value, k2list[12].Value);
+                                        k3 = Math.Max(k3list[11].Value, k3list[12].Value);
+                                        k4 = Math.Max(k4list[11].Value, k4list[12].Value);
+                                        kc = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                        _text.Add(kc.ToString("F").Substring(0, digit));
+                                        _p.Add(rc);
+                                        color = new ColorHSL((1 - Math.Min(kc, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        _c.Add(color);
+                                    }
+                                    else if (on_off_23 == 1)
+                                    {
+                                        _text.Add(ki.ToString("F").Substring(0, digit));
+                                        _p.Add(ri);
+                                        var color = new ColorHSL((1 - Math.Min(ki, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        _c.Add(color);
+                                        _text.Add(kj.ToString("F").Substring(0, digit));
+                                        _p.Add(rj);
+                                        color = new ColorHSL((1 - Math.Min(kj, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        _c.Add(color);
+                                        _text.Add(kc.ToString("F").Substring(0, digit));
+                                        _p.Add(rc);
+                                        color = new ColorHSL((1 - Math.Min(kc, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        _c.Add(color);
+                                    }
+                                    else if (on_off_24 == 1)
+                                    {
+                                        var k = lam;
+                                        _text.Add(k.ToString("F").Substring(0, digit));
+                                        _p.Add(rc);
+                                        var color = Color.Crimson;
+                                        _c.Add(color);
+                                    }
+                                }
+                            }
+                        }
                         var f_ktree = new GH_Structure<GH_Number>(); var f_ttree = new GH_Structure<GH_Number>(); var f_btree = new GH_Structure<GH_Number>(); var f_stree = new GH_Structure<GH_Number>();
                         var f_klist = new List<GH_Number>(); var f_tlist = new List<GH_Number>(); var f_blist = new List<GH_Number>(); var f_slist = new List<GH_Number>();
                         var f_k2list = new List<GH_Number>(); var f_t2list = new List<GH_Number>(); var f_b2list = new List<GH_Number>(); var f_s2list = new List<GH_Number>();
@@ -749,32 +953,35 @@ namespace TimberCheck
                     int jj = 0;
                     var kk = new List<double>(); var rclist = new List<Point3d>();
                     var k2max1 = new List<double>(); var k2max2 = new List<double>();
-                    for (int ii = 0; ii < KABE_W[0].Count / 7; ii++)
+                    if (KABE_W[0].Count / 7 == 3 | KABE_W[0].Count / 7 == 5)
                     {
-                        jj = 0;
-                        for (int ind = 0; ind < index2.Count; ind++)
+                        for (int ii = 0; ii < 3; ii++)
                         {
-                            int e = (int)index2[ind];
-                            if (KABE_W[e][4 + 7 * ii].Value > 0)//倍率0は無視
+                            jj = 0;
+                            for (int ind = 0; ind < index2.Count; ind++)
                             {
-                                var Qa = KABE_W[e][4 + 7 * ii].Value * 1.96;
-                                var Q = shear_w[e + KABE_W.Count * ii];
-                                int n1 = (int)KABE_W[e][0 + 7 * ii].Value; int n2 = (int)KABE_W[e][1 + 7 * ii].Value; int n3 = (int)KABE_W[e][2 + 7 * ii].Value; int n4 = (int)KABE_W[e][3 + 7 * ii].Value;
-                                var ri = new Point3d(r[n1][0].Value, r[n1][1].Value, r[n1][2].Value); var rj = new Point3d(r[n2][0].Value, r[n2][1].Value, r[n2][2].Value); var rk = new Point3d(r[n3][0].Value, r[n3][1].Value, r[n3][2].Value); var rl = new Point3d(r[n4][0].Value, r[n4][1].Value, r[n4][2].Value);//4隅の座標
-                                var l = Math.Min((new Point3d(r[n2][0].Value, r[n2][1].Value, r[n2][2].Value) - new Point3d(r[n1][0].Value, r[n1][1].Value, r[n1][2].Value)).Length, (new Point3d(r[n4][0].Value, r[n4][1].Value, r[n4][2].Value) - new Point3d(r[n3][0].Value, r[n3][1].Value, r[n3][2].Value)).Length);
-                                if (KABE_W[e][6 + 7 * ii].Value == 1) { l = Math.Min((new Point3d(r[n3][0].Value, r[n3][1].Value, r[n3][2].Value) - new Point3d(r[n2][0].Value, r[n2][1].Value, r[n2][2].Value)).Length, (new Point3d(r[n4][0].Value, r[n4][1].Value, r[n4][2].Value) - new Point3d(r[n1][0].Value, r[n1][1].Value, r[n1][2].Value)).Length); }
-                                var rc = new Point3d((r[n1][0].Value + r[n2][0].Value + r[n3][0].Value + r[n4][0].Value) / 4.0, (r[n1][1].Value + r[n2][1].Value + r[n3][1].Value + r[n4][1].Value) / 4.0, (r[n1][2].Value + r[n2][2].Value + r[n3][2].Value + r[n4][2].Value) / 4.0);
-                                var k = Math.Abs(Q) / (Qa * l);
-                                List<GH_Number> klist = new List<GH_Number>();
-                                klist.Add(new GH_Number(n1)); klist.Add(new GH_Number(n2)); klist.Add(new GH_Number(n3)); klist.Add(new GH_Number(n4));
-                                klist.Add(new GH_Number(l)); klist.Add(new GH_Number(Q)); klist.Add(new GH_Number(Qa * l)); klist.Add(new GH_Number(k));
-                                kentei2.AppendRange(klist, new GH_Path(jj));
-                                kk.Add(k); rclist.Add(rc);
-                                if (ii == 0) { k2max1.Add(k); kmaxL = Math.Max(kmaxL, k); if (kmaxL == k) { L2 = e; } }
-                                else { kmaxS = Math.Max(kmaxS, k); if (kmaxS == k) { S2 = e; } }
-                                if (ii == 1) { k2max2.Add(k); }
-                                if (ii >= 2) { k2max2[jj] = Math.Max(k2max2[jj], k); }
-                                jj += 1;
+                                int e = (int)index2[ind];
+                                if (KABE_W[e][4 + 7 * ii].Value > 0)//倍率0は無視
+                                {
+                                    var Qa = KABE_W[e][4 + 7 * ii].Value * 1.96;
+                                    var Q = shear_w[e + KABE_W.Count * ii];
+                                    int n1 = (int)KABE_W[e][0 + 7 * ii].Value; int n2 = (int)KABE_W[e][1 + 7 * ii].Value; int n3 = (int)KABE_W[e][2 + 7 * ii].Value; int n4 = (int)KABE_W[e][3 + 7 * ii].Value;
+                                    var ri = new Point3d(r[n1][0].Value, r[n1][1].Value, r[n1][2].Value); var rj = new Point3d(r[n2][0].Value, r[n2][1].Value, r[n2][2].Value); var rk = new Point3d(r[n3][0].Value, r[n3][1].Value, r[n3][2].Value); var rl = new Point3d(r[n4][0].Value, r[n4][1].Value, r[n4][2].Value);//4隅の座標
+                                    var l = Math.Min((new Point3d(r[n2][0].Value, r[n2][1].Value, r[n2][2].Value) - new Point3d(r[n1][0].Value, r[n1][1].Value, r[n1][2].Value)).Length, (new Point3d(r[n4][0].Value, r[n4][1].Value, r[n4][2].Value) - new Point3d(r[n3][0].Value, r[n3][1].Value, r[n3][2].Value)).Length);
+                                    if (KABE_W[e][6 + 7 * ii].Value == 1) { l = Math.Min((new Point3d(r[n3][0].Value, r[n3][1].Value, r[n3][2].Value) - new Point3d(r[n2][0].Value, r[n2][1].Value, r[n2][2].Value)).Length, (new Point3d(r[n4][0].Value, r[n4][1].Value, r[n4][2].Value) - new Point3d(r[n1][0].Value, r[n1][1].Value, r[n1][2].Value)).Length); }
+                                    var rc = new Point3d((r[n1][0].Value + r[n2][0].Value + r[n3][0].Value + r[n4][0].Value) / 4.0, (r[n1][1].Value + r[n2][1].Value + r[n3][1].Value + r[n4][1].Value) / 4.0, (r[n1][2].Value + r[n2][2].Value + r[n3][2].Value + r[n4][2].Value) / 4.0);
+                                    var k = Math.Abs(Q) / (Qa * l);
+                                    List<GH_Number> klist = new List<GH_Number>();
+                                    klist.Add(new GH_Number(n1)); klist.Add(new GH_Number(n2)); klist.Add(new GH_Number(n3)); klist.Add(new GH_Number(n4));
+                                    klist.Add(new GH_Number(l)); klist.Add(new GH_Number(Q)); klist.Add(new GH_Number(Qa * l)); klist.Add(new GH_Number(k));
+                                    kentei2.AppendRange(klist, new GH_Path(jj));
+                                    kk.Add(k); rclist.Add(rc);
+                                    if (ii == 0) { k2max1.Add(k); kmaxL = Math.Max(kmaxL, k); if (kmaxL == k) { L2 = e; } }
+                                    else { kmaxS = Math.Max(kmaxS, k); if (kmaxS == k) { S2 = e; } }
+                                    if (ii == 1) { k2max2.Add(k); }
+                                    if (ii >= 2) { k2max2[jj] = Math.Max(k2max2[jj], k); }
+                                    jj += 1;
+                                }
                             }
                         }
                     }

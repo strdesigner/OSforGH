@@ -122,7 +122,7 @@ namespace OpenSeesUtility
             DA.GetData("fontsize", ref fontsize); var barname = new List<string>(); DA.GetDataList("name", barname);
             var P1 = new List<double>(); DA.GetDataList("P1", P1); var P2 = new List<double>(); DA.GetDataList("P2", P2);
             var kentei = new GH_Structure<GH_Number>(); int digit = 4;
-            var unitl = 1.0/1000.0; var unitf = 1.0/1000.0;///単位合わせのための係数
+            var unitl = 1.0 / 1000.0; var unitf = 1.0 / 1000.0;///単位合わせのための係数
             List<double> index = new List<double>(); DA.GetDataList("index", index);
             int Digit(int num)//数字の桁数を求める関数
             {
@@ -235,14 +235,14 @@ namespace OpenSeesUtility
                     }
                     int mat = (int)ij[e][2].Value; int bar = (int)barNo[e]; var T1 = barT1[bar]; var T2 = barT2[bar]; var B1 = barB1[bar]; var B2 = barB2[bar];
                     Name.Add(new List<string> { barname[bar] });
-                    var fcL = Fc[mat] / 3.0; var fsL = Math.Min(fcL/10.0,0.49+Fc[mat]/100.0);
-                    var fcS= fcL * 2.0; var fsS = fsL * 1.5;
-                    FC.Add(new List<string> { fcL.ToString("F10").Substring(0, Math.Max(4, Digit((int)fcL))), "", (fcS).ToString("F10").Substring(0, Math.Max(4,Digit((int)(fcS)))) });
+                    var fcL = Fc[mat] / 3.0; var fsL = Math.Min(fcL / 10.0, 0.49 + Fc[mat] / 100.0);
+                    var fcS = fcL * 2.0; var fsS = fsL * 1.5;
+                    FC.Add(new List<string> { fcL.ToString("F10").Substring(0, Math.Max(4, Digit((int)fcL))), "", (fcS).ToString("F10").Substring(0, Math.Max(4, Digit((int)(fcS)))) });
                     FS.Add(new List<string> { fsL.ToString("F10").Substring(0, Math.Max(4, Digit((int)fsL))), "", (fsS).ToString("F10").Substring(0, Math.Max(4, Digit((int)(fsS)))) });
-                    var b = T1[16].Value; var D= T1[17].Value;//梁幅,梁せい
+                    var b = T1[16].Value; var D = T1[17].Value;//梁幅,梁せい
                     if (b <= 1e-5 || D <= 1e-5) { D = P1[(int)ij[e][3].Value] * 1000; b = P2[(int)ij[e][3].Value] * 1000; }//梁幅,梁せいの指定がない場合は断面リストの値を採用する
                     if (b <= 1e-5 || D <= 1e-5) { return; }
-                    var kT= T1[15].Value; var kB = B1[15].Value;//上下かぶり
+                    var kT = T1[15].Value; var kB = B1[15].Value;//上下かぶり
                     var n_it1 = T1[0].Value; var n_it2 = T2[0].Value; var D_it1 = T1[1].Value; var D_it2 = T2[1].Value;//i端の1&2段目上端筋本数ならびに主筋径
                     var n_ct1 = T1[2].Value; var n_ct2 = T2[2].Value; var D_ct1 = T1[3].Value; var D_ct2 = T2[3].Value;//中央の1&2段目上端筋本数ならびに主筋径
                     var n_jt1 = T1[4].Value; var n_jt2 = T2[4].Value; var D_jt1 = T1[5].Value; var D_jt2 = T2[5].Value;//j端の1&2段目上端筋本数ならびに主筋径
@@ -264,10 +264,10 @@ namespace OpenSeesUtility
                     if (D_cb1 == 0) { D_cb1 = D_cb2; }
                     if (D_jt1 == 0) { D_jt1 = D_jt2; }
                     if (D_jb1 == 0) { D_jb1 = D_jb2; }
-                    Size.Add(new List<string> { ((b).ToString()).Substring(0, Digit((int)b))+ "x"+ ((D).ToString()).Substring(0, Digit((int)D)) });
-                    var bartextit = (n_it1.ToString()).Substring(0, Digit((int)n_it1))+"/"+ (n_it2.ToString()).Substring(0, Digit((int)n_it2));
+                    Size.Add(new List<string> { ((b).ToString()).Substring(0, Digit((int)b)) + "x" + ((D).ToString()).Substring(0, Digit((int)D)) });
+                    var bartextit = (n_it1.ToString()).Substring(0, Digit((int)n_it1)) + "/" + (n_it2.ToString()).Substring(0, Digit((int)n_it2));
                     if (n_it2 < 1) { bartextit = (n_it1.ToString()).Substring(0, Digit((int)n_it1)); }
-                    bartextit += "-D"+(((D_it1 + D_it2) / 2).ToString()).Substring(0, Digit((int)(D_it1 + D_it2) / 2));
+                    bartextit += "-D" + (((D_it1 + D_it2) / 2).ToString()).Substring(0, Digit((int)(D_it1 + D_it2) / 2));
                     var bartextib = (n_ib1.ToString()).Substring(0, Digit((int)n_ib1)) + "/" + (n_ib2.ToString()).Substring(0, Digit((int)n_ib2));
                     if (n_ib2 < 1) { bartextib = (n_ib1.ToString()).Substring(0, Digit((int)n_ib1)); }
                     bartextib += "-D" + (((D_ib1 + D_ib2) / 2).ToString()).Substring(0, Digit((int)(D_ib1 + D_ib2) / 2));
@@ -284,15 +284,15 @@ namespace OpenSeesUtility
                     if (n_jb2 < 1) { bartextjb = (n_jb1.ToString()).Substring(0, Digit((int)n_jb1)); }
                     bartextjb += "-D" + (((D_jb1 + D_jb2) / 2).ToString()).Substring(0, Digit((int)(D_jb1 + D_jb2) / 2));
                     Bart.Add(new List<string> { bartextit, bartextct, bartextjt }); Barb.Add(new List<string> { bartextib, bartextcb, bartextjb });
-                    var stptexti = (s_i.ToString()).Substring(0, Digit((int)s_i))+"-D"+ (S_i.ToString()).Substring(0, Digit((int)S_i))+"@"+ (P_i.ToString()).Substring(0, Digit((int)P_i));
+                    var stptexti = (s_i.ToString()).Substring(0, Digit((int)s_i)) + "-D" + (S_i.ToString()).Substring(0, Digit((int)S_i)) + "@" + (P_i.ToString()).Substring(0, Digit((int)P_i));
                     var stptextc = (s_c.ToString()).Substring(0, Digit((int)s_c)) + "-D" + (S_c.ToString()).Substring(0, Digit((int)S_c)) + "@" + (P_c.ToString()).Substring(0, Digit((int)P_c));
                     var stptextj = (s_j.ToString()).Substring(0, Digit((int)s_j)) + "-D" + (S_j.ToString()).Substring(0, Digit((int)S_j)) + "@" + (P_j.ToString()).Substring(0, Digit((int)P_j));
                     Bars.Add(new List<string> { stptexti, stptextc, stptextj });
                     //************************************************************************************************************************************************************
                     //i端の許容曲げモーメントFtit.Add(new List<string> { "", "", "" });
                     //************************************************************************************************************************************************************
-                    var a_it1 = n_it1 * Math.Pow(D_it1,2) * Math.PI / 4.0;//i端上端筋1段目主筋断面積
-                    var a_it2 = n_it2 * Math.Pow(D_it2,2) * Math.PI / 4.0;//i端上端筋2段目主筋断面積
+                    var a_it1 = n_it1 * Math.Pow(D_it1, 2) * Math.PI / 4.0;//i端上端筋1段目主筋断面積
+                    var a_it2 = n_it2 * Math.Pow(D_it2, 2) * Math.PI / 4.0;//i端上端筋2段目主筋断面積
                     var ft_it1L = 195.0; var ft_it2L = 195.0;
                     if (D_it1 > 18.9 && D_it1 < 28.9) { ft_it1L = 215.0; }//i端上端筋1段目許容引張応力度
                     if (D_it2 > 18.9 && D_it2 < 28.9) { ft_it2L = 215.0; }//i端上端筋2段目許容引張応力度
@@ -307,8 +307,8 @@ namespace OpenSeesUtility
                     var ft_itS = (ft_it1S * a_it1 + ft_it2S * a_it2) / a_it;//i端上端筋主筋許容引張応力度(短期)
                     var d_it = ((kT + S_i + D_it1 / 2.0) * a_it1 + (kT + S_i + D_it1 + 25.0 + D_it2 / 2.0) * a_it2) / a_it;//i端の上端より鉄筋重心までの距離
 
-                    var a_ib1 = n_ib1 * Math.Pow(D_ib1,2) * Math.PI / 4.0;//i端下端筋1段目主筋断面積
-                    var a_ib2 = n_ib2 * Math.Pow(D_ib2,2) * Math.PI / 4.0;//i端下端筋2段目主筋断面積
+                    var a_ib1 = n_ib1 * Math.Pow(D_ib1, 2) * Math.PI / 4.0;//i端下端筋1段目主筋断面積
+                    var a_ib2 = n_ib2 * Math.Pow(D_ib2, 2) * Math.PI / 4.0;//i端下端筋2段目主筋断面積
                     var ft_ib1L = 195.0; var ft_ib2L = 195.0;
                     if (D_ib1 > 18.9 && D_ib1 < 28.9) { ft_ib1L = 215.0; }//i端上端筋1段目許容引張応力度
                     if (D_ib2 > 18.9 && D_ib2 < 28.9) { ft_ib2L = 215.0; }//i端上端筋2段目許容引張応力度
@@ -324,8 +324,8 @@ namespace OpenSeesUtility
                     var d_ib = ((kB + S_i + D_it1 / 2.0) * a_ib1 + (kB + S_i + D_ib1 + 25.0 + D_ib2 / 2.0) * a_ib2) / a_ib;//i端の下端より鉄筋重心までの距離
 
                     var gamma_it = a_ib / a_it; var D_it = D - d_it; var dc1_it = d_ib / D_it; var pt_it = a_it / (b * D_it);
-                    var xn1_it = pt_it * (Math.Sqrt(Math.Pow(n*(1+ gamma_it) - gamma_it, 2)+2.0/ pt_it * (n*(1+ gamma_it * dc1_it) - gamma_it * dc1_it))-(n*(1+ gamma_it) - gamma_it));//RC規準2010 P.123(13.5)
-                    var C1_itL = pt_it * fcL / (3 * xn1_it) * (n*(1- xn1_it) *(3- xn1_it) - gamma_it * (n-1)*(xn1_it - dc1_it) *(3* dc1_it - xn1_it));
+                    var xn1_it = pt_it * (Math.Sqrt(Math.Pow(n * (1 + gamma_it) - gamma_it, 2) + 2.0 / pt_it * (n * (1 + gamma_it * dc1_it) - gamma_it * dc1_it)) - (n * (1 + gamma_it) - gamma_it));//RC規準2010 P.123(13.5)
+                    var C1_itL = pt_it * fcL / (3 * xn1_it) * (n * (1 - xn1_it) * (3 - xn1_it) - gamma_it * (n - 1) * (xn1_it - dc1_it) * (3 * dc1_it - xn1_it));
                     var C2_itL = pt_it * ft_itL / (3 * n * (1 - xn1_it)) * (n * (1 - xn1_it) * (3 - xn1_it) - gamma_it * (n - 1) * (xn1_it - dc1_it) * (3 * dc1_it - xn1_it));
                     var C_itL = Math.Min(C1_itL, C2_itL);
                     var C1_itS = pt_it * fcS / (3 * xn1_it) * (n * (1 - xn1_it) * (3 - xn1_it) - gamma_it * (n - 1) * (xn1_it - dc1_it) * (3 * dc1_it - xn1_it));
@@ -346,8 +346,8 @@ namespace OpenSeesUtility
                     //************************************************************************************************************************************************************
                     //中央の許容曲げモーメント
                     //************************************************************************************************************************************************************
-                    var a_ct1 = n_ct1 * Math.Pow(D_ct1,2) * Math.PI / 4.0;//i端上端筋1段目主筋断面積
-                    var a_ct2 = n_ct2 * Math.Pow(D_ct2,2) * Math.PI / 4.0;//i端上端筋2段目主筋断面積
+                    var a_ct1 = n_ct1 * Math.Pow(D_ct1, 2) * Math.PI / 4.0;//i端上端筋1段目主筋断面積
+                    var a_ct2 = n_ct2 * Math.Pow(D_ct2, 2) * Math.PI / 4.0;//i端上端筋2段目主筋断面積
                     var ft_ct1L = 195.0; var ft_ct2L = 195.0;
                     if (D_ct1 > 18.9 && D_ct1 < 28.9) { ft_ct1L = 215.0; }//i端上端筋1段目許容引張応力度
                     if (D_ct2 > 18.9 && D_ct2 < 28.9) { ft_ct2L = 215.0; }//i端上端筋2段目許容引張応力度
@@ -362,8 +362,8 @@ namespace OpenSeesUtility
                     var ft_ctS = (ft_ct1S * a_ct1 + ft_ct2S * a_ct2) / a_ct;//中央上端筋主筋許容引張応力度(短期)
                     var d_ct = ((kT + S_c + D_ct1 / 2.0) * a_ct1 + (kT + S_c + D_ct1 + 25.0 + D_ct2 / 2.0) * a_ct2) / a_ct;//中央の上端より鉄筋重心までの距離
 
-                    var a_cb1 = n_cb1 * Math.Pow(D_cb1,2) * Math.PI / 4.0;//中央下端筋1段目主筋断面積
-                    var a_cb2 = n_cb2 * Math.Pow(D_cb2,2) * Math.PI / 4.0;//中央下端筋2段目主筋断面積
+                    var a_cb1 = n_cb1 * Math.Pow(D_cb1, 2) * Math.PI / 4.0;//中央下端筋1段目主筋断面積
+                    var a_cb2 = n_cb2 * Math.Pow(D_cb2, 2) * Math.PI / 4.0;//中央下端筋2段目主筋断面積
                     var ft_cb1L = 195.0; var ft_cb2L = 195.0;
                     if (D_cb1 > 18.9 && D_cb1 < 28.9) { ft_cb1L = 215.0; }//i端上端筋1段目許容引張応力度
                     if (D_cb2 > 18.9 && D_cb2 < 28.9) { ft_cb2L = 215.0; }//i端上端筋2段目許容引張応力度
@@ -401,8 +401,8 @@ namespace OpenSeesUtility
                     //************************************************************************************************************************************************************
                     //j端の許容曲げモーメント
                     //************************************************************************************************************************************************************
-                    var a_jt1 = n_jt1 * Math.Pow(D_jt1,2) * Math.PI / 4.0;//j端上端筋1段目主筋断面積
-                    var a_jt2 = n_jt2 * Math.Pow(D_jt2,2) * Math.PI / 4.0;//j端上端筋2段目主筋断面積
+                    var a_jt1 = n_jt1 * Math.Pow(D_jt1, 2) * Math.PI / 4.0;//j端上端筋1段目主筋断面積
+                    var a_jt2 = n_jt2 * Math.Pow(D_jt2, 2) * Math.PI / 4.0;//j端上端筋2段目主筋断面積
                     var ft_jt1L = 195.0; var ft_jt2L = 195.0;
                     if (D_jt1 > 18.9 && D_jt1 < 28.9) { ft_jt1L = 215.0; }//i端上端筋1段目許容引張応力度
                     if (D_jt2 > 18.9 && D_jt2 < 28.9) { ft_jt2L = 215.0; }//i端上端筋2段目許容引張応力度
@@ -417,8 +417,8 @@ namespace OpenSeesUtility
                     var ft_jtS = (ft_jt1S * a_jt1 + ft_jt2S * a_jt2) / a_jt;//j端上端筋主筋許容引張応力度(短期)
                     var d_jt = ((kT + S_j + D_jt1 / 2.0) * a_jt1 + (kT + S_j + D_jt1 + 25.0 + D_jt2 / 2.0) * a_jt2) / a_jt;//i端の上端より鉄筋重心までの距離
 
-                    var a_jb1 = n_jb1 * Math.Pow(D_jb1,2) * Math.PI / 4.0;//j端下端筋1段目主筋断面積
-                    var a_jb2 = n_jb2 * Math.Pow(D_jb2,2) * Math.PI / 4.0;//j端下端筋2段目主筋断面積
+                    var a_jb1 = n_jb1 * Math.Pow(D_jb1, 2) * Math.PI / 4.0;//j端下端筋1段目主筋断面積
+                    var a_jb2 = n_jb2 * Math.Pow(D_jb2, 2) * Math.PI / 4.0;//j端下端筋2段目主筋断面積
                     var ft_jb1L = 195.0; var ft_jb2L = 195.0;
                     if (D_jb1 > 18.9 && D_jb1 < 28.9) { ft_jb1L = 215.0; }//i端上端筋1段目許容引張応力度
                     if (D_jb2 > 18.9 && D_jb2 < 28.9) { ft_jb2L = 215.0; }//i端上端筋2段目許容引張応力度
@@ -468,7 +468,7 @@ namespace OpenSeesUtility
                     Fsi.Add(new List<string> { wft_iL.ToString().Substring(0, Digit((int)wft_iL)), "", wft_iS.ToString().Substring(0, Digit((int)wft_iS)) });
                     var aw_i = s_i * Math.Pow(S_i, 2) * Math.PI / 4.0;
                     var pw_i = aw_i / (b * P_i);
-                    var Qa_iL= (b * j_i * (alpha_iL * fsL + 0.5 * wft_iL * (Math.Min(pw_i, 0.006) - 0.002))) * unitf;
+                    var Qa_iL = (b * j_i * (alpha_iL * fsL + 0.5 * wft_iL * (Math.Min(pw_i, 0.006) - 0.002))) * unitf;
                     var Qa_iLpX = (b * j_i * (2.0 / 3.0 * alpha_iLpX * fsS + 0.5 * wft_iS * (Math.Min(pw_i, 0.012) - 0.002))) * unitf;
                     var Qa_iLpY = (b * j_i * (2.0 / 3.0 * alpha_iLpY * fsS + 0.5 * wft_iS * (Math.Min(pw_i, 0.012) - 0.002))) * unitf;
                     var Qa_iLmX = (b * j_i * (2.0 / 3.0 * alpha_iLmX * fsS + 0.5 * wft_iS * (Math.Min(pw_i, 0.012) - 0.002))) * unitf;
@@ -575,10 +575,10 @@ namespace OpenSeesUtility
                     else { kc.Add(Math.Abs(Mc + Mc_y) / Ma_cbS); }
                     if (Mc - Mc_y < 0) { kc.Add(Math.Abs(Mc + Mc_y2) / Ma_ctS); }
                     else { kc.Add(Math.Abs(Mc + Mc_y2) / Ma_cbS); }
-                    k2list.Add(new GH_Number(Math.Max(Math.Max(ki[0],ki[1]),Math.Max(ki[2],ki[3]))));
+                    k2list.Add(new GH_Number(Math.Max(Math.Max(ki[0], ki[1]), Math.Max(ki[2], ki[3]))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(kj[0], kj[1]), Math.Max(kj[2], kj[3]))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(kc[0], kc[1]), Math.Max(kc[2], kc[3]))));
-                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qi+Qi_x * N) / Qa_iLpX, Math.Abs(Qi + Qi_x2 * N) / Qa_iLmX), Math.Max(Math.Abs(Qi + Qi_y * N) / Qa_iLpY, Math.Abs(Qi + Qi_y2 * N) / Qa_iLpY))));
+                    k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qi + Qi_x * N) / Qa_iLpX, Math.Abs(Qi + Qi_x2 * N) / Qa_iLmX), Math.Max(Math.Abs(Qi + Qi_y * N) / Qa_iLpY, Math.Abs(Qi + Qi_y2 * N) / Qa_iLpY))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qj + Qj_x * N) / Qa_jLpX, Math.Abs(Qj + Qj_x2 * N) / Qa_jLmX), Math.Max(Math.Abs(Qj + Qj_y * N) / Qa_jLpY, Math.Abs(Qj + Qj_y2 * N) / Qa_jLpY))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(Math.Abs(Qc + Qc_x * N) / Qa_cLpX, Math.Abs(Qc + Qc_x2 * N) / Qa_cLmX), Math.Max(Math.Abs(Qc + Qc_y * N) / Qa_cLpY, Math.Abs(Qc + Qc_y2 * N) / Qa_cLpY))));
                     //kentei.AppendRange(k2list, new GH_Path(e, 1));
@@ -745,7 +745,7 @@ namespace OpenSeesUtility
                         {
                             int e = (int)index[ind];
                             var values = new List<List<string>>();
-                            values.Add(Ele[ind]); values.Add(Name[ind]); values.Add(Size[ind]); values.Add(new List<string> { "長期","","短期"});
+                            values.Add(Ele[ind]); values.Add(Name[ind]); values.Add(Size[ind]); values.Add(new List<string> { "長期", "", "短期" });
                             values.Add(Ftit[ind]); values.Add(Ftib[ind]); values.Add(Ftct[ind]); values.Add(Ftcb[ind]); values.Add(Ftjt[ind]); values.Add(Ftjb[ind]);
                             values.Add(Fsi[ind]); values.Add(Fsc[ind]); values.Add(Fsj[ind]);
                             values.Add(FC[ind]); values.Add(FS[ind]); values.Add(Nod[ind]);
@@ -753,7 +753,7 @@ namespace OpenSeesUtility
                             values.Add(new List<string> { "長期検討" });
                             var Mit = 0.0; var Mib = 0.0; var Mct = 0.0; var Mcb = 0.0; var Mjt = 0.0; var Mjb = 0.0;
                             var Mit_text = ""; var Mib_text = ""; var Mct_text = ""; var Mcb_text = ""; var Mjt_text = ""; var Mjb_text = "";
-                            if (M[ind][0] < 0) { Mit=Math.Abs(M[ind][0]); Mit_text = Mit.ToString("F10").Substring(0, Math.Max(4, Digit((int)Mit))); }
+                            if (M[ind][0] < 0) { Mit = Math.Abs(M[ind][0]); Mit_text = Mit.ToString("F10").Substring(0, Math.Max(4, Digit((int)Mit))); }
                             else { Mib = Math.Abs(M[ind][0]); Mib_text = Mib.ToString("F10").Substring(0, Math.Max(4, Digit((int)Mib))); }
                             if (M[ind][1] < 0) { Mct = Math.Abs(M[ind][1]); Mct_text = Mct.ToString("F10").Substring(0, Math.Max(4, Digit((int)Mct))); }
                             else { Mcb = Math.Abs(M[ind][1]); Mcb_text = Mcb.ToString("F10").Substring(0, Math.Max(4, Digit((int)Mcb))); }
@@ -1198,7 +1198,7 @@ namespace OpenSeesUtility
                 int height = 120; int radi1 = 7; int radi2 = 4; int titleheight = 20;
                 int pitchx = 8; int pitchy = 11; int textheight = 20;
                 global_rec.Height += height;
-                int width= global_rec.Width;
+                int width = global_rec.Width;
                 title_rec = global_rec;
                 title_rec.Y = title_rec.Bottom - height;
                 title_rec.Height = titleheight;
@@ -1355,21 +1355,21 @@ namespace OpenSeesUtility
                     }
                     if (rec21.Contains(e.CanvasLocation))
                     {
-                        if (c21 == Brushes.White) { c21 = Brushes.Black; SetButton("21", 1); c22 = Brushes.White; SetButton("22", 0); c23 = Brushes.White; SetButton("23", 0);}
+                        if (c21 == Brushes.White) { c21 = Brushes.Black; SetButton("21", 1); c22 = Brushes.White; SetButton("22", 0); c23 = Brushes.White; SetButton("23", 0); }
                         else { c21 = Brushes.White; SetButton("21", 0); }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     if (rec22.Contains(e.CanvasLocation))
                     {
-                        if (c22 == Brushes.White) { c22 = Brushes.Black; SetButton("22", 1); c21 = Brushes.White; SetButton("21", 0); c23 = Brushes.White; SetButton("23", 0);}
+                        if (c22 == Brushes.White) { c22 = Brushes.Black; SetButton("22", 1); c21 = Brushes.White; SetButton("21", 0); c23 = Brushes.White; SetButton("23", 0); }
                         else { c22 = Brushes.White; SetButton("22", 0); }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     if (rec23.Contains(e.CanvasLocation))
                     {
-                        if (c23 == Brushes.White) { c23 = Brushes.Black; SetButton("23", 1); c21 = Brushes.White; SetButton("21", 0); c22 = Brushes.White; SetButton("22", 0);}
+                        if (c23 == Brushes.White) { c23 = Brushes.Black; SetButton("23", 1); c21 = Brushes.White; SetButton("21", 0); c22 = Brushes.White; SetButton("22", 0); }
                         else { c23 = Brushes.White; SetButton("23", 0); }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;

@@ -67,6 +67,7 @@ namespace OpenSeesUtility
             pManager.AddTextParameter("names(shell)", "names(shell)", "[[layer,wick],[layer,wick],...](Datatree)", GH_ParamAccess.tree, "");
             pManager.AddTextParameter("names(spring)", "names(spring)", "[[layer,wick],[layer,wick],...](Datatree)", GH_ParamAccess.tree, "");
             pManager.AddNumberParameter("kentei", "kentei", "[[element No.,long-term,short-term],...](Datatree)", GH_ParamAccess.tree, -9999);
+            pManager.AddNumberParameter("kentei(kabe)", "kentei(kabe)", "[[element No.,long-term,short-term],...](Datatree)", GH_ParamAccess.tree, -9999);
             pManager.AddNumberParameter("kentei(spring)", "kentei(spring)", "[[element No.,long-term,short-term],...](Datatree)", GH_ParamAccess.tree, -9999);
             pManager.AddTextParameter("outputname", "outputname", "output file name", GH_ParamAccess.item, "");///
             pManager.AddNumberParameter("scaling", "scaling", "scale factor of figures", GH_ParamAccess.item, 0.85);///
@@ -176,6 +177,7 @@ namespace OpenSeesUtility
                 var B_No = new List<int>(); for (int i = 0; i < B.Count; i++) { B_No.Add((int)B[i][0].Value); }
                 var l_vec = new List<Vector3d>(); DA.GetDataList("l_vec", l_vec);
                 DA.GetDataTree("kentei", out GH_Structure<GH_Number> _kentei); var kentei = _kentei.Branches;
+                DA.GetDataTree("kentei(kabe)", out GH_Structure<GH_Number> _kentei1); var kentei1 = _kentei1.Branches;
                 DA.GetDataTree("kentei(spring)", out GH_Structure<GH_Number> _kentei2); var kentei2 = _kentei2.Branches;
                 DA.GetDataTree("KABE_W", out GH_Structure<GH_Number> _kabe_w); var kabe_w = _kabe_w.Branches;
                 var shear_w = new List<double>(); DA.GetDataList("shear_w", shear_w);
@@ -418,8 +420,8 @@ namespace OpenSeesUtility
                                     gfx.DrawEllipse(pengray, XBrushes.White, rp3[0] - js / 2.0, rp3[1] - js / 2.0, js, js);//ピン記号
                                     gfx.DrawEllipse(pengray, XBrushes.White, rp4[0] - js / 2.0, rp4[1] - js / 2.0, js, js);//ピン記号
                                     var color = new XSolidBrush(RGB(Math.Max(0, (1 - Math.Min(alpha / 5.0, 1.0)) * 1.9 / 3.0), 1, 0.5));
-                                    if (k == 0) { gfx.DrawString(Math.Round(alpha, 2).ToString().Substring(0, Math.Min(4, Math.Round(alpha, 2).ToString().Length)) + "倍", font, color, rc[0], rc[1], XStringFormats.TopCenter); }//壁倍率
-                                    if (k == 0) { gfx.DrawString(nel.ToString(), font, XBrushes.Black, rc[0], rc[1], XStringFormats.BottomCenter); }//壁番号
+                                    if (k == 1) { gfx.DrawString(Math.Round(alpha, 2).ToString().Substring(0, Math.Min(4, Math.Round(alpha, 2).ToString().Length)) + "倍", font, color, rc[0], rc[1], XStringFormats.TopCenter); }//壁倍率
+                                    if (k == 1) { gfx.DrawString(nel.ToString(), font, XBrushes.Black, rc[0], rc[1], XStringFormats.BottomCenter); }//壁番号
                                 }
                             }
                         }
@@ -563,12 +565,13 @@ namespace OpenSeesUtility
                 var filename = dir + "/" + pdfname + "_model.pdf";
                 document.Save(filename);// ドキュメントを保存。
                 Process.Start(filename);// ビューアを起動。
-                var kentei_index = new List<int>(); var kentei2_index = new List<int>();
+                var kentei_index = new List<int>(); var kentei1_index = new List<int>(); var kentei2_index = new List<int>();
                 figname = new List<string>();
                 if (kentei[0][0].Value != -9999)
                 {
                     figname.Add("通り長期最大検定比図"); if (kentei[0].Count == 3) { figname.Add("通り短期最大検定比図"); }
                     for (int i = 0; i < kentei.Count; i++) { kentei_index.Add((int)kentei[i][0].Value); }
+                    for (int i = 0; i < kentei1.Count; i++) { kentei1_index.Add((int)kentei1[i][0].Value); }
                 }
                 if (kentei2[0][0].Value != -9999)
                 {
@@ -691,9 +694,36 @@ namespace OpenSeesUtility
                                     gfx.DrawEllipse(pengray, XBrushes.White, rp2[0] - js / 2.0, rp2[1] - js / 2.0, js, js);//ピン記号
                                     gfx.DrawEllipse(pengray, XBrushes.White, rp3[0] - js / 2.0, rp3[1] - js / 2.0, js, js);//ピン記号
                                     gfx.DrawEllipse(pengray, XBrushes.White, rp4[0] - js / 2.0, rp4[1] - js / 2.0, js, js);//ピン記号
-                                    var color = new XSolidBrush(RGB(Math.Max(0, (1 - Math.Min(alpha / 5.0, 1.0)) * 1.9 / 3.0), 1, 0.5));
-                                    if (k == 0) { gfx.DrawString(Math.Round(alpha, 2).ToString().Substring(0, Math.Min(4, Math.Round(alpha, 2).ToString().Length)) + "倍", font, color, rc[0], rc[1], XStringFormats.TopCenter); }//壁倍率
-                                    if (k == 0) { gfx.DrawString(nel.ToString(), font, XBrushes.Black, rc[0], rc[1], XStringFormats.BottomCenter); }//壁番号
+                                    //var color = new XSolidBrush(RGB(Math.Max(0, (1 - Math.Min(alpha / 5.0, 1.0)) * 1.9 / 3.0), 1, 0.5));
+                                    //if (k == 1) { gfx.DrawString(Math.Round(alpha, 2).ToString().Substring(0, Math.Min(4, Math.Round(alpha, 2).ToString().Length)) + "倍", font, color, rc[0], rc[1], XStringFormats.TopCenter); }//壁倍率
+                                    //if (k == 1) { gfx.DrawString(nel.ToString(), font, XBrushes.Black, rc[0], rc[1], XStringFormats.BottomCenter); }//壁番号
+                                    if (figname[k] == "通り長期最大検定比図" && kentei1[0][0].Value!=-9999)
+                                    {
+                                        int aa = kentei1_index.IndexOf(nel);
+                                        if (aa != -1)
+                                        {
+                                            var kk = Math.Round(kentei1[aa][1].Value, 2);
+                                            if (kk > kbound)
+                                            {
+                                                var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                                                gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, rc[0], rc[1], XStringFormats.TopCenter);
+                                            }
+                                        }
+                                    }
+                                    if (figname[k] == "通り短期最大検定比図" && kentei1[0][0].Value != -9999)
+                                    {
+                                        int aa = kentei1_index.IndexOf(nel);
+                                        if (aa != -1)
+                                        {
+                                            var kk = Math.Round(kentei1[aa][2].Value, 2);
+                                            if (kk > kbound)
+                                            {
+                                                var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                                                gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, rc[0], rc[1], XStringFormats.TopCenter);
+                                            }
+                                        }
+                                    }
+
                                 }
                             }
                         }
@@ -1151,7 +1181,7 @@ namespace OpenSeesUtility
                     {
                         var Qmax = Math.Max(Qymax, Qzmax);
                         var Qwmax = 0.0;
-                        for (int j = 0; j < shear_w.Count / 3; j++) { Qwmax = Math.Max(Qwmax, shear_w[(shear_w.Count / 3) * ii + j]); }
+                        for (int j = 0; j < shear_w.Count / (nf / 18); j++) { Qwmax = Math.Max(Qwmax, shear_w[(shear_w.Count / (nf / 18)) * ii + j]); }
                         Qwmax *= qwscale * 100 / 2.0;
                         //せん断力図Qz/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         document = new PdfDocument();

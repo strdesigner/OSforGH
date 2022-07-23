@@ -76,7 +76,7 @@ namespace OpenSeesUtility
                         if (obj.Attributes.GetUserString(Pname[k]) == null) { P.Add(0); }
                         else { P.Add(float.Parse(obj.Attributes.GetUserString(Pname[k]))); }
                     }
-                    if (B[0]!=0 || B[1] != 0 || B[2] != 0 || B[3] != 0 || B[4] != 0 || B[5] != 0)
+                    if (B[0] != 0 || B[1] != 0 || B[2] != 0 || B[3] != 0 || B[4] != 0 || B[5] != 0)
                     {
                         var blist = new List<GH_Number>();
                         blist.Add(new GH_Number(number)); for (int k = 0; k < 6; k++) { blist.Add(new GH_Number(B[k])); }
