@@ -70,6 +70,7 @@ namespace OpenSeesUtility
             pManager.AddTextParameter("name(sec)", "name(sec)", "[...](section name list)", GH_ParamAccess.list, "-9999");///
             pManager.AddTextParameter("name floor", "name floor", "layer name for floor", GH_ParamAccess.item, "floor");
             pManager.AddNumberParameter("kentei", "kentei", "[[element No.,long-term,short-term],...](Datatree)", GH_ParamAccess.tree, -9999);
+            pManager.AddNumberParameter("kentei(kabe)", "kentei(kabe)", "[[element No.,long-term,short-term],...](Datatree)", GH_ParamAccess.tree, -9999);
             pManager.AddNumberParameter("kentei(spring)", "kentei(spring)", "[[element No.,long-term,short-term],...](Datatree)", GH_ParamAccess.tree, -9999);
             pManager.AddTextParameter("outputname", "outputname", "output file name", GH_ParamAccess.item, "");///
             pManager.AddNumberParameter("scaling", "scaling", "scale factor of figures", GH_ParamAccess.item, 0.85);///
@@ -209,6 +210,7 @@ namespace OpenSeesUtility
                 DA.GetDataTree("e_load", out GH_Structure<GH_Number> _e_load); var e_load = _e_load.Branches;
                 DA.GetDataTree("f_load", out GH_Structure<GH_Number> _f_load); var f_load = _f_load.Branches;
                 DA.GetDataTree("kentei", out GH_Structure<GH_Number> _kentei); var kentei = _kentei.Branches;
+                DA.GetDataTree("kentei(kabe)", out GH_Structure<GH_Number> _kentei1); var kentei1 = _kentei1.Branches;
                 DA.GetDataTree("kentei(spring)", out GH_Structure<GH_Number> _kentei2); var kentei2 = _kentei2.Branches;
                 var nod = new GH_Structure<GH_Number>(); var nodall = new GH_Structure<GH_Number>();
                 var plan = new List<string>(); DA.GetDataList("plan names", plan);
@@ -265,6 +267,7 @@ namespace OpenSeesUtility
                     if (f_load[0][0].Value != -9999) { figname.Add("面荷重伏図[kN/m2]"); }
                     if (bar[0] != -9999 && name_bar[0] != "-9999") { figname.Add("配筋符号伏図"); }
                     if (name_sec[0] != "-9999") { figname.Add("断面符号伏図"); }
+                    if (kabe_w[0][0].Value != -9999) { figname.Add("壁床線材置換伏図"); }
                     var Xmin = 9999.0; var Xmax = -9999.0; var Ymin = 9999.0; var Ymax = -9999.0;
                     for (int ii = 0; ii < R.Count; ii++)
                     {
@@ -518,6 +521,35 @@ namespace OpenSeesUtility
                                     }
                                 }
                             }
+                            if (figname[k] == "壁床線材置換伏図")
+                            {
+                                for (int j = 0; j < kabe_w.Count; j++)
+                                {
+                                    int ni = (int)kabe_w[j][0].Value; int nj = (int)kabe_w[j][1].Value; int nk = (int)kabe_w[j][2].Value; int nl = (int)kabe_w[j][3].Value;
+                                    if (nod_No_all.Contains(ni) == true && nod_No_all.Contains(nj) == true && nod_No_all.Contains(nk) == true && (nod_No_all.Contains(nk) == true))
+                                    {
+                                        var position = XStringFormats.Center;
+                                        var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
+                                        var r2 = new List<double>(); r2.Add(offset + (R[nj][0].Value - xmin) * scale); r2.Add(842 - offsety - (R[nj][1].Value - ymin) * scale);
+                                        var r3 = new List<double>(); r3.Add(offset + (R[nk][0].Value - xmin) * scale); r3.Add(842 - offsety - (R[nk][1].Value - ymin) * scale);
+                                        var r4 = new List<double>(); r4.Add(offset + (R[nl][0].Value - xmin) * scale); r4.Add(842 - offsety - (R[nl][1].Value - ymin) * scale);
+                                        var rp1 = new List<double>(); rp1.Add(r1[0] + (r3[0] - r1[0]) * pinwidth); rp1.Add(r1[1] + (r3[1] - r1[1]) * pinwidth);
+                                        var rp2 = new List<double>(); rp2.Add(r2[0] + (r4[0] - r2[0]) * pinwidth); rp2.Add(r2[1] + (r4[1] - r2[1]) * pinwidth);
+                                        var rp3 = new List<double>(); rp3.Add(r3[0] + (r1[0] - r3[0]) * pinwidth); rp3.Add(r3[1] + (r1[1] - r3[1]) * pinwidth);
+                                        var rp4 = new List<double>(); rp4.Add(r4[0] + (r2[0] - r4[0]) * pinwidth); rp4.Add(r4[1] + (r2[1] - r4[1]) * pinwidth);
+                                        var rc = new List<double> { (r1[0] + r2[0] + r3[0] + r4[0]) / 4.0, (r1[1] + r2[1] + r3[1] + r4[1]) / 4.0 };
+                                        gfx.DrawLine(pengray, r1[0], r1[1], r3[0], r3[1]); gfx.DrawLine(pengray, r2[0], r2[1], r4[0], r4[1]);//線材置換トラスの描画
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp1[0] - js / 2.0, rp1[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp2[0] - js / 2.0, rp2[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp3[0] - js / 2.0, rp3[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp4[0] - js / 2.0, rp4[1] - js / 2.0, js, js);//ピン記号
+                                        var alpha = kabe_w[j][4].Value;
+                                        var color = new XSolidBrush(RGB(Math.Max(0, (1 - Math.Min(alpha / 5.0, 1.0)) * 1.9 / 3.0), 1, 0.5));
+                                        gfx.DrawString(Math.Round(alpha, 2).ToString().Substring(0, Math.Min(4, Math.Round(alpha, 2).ToString().Length)) + "倍", font, color, rc[0], rc[1], XStringFormats.TopCenter);//壁倍率
+                                        gfx.DrawString(j.ToString(), font, XBrushes.Black, rc[0], rc[1], XStringFormats.BottomCenter);//壁番号
+                                    }
+                                }
+                            }
                             gfx.DrawString(figname[k] + "(" + plan[i] + ")", titlefont, XBrushes.Black, offset, 842 - offset, XStringFormats.BaseLineLeft);
                         }
                         var nlist = new List<GH_Number>(); var nlist2 = new List<GH_Number>();
@@ -691,11 +723,14 @@ namespace OpenSeesUtility
                     document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
                     var kentei_index = new List<int>();
                     if (kentei[0][0].Value != -9999) { for (int i = 0; i < kentei.Count; i++) { kentei_index.Add((int)kentei[i][0].Value); } }
+                    var kentei1_index = new List<int>();
+                    if (kentei1[0][0].Value != -9999) { for (int i = 0; i < kentei1.Count; i++) { kentei1_index.Add((int)kentei1[i][0].Value); } }
                     var kentei2_index = new List<int>();
                     if (kentei2[0][0].Value != -9999) { for (int i = 0; i < kentei2.Count; i++) { kentei2_index.Add((int)kentei2[i][0].Value); } }
                     figname = new List<string>();
-                    if (kentei[0][0].Value != -9999) { figname.Add("長期検定比伏図"); if (kentei[0].Count == 3) { figname.Add("短期検定比伏図"); } }
-                    if (kentei2[0][0].Value != -9999) { figname.Add("長期検定比伏図(ばね)"); if (kentei2[0].Count == 3) { figname.Add("短期検定比伏図(ばね)"); } }
+                    if (kentei[0][0].Value != -9999) { figname.Add("長期最大検定比伏図"); if (kentei[0].Count == 3) { figname.Add("短期最大検定比伏図"); } }
+                    if (kentei1[0][0].Value != -9999) { figname.Add("長期最大検定比伏図(壁床線材置換)"); if (kentei1[0].Count == 3) { figname.Add("短期最大検定比伏図(壁床線材置換)"); } }
+                    if (kentei2[0][0].Value != -9999) { figname.Add("長期最大検定比伏図(ばね)"); if (kentei2[0].Count == 3) { figname.Add("短期最大検定比伏図(ばね)"); } }
                     for (int i = 0; i < 20; i++)
                     {
                         List<Curve> lines = new List<Curve>();
@@ -703,6 +738,7 @@ namespace OpenSeesUtility
                         var sec_f_new = new List<List<double>>();//その面の断面力
                         var spring_new = new List<List<double>>();//その面の要素節点関係(ばね)
                         var spring_f_new = new List<List<double>>();//その面の断面力(ばね)
+                        var kabe_w_new = new List<List<double>>();//その面の耐力壁
                         var line = doc.Objects.FindByUserString(floorname, i.ToString(), true);
                         if (line.Length == 0) { break; }
                         for (int j = 0; j < line.Length; j++)
@@ -785,7 +821,7 @@ namespace OpenSeesUtility
                                 gfx.DrawLine(penspring, r1[0], r1[1], r2[0], r2[1]);//ばねの描画
                                 gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//i節点の描画
                                 gfx.DrawEllipse(XBrushes.Black, r2[0] - ps / 2.0, r2[1] - ps / 2.0, ps, ps);//j節点の描画
-                                if (figname[k] == "長期検定比伏図(ばね)")
+                                if (figname[k] == "長期最大検定比伏図(ばね)")
                                 {
                                     int aa = kentei2_index.IndexOf(nel);
                                     if (aa != -1)
@@ -798,7 +834,7 @@ namespace OpenSeesUtility
                                         }
                                     }
                                 }
-                                if (figname[k] == "短期検定比伏図(ばね)")
+                                if (figname[k] == "短期最大検定比伏図(ばね)")
                                 {
                                     int aa = kentei2_index.IndexOf(nel);
                                     if (aa != -1)
@@ -812,6 +848,7 @@ namespace OpenSeesUtility
                                     }
                                 }
                             }
+                            var nod_No_all = new List<int>();
                             for (int e = 0; e < ij_new.Count; e++)
                             {
                                 int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2]; int nel = (int)ij_new[e][0]; int mat = (int)ij_new[e][3]; int sec = (int)ij_new[e][4];
@@ -846,7 +883,7 @@ namespace OpenSeesUtility
                                 if (e % 4 == 3) { position = XStringFormats.CenterLeft; }
                                 if (index_model.Contains(nel) == true)
                                 {
-                                    if (figname[k] == "長期検定比伏図")
+                                    if (figname[k] == "長期最大検定比伏図")
                                     {
                                         int aa = kentei_index.IndexOf(nel);
                                         if (aa != -1)
@@ -859,7 +896,7 @@ namespace OpenSeesUtility
                                             }
                                         }
                                     }
-                                    if (figname[k] == "短期検定比伏図")
+                                    if (figname[k] == "短期最大検定比伏図")
                                     {
                                         int aa = kentei_index.IndexOf(nel);
                                         if (aa != -1)
@@ -869,6 +906,61 @@ namespace OpenSeesUtility
                                             {
                                                 var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
                                                 gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (figname[k] == "長期最大検定比伏図(壁床線材置換)" | figname[k] == "短期最大検定比伏図(壁床線材置換)")
+                                {
+                                    if (nod_No_all.Contains(ni) != true) { nod_No_all.Add(ni); }
+                                    if (nod_No_all.Contains(nj) != true) { nod_No_all.Add(nj); }
+                                }
+                            }
+                            if (figname[k] == "長期最大検定比伏図(壁床線材置換)" | figname[k] == "短期最大検定比伏図(壁床線材置換)")
+                            {
+                                for (int j = 0; j < kabe_w.Count; j++)
+                                {
+                                    int ni = (int)kabe_w[j][0].Value; int nj = (int)kabe_w[j][1].Value; int nk = (int)kabe_w[j][2].Value; int nl = (int)kabe_w[j][3].Value;
+                                    if (nod_No_all.Contains(ni) == true && nod_No_all.Contains(nj) == true && nod_No_all.Contains(nk) == true && (nod_No_all.Contains(nk) == true))
+                                    {
+                                        var position = XStringFormats.Center;
+                                        var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
+                                        var r2 = new List<double>(); r2.Add(offset + (R[nj][0].Value - xmin) * scale); r2.Add(842 - offsety - (R[nj][1].Value - ymin) * scale);
+                                        var r3 = new List<double>(); r3.Add(offset + (R[nk][0].Value - xmin) * scale); r3.Add(842 - offsety - (R[nk][1].Value - ymin) * scale);
+                                        var r4 = new List<double>(); r4.Add(offset + (R[nl][0].Value - xmin) * scale); r4.Add(842 - offsety - (R[nl][1].Value - ymin) * scale);
+                                        var rp1 = new List<double>(); rp1.Add(r1[0] + (r3[0] - r1[0]) * pinwidth); rp1.Add(r1[1] + (r3[1] - r1[1]) * pinwidth);
+                                        var rp2 = new List<double>(); rp2.Add(r2[0] + (r4[0] - r2[0]) * pinwidth); rp2.Add(r2[1] + (r4[1] - r2[1]) * pinwidth);
+                                        var rp3 = new List<double>(); rp3.Add(r3[0] + (r1[0] - r3[0]) * pinwidth); rp3.Add(r3[1] + (r1[1] - r3[1]) * pinwidth);
+                                        var rp4 = new List<double>(); rp4.Add(r4[0] + (r2[0] - r4[0]) * pinwidth); rp4.Add(r4[1] + (r2[1] - r4[1]) * pinwidth);
+                                        var rc = new List<double> { (r1[0] + r2[0] + r3[0] + r4[0]) / 4.0, (r1[1] + r2[1] + r3[1] + r4[1]) / 4.0 };
+                                        gfx.DrawLine(pengray, r1[0], r1[1], r3[0], r3[1]); gfx.DrawLine(pengray, r2[0], r2[1], r4[0], r4[1]);//線材置換トラスの描画
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp1[0] - js / 2.0, rp1[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp2[0] - js / 2.0, rp2[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp3[0] - js / 2.0, rp3[1] - js / 2.0, js, js);//ピン記号
+                                        gfx.DrawEllipse(pengray, XBrushes.White, rp4[0] - js / 2.0, rp4[1] - js / 2.0, js, js);//ピン記号
+                                        int aa = kentei1_index.IndexOf(j);
+                                        if (figname[k] == "長期最大検定比伏図(壁床線材置換)" && kentei1[0][0].Value != -9999)
+                                        {
+                                            if (aa != -1)
+                                            {
+                                                var kk = Math.Round(kentei1[aa][1].Value, 2);
+                                                if (kk > kbound)
+                                                {
+                                                    var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                                                    gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, rc[0], rc[1], XStringFormats.TopCenter);
+                                                }
+                                            }
+                                        }
+                                        if (figname[k] == "短期最大検定比伏図(壁床線材置換)" && kentei1[0][0].Value != -9999)
+                                        {
+                                            if (aa != -1)
+                                            {
+                                                var kk = Math.Round(kentei1[aa][2].Value, 2);
+                                                if (kk > kbound)
+                                                {
+                                                    var color = new XSolidBrush(RGB((1 - Math.Min(kk, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                                                    gfx.DrawString(kk.ToString().Substring(0, Math.Min(kk.ToString().Length, 4)), font, color, rc[0], rc[1], XStringFormats.TopCenter);
+                                                }
                                             }
                                         }
                                     }
