@@ -201,7 +201,16 @@ namespace NValue
             var TA = new GH_Structure<GH_Number>();
             for (int i = 0; i < Q.Count; i++)
             {
-                alphaX.Add(Qax[i] / Q[i]); alphaY.Add(Qay[i] / Q[i]);
+                if (Qax[0] != -9999)
+                {
+                    alphaX.Add(Qax[i] / Q[i]);
+                }
+                else { alphaX.Add(1.0); }
+                if (Qay[0] != -9999)
+                {
+                    alphaY.Add(Qay[i] / Q[i]);
+                }
+                else { alphaY.Add(1.0); }
             }
             if (index1.Count != 0)
             {
@@ -320,6 +329,13 @@ namespace NValue
                         {
                             "部材番号","階","Bx","By","Qi[kN]","Qaxi[kN]","Qayi[kN]","αx","αy","NEx[kN]","NEy[kN]","NHx[kN]","NHy[kN]","Nw[kN]","Tx[kN]","Ty[kN]","T[kN]","必要金物","Ta[kN]","T/Ta"
                         };
+                if (Qax[0]==-9999 || Qay[0] == -9999)
+                {
+                    labels = new List<string>
+                        {
+                            "部材番号","階","Bx","By","NEx[kN]","NEy[kN]","NHx[kN]","NHy[kN]","Nw[kN]","Tx[kN]","Ty[kN]","T[kN]","必要金物","Ta[kN]","T/Ta"
+                        };
+                }
                 var label_width = 75; var offset_x = 25; var offset_y = 25; var pitchy = 12; var text_width = 45; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
                 var k = 0;
                 for (int i = 0; i< Q.Count; i++)
@@ -335,11 +351,14 @@ namespace NValue
                         values.Add((i + 1).ToString() + "F");
                         values.Add(BX[e].ToString("F6").Substring(0, 3));
                         values.Add(BY[e].ToString("F6").Substring(0, 3));
-                        values.Add(Q[i].ToString("F6").Substring(0, Math.Max(4,Digit((int)Q[i]) + 2)));
-                        values.Add(Qax[i].ToString("F6").Substring(0, Math.Max(4, Digit((int)Qax[i]) + 2)));
-                        values.Add(Qay[i].ToString("F6").Substring(0, Math.Max(4, Digit((int)Qay[i]) + 2)));
-                        values.Add(alphaX[i].ToString("F6").Substring(0, 4));
-                        values.Add(alphaY[i].ToString("F6").Substring(0, 4));
+                        if (Qax[0] != -9999 || Qay[0] != -9999)
+                        {
+                            values.Add(Q[i].ToString("F6").Substring(0, Math.Max(4, Digit((int)Q[i]) + 2)));
+                            values.Add(Qax[i].ToString("F6").Substring(0, Math.Max(4, Digit((int)Qax[i]) + 2)));
+                            values.Add(Qay[i].ToString("F6").Substring(0, Math.Max(4, Digit((int)Qay[i]) + 2)));
+                            values.Add(alphaX[i].ToString("F6").Substring(0, 4));
+                            values.Add(alphaY[i].ToString("F6").Substring(0, 4));
+                        }
                         values.Add(NX[i][j].ToString("F6").Substring(0, Math.Max(4, Digit((int)NX[i][j]) + 2)));
                         values.Add(NY[i][j].ToString("F6").Substring(0, Math.Max(4, Digit((int)NY[i][j]) + 2)));
                         values.Add((NX[i][j] * alphaX[i]).ToString("F6").Substring(0, Math.Max(4, Digit((int)(NX[i][j] * alphaX[i]) + 2))));
@@ -387,7 +406,7 @@ namespace NValue
                                 gfx.DrawLine(pen, offset_x + label_width + text_width * jj, offset_y + pitchy * (ii + 1) + slide, offset_x + label_width + text_width * (jj + 1), offset_y + pitchy * (ii + 1) + slide);//横線
                             }
                             var color = XBrushes.Black;
-                            if (ii == 17)
+                            if ((ii == 17 && Qax[0]!=-9999 && Qay[0]!=-9999) || (ii == 12 && (Qax[0]==-9999 || Qay[0]==-9999)))
                             {
                                 color = new XSolidBrush(RGB(COLOR[i][j].H, COLOR[i][j].S, COLOR[i][j].L));
                             }
