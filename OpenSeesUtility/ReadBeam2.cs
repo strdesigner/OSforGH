@@ -43,7 +43,7 @@ namespace ReadBeam2
             pManager.AddTextParameter("name lb", "name lb", "usertextname for buckling length(local-y and z axis)", GH_ParamAccess.list, new List<string> { "lby","lbz" });
             pManager.AddTextParameter("name bar", "name bar", "usertextname for reinforcement number", GH_ParamAccess.item, "bar");
             pManager.AddTextParameter("name wick", "name wick", "usertextname for wick1 and wick2", GH_ParamAccess.list, new List<string> { "wickX","wickY", "wickZ", "wickW" });
-            pManager.AddTextParameter("name ele_w", "name ele_w", "element force Wx", GH_ParamAccess.list, new List<string> { "ele_wx", "ele_wy", "ele_wz" });
+            pManager.AddTextParameter("name ele_w", "name ele_w", "element force Wx", GH_ParamAccess.list, new List<string> { "ele_wx", "ele_wy", "ele_wz", "ele_wx2", "ele_wy2", "ele_wz2", "ele_l1", "ele_l2" });
             pManager.AddTextParameter("layer(spring)", "layer(spring)", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
             pManager.AddTextParameter("name K", "name K", "[kx+,kx-,ky+,ky-,kz+,kz-,mx,my,mz](Datalist)", GH_ParamAccess.list, new List<string> { "kxt", "kxc", "kyt", "kyc", "kzt", "kzc", "mx", "my", "mz" });
             pManager.AddTextParameter("name angle(spring)", "name angle(spring)", "usertextname for code-angle", GH_ParamAccess.item, "angle");
@@ -82,10 +82,11 @@ namespace ReadBeam2
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            List<string> layer = new List<string>(); string name_mat = "mat"; string name_sec = "sec"; string name_angle = "angle"; string name_joint = "joint"; string name_lby = "lby"; string name_lbz = "lbz"; string name_bar = "bar"; string name_ele_wx = "ele_wx"; string name_ele_wy = "ele_wy"; string name_ele_wz = "ele_wz"; string name_x = "wickX"; string name_y = "wickY"; string name_z = "wickZ"; string name_w = "wickW";
+            List<string> layer = new List<string>(); string name_mat = "mat"; string name_sec = "sec"; string name_angle = "angle"; string name_joint = "joint"; string name_lby = "lby"; string name_lbz = "lbz"; string name_bar = "bar"; string name_ele_wx = "ele_wx"; string name_ele_wy = "ele_wy"; string name_ele_wz = "ele_wz"; string name_ele_wx2 = "ele_wx2"; string name_ele_wy2 = "ele_wy2"; string name_ele_wz2 = "ele_wz2"; string name_ele_l1 = "ele_l1"; string name_ele_l2 = "ele_l2"; string name_x = "wickX"; string name_y = "wickY"; string name_z = "wickZ"; string name_w = "wickW";
             DA.GetDataList("layer(beam)", layer); DA.GetData("name mat", ref name_mat); DA.GetData("name sec", ref name_sec); DA.GetData("name angle", ref name_angle); DA.GetData("name joint", ref name_joint); var name_lb = new List<string> {"lby","lbz" }; DA.GetDataList("name lb", name_lb); name_lby = name_lb[0]; name_lbz = name_lb[1]; var acc = 5e-3; DA.GetData("accuracy", ref acc);
             DA.GetData("name bar", ref name_bar);
             var name_ele_w = new List<string>(); DA.GetDataList("name ele_w", name_ele_w); name_ele_wx = name_ele_w[0]; name_ele_wy = name_ele_w[1]; name_ele_wz = name_ele_w[2];
+            if (name_ele_w.Count == 8) { name_ele_wx2 = name_ele_w[3]; name_ele_wy2 = name_ele_w[4]; name_ele_wz2 = name_ele_w[5]; name_ele_l1 = name_ele_w[6]; name_ele_l2 = name_ele_w[7]; }
             var name_xyz = new List<string>(); DA.GetDataList("name wick", name_xyz); name_x = name_xyz[0]; name_y = name_xyz[1];
             if (name_xyz.Count >= 3) { name_z = name_xyz[2]; }
             if (name_xyz.Count >= 4) { name_w = name_xyz[3]; }
@@ -146,6 +147,7 @@ namespace ReadBeam2
                             k += 1;
                         }
                         var t1 = obj.Attributes.GetUserString(name_ele_wx); var t2 = obj.Attributes.GetUserString(name_ele_wy); var t3 = obj.Attributes.GetUserString(name_ele_wz);//分布荷重
+                        var t4 = obj.Attributes.GetUserString(name_ele_wx2); var t5 = obj.Attributes.GetUserString(name_ele_wy2); var t6 = obj.Attributes.GetUserString(name_ele_wz2); var t7 = obj.Attributes.GetUserString(name_ele_l1); var t8 = obj.Attributes.GetUserString(name_ele_l2);//台形分布用
                         if (t1 != null || t2 != null || t3 != null)
                         {
                             e_load_No.Add(e);
@@ -155,6 +157,16 @@ namespace ReadBeam2
                             if (t3 != null) { wz = float.Parse(t3); }
                             List<GH_Number> flist = new List<GH_Number>();
                             flist.Add(new GH_Number(e)); flist.Add(new GH_Number(wx)); flist.Add(new GH_Number(wy)); flist.Add(new GH_Number(wz));
+                            if (t4 != null || t5 != null || t6 != null || t7 != null || t8 != null)
+                            {
+                                var wx2 = 0.0; var wy2 = 0.0; var wz2 = 0.0; var l1 = 0.0; var l2 = 0.0;
+                                if (t4 != null) { wx2 = float.Parse(t4); }
+                                if (t5 != null) { wy2 = float.Parse(t5); }
+                                if (t6 != null) { wz2 = float.Parse(t6); }
+                                if (t7 != null) { l1 = float.Parse(t7); }
+                                if (t8 != null) { l2 = float.Parse(t8); }
+                                flist.Add(new GH_Number(wx2)); flist.Add(new GH_Number(wy2)); flist.Add(new GH_Number(wz2)); flist.Add(new GH_Number(l1)); flist.Add(new GH_Number(l2));
+                            }
                             e_load.AppendRange(flist, new GH_Path(kk));
                             kk += 1;
                         }
@@ -287,7 +299,17 @@ namespace ReadBeam2
                     lines_new.Add(new Line(r1, rc[idx[0]])); k += 1;
                     mat_new.Add(mat[e]); sec_new.Add(sec[e]); angle_new.Add(angle[e]); bar_new.Add(bar[e]); names_new.AppendRange(names[e], new GH_Path(k)); index_new.Add(k);
                     if (ind >= 0) { if (joint[ind][1].Value == 0 || joint[ind][1].Value == 2) { joint_new.AppendRange(new List<GH_Number> { new GH_Number(k), new GH_Number(0), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(pin), new GH_Number(pin), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(pin), new GH_Number(pin) }, new GH_Path(kk)); kk += 1; } }
-                    if (ind2 >= 0) { e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3] }, new GH_Path(kkk)); kkk += 1; }
+                    if (ind2 >= 0)
+                    {
+                        if (e_load[ind2].Count == 4)
+                        {
+                            e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3] }, new GH_Path(kkk)); kkk += 1;
+                        }
+                        else if (e_load[ind2].Count == 9)
+                        {
+                            e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3], e_load[ind2][4], e_load[ind2][5], e_load[ind2][6], e_load[ind2][7], e_load[ind2][8] }, new GH_Path(kkk)); kkk += 1;
+                        }
+                    }
                     if (lby[e] == -1) { lby_new.Add(new Line(r1, rc[idx[0]]).Length); }
                     else { lby_new.Add(lby[e]); }
                     if (lbz[e] == -1) { lbz_new.Add(new Line(r1, rc[idx[0]]).Length); }
@@ -296,7 +318,17 @@ namespace ReadBeam2
                     {
                         lines_new.Add(new Line(rc[idx[i]], rc[idx[i + 1]])); k += 1;
                         mat_new.Add(mat[e]); sec_new.Add(sec[e]); angle_new.Add(angle[e]); bar_new.Add(bar[e]); names_new.AppendRange(names[e], new GH_Path(k)); index_new.Add(k);
-                        if (ind2 >= 0) { e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3] }, new GH_Path(kkk)); kkk += 1; }
+                        if (ind2 >= 0)
+                        {
+                            if (e_load[ind2].Count == 4)
+                            {
+                                e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3] }, new GH_Path(kkk)); kkk += 1;
+                            }
+                            else if (e_load[ind2].Count == 9)
+                            {
+                                e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3], e_load[ind2][4], e_load[ind2][5], e_load[ind2][6], e_load[ind2][7], e_load[ind2][8] }, new GH_Path(kkk)); kkk += 1;
+                            }
+                        }
                         if (lby[e] == -1) { lby_new.Add(new Line(rc[idx[i]], rc[idx[i + 1]]).Length); }
                         else { lby_new.Add(lby[e]); }
                         if (lbz[e] == -1) { lbz_new.Add(new Line(rc[idx[i]], rc[idx[i + 1]]).Length); }
@@ -304,7 +336,17 @@ namespace ReadBeam2
                     }
                     lines_new.Add(new Line(rc[idx[idx.Length - 1]], r2)); k += 1;
                     if (ind >= 0) { if (joint[ind][1].Value == 1 || joint[ind][1].Value == 2) { joint_new.AppendRange(new List<GH_Number> { new GH_Number(k), new GH_Number(1), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(pin), new GH_Number(pin), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(pin), new GH_Number(pin) }, new GH_Path(kk)); kk += 1; } }
-                    if (ind2 >= 0) { e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3] }, new GH_Path(kkk)); kkk += 1; }
+                    if (ind2 >= 0)
+                    {
+                        if (e_load[ind2].Count == 4)
+                        {
+                            e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3] }, new GH_Path(kkk)); kkk += 1;
+                        }
+                        else if (e_load[ind2].Count == 9)
+                        {
+                            e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3], e_load[ind2][4], e_load[ind2][5], e_load[ind2][6], e_load[ind2][7], e_load[ind2][8] }, new GH_Path(kkk)); kkk += 1;
+                        }
+                    }
                     mat_new.Add(mat[e]); sec_new.Add(sec[e]); angle_new.Add(angle[e]); bar_new.Add(bar[e]); names_new.AppendRange(names[e], new GH_Path(k)); index_new.Add(k);
                     if (lby[e] == -1) { lby_new.Add(new Line(rc[idx[idx.Length - 1]], r2).Length); }
                     else { lby_new.Add(lby[e]); }
@@ -315,7 +357,17 @@ namespace ReadBeam2
                 {
                     lines_new.Add(new Line(r1, r2)); k += 1;
                     if (ind >= 0) { joint_new.AppendRange(new List<GH_Number> { new GH_Number(k), new GH_Number(joint[ind][1].Value), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(pin), new GH_Number(pin), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(rigid), new GH_Number(pin), new GH_Number(pin) }, new GH_Path(kk)); kk += 1; }
-                    if (ind2 >= 0) { e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3] }, new GH_Path(kkk)); kkk += 1; }
+                    if (ind2 >= 0)
+                    {
+                        if (e_load[ind2].Count == 4)
+                        {
+                            e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3] }, new GH_Path(kkk)); kkk += 1;
+                        }
+                        else if (e_load[ind2].Count == 9)
+                        {
+                            e_load_new.AppendRange(new List<GH_Number> { new GH_Number(k), e_load[ind2][1], e_load[ind2][2], e_load[ind2][3], e_load[ind2][4], e_load[ind2][5], e_load[ind2][6], e_load[ind2][7], e_load[ind2][8] }, new GH_Path(kkk)); kkk += 1;
+                        }
+                    }
                     mat_new.Add(mat[e]); sec_new.Add(sec[e]); angle_new.Add(angle[e]); bar_new.Add(bar[e]); names_new.AppendRange(names[e], new GH_Path(k)); index_new.Add(k);
                     if (lby[e] == -1) { lby_new.Add(new Line(r1, r2).Length); }
                     else { lby_new.Add(lby[e]); }

@@ -335,42 +335,219 @@ namespace VisualizeModel
                             var ni = (int)ij[e][0].Value; var nj = (int)ij[e][1].Value;
                             var ri = new Point3d(r[ni][0].Value, r[ni][1].Value, r[ni][2].Value); var rj = new Point3d(r[nj][0].Value, r[nj][1].Value, r[nj][2].Value);
                             int div = 10; var v = (rj - ri)/div;
+                            var wx1 = l_v[i][1].Value; var wy1 = l_v[i][2].Value; ; var wz1 = l_v[i][3].Value;
+                            var wx2 = 0.0; var wy2 = 0.0; var wz2 = 0.0; var l1 = 0.0; var l2 = 0.0; var l = (rj - ri).Length;
+                            var qx = l_v[i][1].Value; var qy = l_v[i][2].Value; ; var qz = l_v[i][3].Value;
+                            if (l_v[i].Count == 9)
+                            {
+                                wx2 = l_v[i][4].Value; wy2 = l_v[i][5].Value; ; wz2 = l_v[i][6].Value; l1 = l_v[i][7].Value; l2 = l_v[i][8].Value;
+                            }
                             for (int k = 0; k < div+1; k++)
                             {
-                                if (l_v[i][1].Value != 0 && Beam_load == 1)
+                                r1 = ri + v * k;
+                                var x = (v * k).Length;
+                                if ((wx1 != 0 || wx2 != 0) && Beam_load == 1)
                                 {
-                                    r1 = ri + v * k;
-                                    r2 = new Point3d(r1[0] - l_v[i][1].Value * arrowsize, r1[1], r1[2]);
+                                    if (l_v[i].Count == 9)
+                                    {
+                                        if (x <= l1)
+                                        {
+                                            if (l1 > 1e-10)
+                                            {
+                                                qx = wx1 / l1 * x;
+                                            }
+                                            else { qx = wx1; }
+                                        }
+                                        else if (x < l - l2)
+                                        {
+                                            if (l - l1 - l2 > 1e-10)
+                                            {
+                                                qx = wx1 + (wx2 - wx1) * (x - l1) / (l - l1 - l2);
+                                            }
+                                            else { qx = wx1; }
+                                        }
+                                        else
+                                        {
+                                            if (l2 > 1e-10)
+                                            {
+                                                qx = wx2 * (l - x) / l2;
+                                            }
+                                            else { qx = wx2; }
+                                        }
+                                    }
+                                    r2 = new Point3d(r1[0] - qx * arrowsize, r1[1], r1[2]);
                                     _arrows.Add(new Line(r2, r1));
                                 }
-                                if (l_v[i][1].Value != 0 && Value == 1)
+                                if ((wy1 != 0 || wy2 != 0) && Beam_load == 1)
                                 {
-                                    _epts.Add(new Point3d((ri[0] + rj[0]) / 2.0 - l_v[i][1].Value * arrowsize, (ri[1] + rj[1]) / 2.0, (ri[2] + rj[2]) / 2.0));
-                                    _e_load.Add(Math.Abs(l_v[i][1].Value).ToString());
-                                }
-                                if (l_v[i][2].Value != 0 && Beam_load == 1)
-                                {
-                                    r1 = ri + v * k;
-                                    r2 = new Point3d(r1[0], r1[1] - l_v[i][2].Value * arrowsize, r1[2]);
+                                    if (l_v[i].Count == 9)
+                                    {
+                                        if (x <= l1)
+                                        {
+                                            if (l1 > 1e-10)
+                                            {
+                                                qy = wy1 / l1 * x;
+                                            }
+                                            else { qy = wy1; }
+                                        }
+                                        else if (x < l - l2)
+                                        {
+                                            if (l - l1 - l2 > 1e-10)
+                                            {
+                                                qy = wy1 + (wy2 - wy1) * (x - l1) / (l - l1 - l2);
+                                            }
+                                            else { qy = wy1; }
+                                        }
+                                        else
+                                        {
+                                            if (l2 > 1e-10)
+                                            {
+                                                qy = wy2 * (l - x) / l2;
+                                            }
+                                            else { qy = wy2; }
+                                        }
+                                    }
+                                    r2 = new Point3d(r1[0], r1[1] - qy * arrowsize, r1[2]);
                                     _value.Add(Math.Abs(l_v[i][2].Value));
                                     _arrows.Add(new Line(r2, r1));
                                 }
-                                if (l_v[i][2].Value != 0 && Value == 1)
+                                if ((wz1 != 0 || wz2 != 0) && Beam_load == 1)
                                 {
-                                    _epts.Add(new Point3d((ri[0] + rj[0]) / 2.0, (ri[1] + rj[1]) / 2.0 - l_v[i][2].Value * arrowsize, (ri[2] + rj[2]) / 2.0));
-                                    _e_load.Add(Math.Abs(l_v[i][2].Value).ToString());
-                                }
-                                if (l_v[i][3].Value != 0 && Beam_load == 1)
-                                {
-                                    r1 = ri + v * k;
-                                    r2 = new Point3d(r1[0], r1[1], r1[2] - l_v[i][3].Value * arrowsize);
+                                    if (l_v[i].Count == 9)
+                                    {
+                                        if (x <= l1)
+                                        {
+                                            if (l1 > 1e-10)
+                                            {
+                                                qz = wz1 / l1 * x;
+                                            }
+                                            else { qz = wz1; }
+                                        }
+                                        else if (x < l - l2)
+                                        {
+                                            if (l - l1 - l2 > 1e-10)
+                                            {
+                                                qz = wz1 + (wz2 - wz1) * (x - l1) / (l - l1 - l2);
+                                            }
+                                            else { qz = wz1; }
+                                        }
+                                        else
+                                        {
+                                            if (l2 > 1e-10)
+                                            {
+                                                qz = wz2 * (l - x) / l2;
+                                            }
+                                            else { qz = wz2; }
+                                        }
+                                    }
+                                    r2 = new Point3d(r1[0], r1[1], r1[2] - qz * arrowsize);
                                     _value.Add(Math.Abs(l_v[i][3].Value));
                                     _arrows.Add(new Line(r2, r1));
                                 }
-                                if (l_v[i][3].Value != 0 && Value == 1)
+                            }
+                            if (l_v[i].Count == 4)
+                            {
+                                if (wx1 != 0)
                                 {
-                                    _epts.Add(new Point3d((ri[0] + rj[0]) / 2.0, (ri[1] + rj[1]) / 2.0, (ri[2] + rj[2]) / 2.0 - l_v[i][3].Value * arrowsize));
-                                    _e_load.Add(Math.Round(Math.Abs(l_v[i][3].Value),2).ToString());
+                                    var px = new Point3d((ri[0] + rj[0]) / 2.0 - wx1 * arrowsize, (ri[1] + rj[1]) / 2.0, (ri[2] + rj[2]) / 2.0);
+                                    _arrows2.Add(new Line(ri, px)); _arrows2.Add(new Line(rj, px));
+                                    if (Value == 1)
+                                    {
+                                        _epts.Add(px);
+                                        _e_load.Add(Math.Round(Math.Abs(wx1), 2).ToString());
+                                    }
+                                }
+                                if (wy1 != 0)
+                                {
+                                    var py = new Point3d((ri[0] + rj[0]) / 2.0, (ri[1] + rj[1]) / 2.0 - wy1 * arrowsize, (ri[2] + rj[2]) / 2.0);
+                                    _arrows2.Add(new Line(ri, py)); _arrows2.Add(new Line(rj, py));
+                                    if (Value == 1)
+                                    {
+                                        _epts.Add(py);
+                                        _e_load.Add(Math.Round(Math.Abs(wy1), 2).ToString());
+                                    }
+                                }
+                                if (wz1 != 0)
+                                {
+                                    var pz = new Point3d((ri[0] + rj[0]) / 2.0, (ri[1] + rj[1]) / 2.0, (ri[2] + rj[2]) / 2.0 - wz1 * arrowsize);
+                                    _arrows2.Add(new Line(ri, pz)); _arrows2.Add(new Line(rj, pz));
+                                    if (Value == 1)
+                                    {
+                                        _epts.Add(pz);
+                                        _e_load.Add(Math.Round(Math.Abs(wz1), 2).ToString());
+                                    }
+                                }
+                            }
+                            else if (l_v[i].Count == 9)
+                            {
+                                r1 = ri + (rj - ri) / l * l1;
+                                var rx1 = new Point3d(r1[0] - wx1 * arrowsize, r1[1], r1[2]);
+                                r1 = ri + (rj - ri) / l * (l - l2);
+                                var rx2 = new Point3d(r1[0] - wx2 * arrowsize, r1[1], r1[2]);
+                                r1 = ri + (rj - ri) / l * l1;
+                                var ry1 = new Point3d(r1[0], r1[1] - wy1 * arrowsize, r1[2]);
+                                r1 = ri + (rj - ri) / l * (l - l2);
+                                var ry2 = new Point3d(r1[0], r1[1] - wy2 * arrowsize, r1[2]);
+                                r1 = ri + (rj - ri) / l * l1;
+                                var rz1 = new Point3d(r1[0], r1[1], r1[2] - wz1 * arrowsize);
+                                r1 = ri + (rj - ri) / l * (l - l2);
+                                var rz2 = new Point3d(r1[0], r1[1], r1[2] - wz2 * arrowsize);
+                                if (wx1 != 0)
+                                {
+                                    _arrows2.Add(new Line(ri, rx1));
+                                    if (Value == 1)
+                                    {
+                                        _epts.Add(rx1);
+                                        _e_load.Add(Math.Round(Math.Abs(wx1), 2).ToString());
+                                    }
+                                }
+                                if (wx2 != 0)
+                                {
+                                    _arrows2.Add(new Line(rx1, rx2));
+                                    _arrows2.Add(new Line(rx2, rj));
+                                    if (Value == 1)
+                                    {
+                                        _epts.Add(rx2);
+                                        _e_load.Add(Math.Round(Math.Abs(wx2), 2).ToString());
+                                    }
+                                }
+                                if (wy1 != 0)
+                                {
+                                    _arrows2.Add(new Line(ri, ry1));
+                                    if (Value == 1)
+                                    {
+                                        _epts.Add(ry1);
+                                        _e_load.Add(Math.Round(Math.Abs(wy1), 2).ToString());
+                                    }
+                                }
+                                if (wy2 != 0)
+                                {
+                                    _arrows2.Add(new Line(ry1, ry2));
+                                    _arrows2.Add(new Line(ry2, rj));
+                                    if (Value == 1)
+                                    {
+                                        _epts.Add(ry2);
+                                        _e_load.Add(Math.Round(Math.Abs(wy2), 2).ToString());
+                                    }
+                                }
+                                if (wz1 != 0)
+                                {
+                                    _arrows2.Add(new Line(ri, rz1));
+                                    if (Value == 1)
+                                    {
+                                        _epts.Add(rz1);
+                                        _e_load.Add(Math.Round(Math.Abs(wz1), 2).ToString());
+                                    }
+                                }
+                                if (wz2 != 0)
+                                {
+                                    _arrows2.Add(new Line(rz1, rz2));
+                                    _arrows2.Add(new Line(rz2, rj));
+                                    if (Value == 1)
+                                    {
+                                        _epts.Add(rz2);
+                                        _e_load.Add(Math.Round(Math.Abs(wz2), 2).ToString());
+                                    }
                                 }
                             }
                         }
@@ -652,6 +829,7 @@ namespace VisualizeModel
 
         private readonly List<Line> _arrow = new List<Line>();
         private readonly List<Line> _arrows = new List<Line>();
+        private readonly List<Line> _arrows2 = new List<Line>();
         private readonly List<double> _value = new List<double>();
         private readonly List<Point3d> _point2 = new List<Point3d>();
         private readonly List<Color> _color2 = new List<Color>();
@@ -697,6 +875,7 @@ namespace VisualizeModel
 
             _arrow.Clear();
             _arrows.Clear();
+            _arrows2.Clear();
             _value.Clear();
             _point2.Clear();
             _color2.Clear();
@@ -861,7 +1040,7 @@ namespace VisualizeModel
                 {
                     Line arrow = _arrow[i];
                     args.Display.DrawLine(arrow, _color2[i], 2);
-                    args.Display.DrawArrowHead(arrow.To, arrow.Direction, _color2[i], 25, 0);
+                    args.Display.DrawArrowHead(arrow.To, arrow.Direction, _color2[i], 50 * arcsize, 0);
                 }
                 if (PxPyPz == 1 && Value == 1)
                 {
@@ -876,7 +1055,15 @@ namespace VisualizeModel
                 {
                     Line arrow = _arrows[i];
                     args.Display.DrawLine(arrow, Color.SpringGreen, 2);
-                    args.Display.DrawArrowHead(arrow.To, arrow.Direction, Color.SpringGreen, 25, 0);
+                    args.Display.DrawArrowHead(arrow.To, arrow.Direction, Color.SpringGreen, 50 * arcsize, 0);
+                }
+            }
+            for (int i = 0; i < _arrows2.Count; i++)
+            {
+                if (Beam_load == 1)
+                {
+                    Line arrow = _arrows2[i];
+                    args.Display.DrawLine(arrow, Color.SpringGreen, 2);
                 }
             }
             for (int i = 0; i < _epts.Count; i++)
@@ -905,7 +1092,7 @@ namespace VisualizeModel
                 if (MxMyMz == 1)
                 {
                     args.Display.DrawArc(_arc[i], _color2[i], 2);
-                    args.Display.DrawArrowHead(_arc[i].EndPoint, _vec[i], _color2[i], 25, 0);
+                    args.Display.DrawArrowHead(_arc[i].EndPoint, _vec[i], _color2[i], 50 * arcsize, 0);
                 }
                 if (MxMyMz == 1 && Value == 1)
                 {
@@ -926,8 +1113,8 @@ namespace VisualizeModel
                         args.Display.DrawLine(arrow, _sloadcolor[i], 2);
                         if (arrowsize > 0)
                         {
-                            if (_vsurf[i] < 0) { args.Display.DrawArrowHead(p1, new Vector3d(0, 0, -1), _sloadcolor[i], 25, 0); }
-                            else { args.Display.DrawArrowHead(p1, new Vector3d(0, 0, 1), _sloadcolor[i], 25, 0); }
+                            if (_vsurf[i] < 0) { args.Display.DrawArrowHead(p1, new Vector3d(0, 0, -1), _sloadcolor[i], 50 * arcsize, 0); }
+                            else { args.Display.DrawArrowHead(p1, new Vector3d(0, 0, 1), _sloadcolor[i], 50 * arcsize, 0); }
                         }
                         if (j != _r4[i].Count - 1)
                         {
@@ -966,27 +1153,27 @@ namespace VisualizeModel
                     List<double> ri = _ri[i];
                     if (ifix[0] == 1)
                     {
-                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(1, 0, 0), Color.Green, 25, 0);
+                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(1, 0, 0), Color.Green, 50 * arcsize, 0);
                     }
                     if (ifix[1] == 1)
                     {
-                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(0, 1, 0), Color.Green, 25, 0);
+                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(0, 1, 0), Color.Green, 50 * arcsize, 0);
                     }
                     if (ifix[2] == 1)
                     {
-                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(0, 0, 1), Color.Green, 25, 0);
+                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(0, 0, 1), Color.Green, 50 * arcsize, 0);
                     }
                     if (ifix[3] == 1)
                     {
-                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(-1, 0, 0), Color.Pink, 25, 0);
+                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(-1, 0, 0), Color.Pink, 50 * arcsize, 0);
                     }
                     if (ifix[4] == 1)
                     {
-                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(0, -1, 0), Color.Pink, 25, 0);
+                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(0, -1, 0), Color.Pink, 50 * arcsize, 0);
                     }
                     if (ifix[5] == 1)
                     {
-                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(0, 0, -1), Color.Pink, 25, 0);
+                        args.Display.DrawArrowHead(new Point3d(ri[0], ri[1], ri[2]), new Vector3d(0, 0, -1), Color.Pink, 50 * arcsize, 0);
                     }
                     if (Value == 1)
                     {
