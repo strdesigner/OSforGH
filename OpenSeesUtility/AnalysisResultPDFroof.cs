@@ -459,7 +459,7 @@ namespace OpenSeesUtility
                             {
                                 for (int j = 0; j < p_load.Count; j++)
                                 {
-                                    var ni = (int)p_load[j][0].Value; var fz = p_load[j][3].Value;
+                                    var ni = (int)p_load[j][0].Value; var fz = Math.Round(p_load[j][3].Value,3);
                                     if (nod_No_all.Contains(ni)==true)
                                     {
                                         var r1= new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
@@ -479,7 +479,7 @@ namespace OpenSeesUtility
                             {
                                 for (int j = 0; j < e_load.Count; j++)
                                 {
-                                    var e = (int)e_load[j][0].Value; var fz = e_load[j][3].Value; int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
+                                    var e = (int)e_load[j][0].Value; var fz = Math.Round(e_load[j][3].Value,3); int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
                                     if (nod_No_all.Contains(ni)==true && nod_No_all.Contains(nj)==true)
                                     {
                                         var r1 = new List<double>(); r1.Add(offset + ((R[ni][0].Value + R[nj][0].Value) / 2.0 - xmin) * scale); r1.Add(842 - offsety - ((R[ni][1].Value + R[nj][1].Value) / 2.0 - ymin) * scale);
@@ -500,7 +500,7 @@ namespace OpenSeesUtility
                                 var semiTransBrush = new XSolidBrush(XColor.FromArgb(50, 192,192,192));
                                 for (int j = 0; j < f_load.Count; j++)
                                 {
-                                    var fz = f_load[j][4].Value; int ni = (int)f_load[j][0].Value; int nj = (int)f_load[j][1].Value; int nk = (int)f_load[j][2].Value; int nl = (int)f_load[j][3].Value;
+                                    var fz = Math.Round(f_load[j][4].Value,3); int ni = (int)f_load[j][0].Value; int nj = (int)f_load[j][1].Value; int nk = (int)f_load[j][2].Value; int nl = (int)f_load[j][3].Value;
                                     if (nod_No_all.Contains(ni) == true && nod_No_all.Contains(nj) == true && nod_No_all.Contains(nk) == true && (nod_No_all.Contains(nk) == true || nk == -1))
                                     {
                                         var rc = new List<double> { (R[ni][0].Value + R[nj][0].Value + R[nk][0].Value) / 3.0, (R[ni][1].Value + R[nj][1].Value + R[nk][1].Value) / 3.0 };
