@@ -320,7 +320,7 @@ namespace TimberCheck
                         f_ttree.AppendRange(f_tlist, new GH_Path(0));
                         f_btree.AppendRange(f_blist, new GH_Path(0));
                         f_stree.AppendRange(f_slist, new GH_Path(0));
-                        DA.SetDataTree(3, f_ktree); DA.SetDataTree(4, f_ttree); DA.SetDataTree(5, f_btree); DA.SetDataTree(6, f_stree); DA.SetDataTree(8, sec_f_new); DA.SetDataTree(11, kentei); DA.SetDataTree(13, kenteimax);
+                        DA.SetDataTree(3, f_ktree); DA.SetDataTree(4, f_ttree); DA.SetDataTree(5, f_btree); DA.SetDataTree(6, f_stree); DA.SetDataTree(8, sec_f_new); DA.SetDataTree(11, kentei); DA.SetDataTree(13, kenteimax); DA.SetDataTree(1, ij_new);
                     }
                     else
                     {

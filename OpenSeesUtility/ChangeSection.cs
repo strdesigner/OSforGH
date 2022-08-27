@@ -24,6 +24,7 @@ namespace ChangeSection
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("layer(all)", "layer(all)", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
+            pManager.AddTextParameter("layer(springall)", "layer(springall)", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
             pManager.AddTextParameter("layer", "layer", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
             pManager.AddTextParameter("name -B", "name -B", "userstring for width subtracted from the original cross-section", GH_ParamAccess.item, "burnB");
             pManager.AddTextParameter("name -D", "name -D", "userstring for height subtracted from the original cross-section", GH_ParamAccess.item, "burnD");
@@ -47,10 +48,11 @@ namespace ChangeSection
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             List<string> layers = new List<string>(); if (!DA.GetDataList("layer(all)", layers)) { };
+            List<string> layers2 = new List<string>(); if (!DA.GetDataList("layer(springall)", layers2)) { };
             List<string> layer = new List<string>(); if (!DA.GetDataList("layer", layer)) { };
             var name_B = "-width"; DA.GetData("name -B", ref name_B); var name_D = "-height"; DA.GetData("name -D", ref name_D); var acc = 5e-3; DA.GetData("accuracy", ref acc);
             var burnwidth = new List<double>(); var burnheight = new List<double>();
-            List<int> index = new List<int>(); List<Curve> lines = new List<Curve>();
+            List<int> index = new List<int>(); var index2 = new List<int>(); List<Curve> lines = new List<Curve>();
             var index_new = new List<int>(); List<Curve> lines2 = new List<Curve>(); var lines_new = new List<Line>();
             var burnwidth_new = new List<double>(); var burnheight_new = new List<double>();
             var doc = RhinoDoc.ActiveDoc;
@@ -80,6 +82,22 @@ namespace ChangeSection
                         burnwidth.Add(B); burnheight.Add(D);
                         k += 1;
                     }
+                }
+            }
+            if (layer.Count == 0 && layers2.Count != 0) { layer = layers2; }
+            k = 0;
+            for (int i = 0; i < layers2.Count; i++)
+            {
+                var line = doc.Objects.FindByLayer(layers2[i]);
+                for (int j = 0; j < line.Length; j++)
+                {
+                    var obj = line[j];
+                    if (layer.Contains(layers2[i]))
+                    {
+                        index2.Add(k);
+                    }
+                    var l = (new ObjRef(obj)).Curve(); lines2.Add(l);
+                    k += 1;
                 }
             }
             if (lines.Count != 0)

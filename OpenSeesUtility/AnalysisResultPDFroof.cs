@@ -526,7 +526,7 @@ namespace OpenSeesUtility
                                 for (int j = 0; j < kabe_w.Count; j++)
                                 {
                                     int ni = (int)kabe_w[j][0].Value; int nj = (int)kabe_w[j][1].Value; int nk = (int)kabe_w[j][2].Value; int nl = (int)kabe_w[j][3].Value;
-                                    if (nod_No_all.Contains(ni) == true && nod_No_all.Contains(nj) == true && nod_No_all.Contains(nk) == true && (nod_No_all.Contains(nk) == true))
+                                    if (nod_No_all.Contains(ni) == true && nod_No_all.Contains(nj) == true && nod_No_all.Contains(nk) == true && kabe_w[j][4].Value!=0)
                                     {
                                         var position = XStringFormats.Center;
                                         var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
@@ -921,7 +921,7 @@ namespace OpenSeesUtility
                                 for (int j = 0; j < kabe_w.Count; j++)
                                 {
                                     int ni = (int)kabe_w[j][0].Value; int nj = (int)kabe_w[j][1].Value; int nk = (int)kabe_w[j][2].Value; int nl = (int)kabe_w[j][3].Value;
-                                    if (nod_No_all.Contains(ni) == true && nod_No_all.Contains(nj) == true && nod_No_all.Contains(nk) == true && (nod_No_all.Contains(nk) == true))
+                                    if (nod_No_all.Contains(ni) == true && nod_No_all.Contains(nj) == true && nod_No_all.Contains(nk) == true && kabe_w[j][4].Value != 0)
                                     {
                                         var position = XStringFormats.Center;
                                         var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
