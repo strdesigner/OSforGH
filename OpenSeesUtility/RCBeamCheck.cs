@@ -553,27 +553,27 @@ namespace OpenSeesUtility
                     var ki = new List<double>(); var kj = new List<double>(); var kc = new List<double>();
                     if (Mi + Mi_x < 0) { ki.Add(Math.Abs(Mi + Mi_x) / Ma_itS); }
                     else { ki.Add(Math.Abs(Mi + Mi_x) / Ma_ibS); }
-                    if (Mi - Mi_x < 0) { ki.Add(Math.Abs(Mi + Mi_x2) / Ma_itS); }
+                    if (Mi + Mi_x2 < 0) { ki.Add(Math.Abs(Mi + Mi_x2) / Ma_itS); }
                     else { ki.Add(Math.Abs(Mi + Mi_x2) / Ma_ibS); }
                     if (Mi + Mi_y < 0) { ki.Add(Math.Abs(Mi + Mi_y) / Ma_itS); }
                     else { ki.Add(Math.Abs(Mi + Mi_y) / Ma_ibS); }
-                    if (Mi - Mi_y < 0) { ki.Add(Math.Abs(Mi + Mi_y2) / Ma_itS); }
+                    if (Mi + Mi_y2 < 0) { ki.Add(Math.Abs(Mi + Mi_y2) / Ma_itS); }
                     else { ki.Add(Math.Abs(Mi + Mi_y2) / Ma_ibS); }
-                    if (Mj + Mj_x < 0) { kj.Add(Math.Abs(Mj + Mj_x) / Ma_jtS); }
+                    if (Mj + Mj_x > 0) { kj.Add(Math.Abs(Mj + Mj_x) / Ma_jtS); }
                     else { kj.Add(Math.Abs(Mj + Mj_x) / Ma_jbS); }
-                    if (Mj - Mj_x < 0) { kj.Add(Math.Abs(Mj + Mj_x2) / Ma_jtS); }
+                    if (Mj + Mj_x2 > 0) { kj.Add(Math.Abs(Mj + Mj_x2) / Ma_jtS); }
                     else { kj.Add(Math.Abs(Mj + Mj_x2) / Ma_jbS); }
-                    if (Mj + Mj_y < 0) { kj.Add(Math.Abs(Mj + Mj_y) / Ma_jtS); }
+                    if (Mj + Mj_y > 0) { kj.Add(Math.Abs(Mj + Mj_y) / Ma_jtS); }
                     else { kj.Add(Math.Abs(Mj + Mj_y) / Ma_jbS); }
-                    if (Mj - Mj_y < 0) { kj.Add(Math.Abs(Mj + Mj_y2) / Ma_jtS); }
+                    if (Mj + Mj_y2 > 0) { kj.Add(Math.Abs(Mj + Mj_y2) / Ma_jtS); }
                     else { kj.Add(Math.Abs(Mj + Mj_y2) / Ma_jbS); }
                     if (Mc + Mc_x < 0) { kc.Add(Math.Abs(Mc + Mc_x) / Ma_ctS); }
                     else { kc.Add(Math.Abs(Mc + Mc_x) / Ma_cbS); }
-                    if (Mc - Mc_x < 0) { kc.Add(Math.Abs(Mc + Mc_x2) / Ma_ctS); }
+                    if (Mc + Mc_x2 < 0) { kc.Add(Math.Abs(Mc + Mc_x2) / Ma_ctS); }
                     else { kc.Add(Math.Abs(Mc + Mc_x2) / Ma_cbS); }
                     if (Mc + Mc_y < 0) { kc.Add(Math.Abs(Mc + Mc_y) / Ma_ctS); }
                     else { kc.Add(Math.Abs(Mc + Mc_y) / Ma_cbS); }
-                    if (Mc - Mc_y < 0) { kc.Add(Math.Abs(Mc + Mc_y2) / Ma_ctS); }
+                    if (Mc + Mc_y2 < 0) { kc.Add(Math.Abs(Mc + Mc_y2) / Ma_ctS); }
                     else { kc.Add(Math.Abs(Mc + Mc_y2) / Ma_cbS); }
                     k2list.Add(new GH_Number(Math.Max(Math.Max(ki[0], ki[1]), Math.Max(ki[2], ki[3]))));
                     k2list.Add(new GH_Number(Math.Max(Math.Max(kj[0], kj[1]), Math.Max(kj[2], kj[3]))));
