@@ -333,6 +333,16 @@ namespace OpenSeesUtility.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap kabeq {
+            get {
+                object obj = ResourceManager.GetObject("kabeq", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap kabew {
             get {
                 object obj = ResourceManager.GetObject("kabew", resourceCulture);

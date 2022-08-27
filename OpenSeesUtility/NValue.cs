@@ -199,7 +199,7 @@ namespace NValue
             var TX = new GH_Structure<GH_Number>(); var TY = new GH_Structure<GH_Number>(); var TMAX = new GH_Structure<GH_Number>();
             var NAME = new GH_Structure<GH_String>();
             var TA = new GH_Structure<GH_Number>();
-            for (int i = 0; i < Q.Count; i++)
+            for (int i = 0; i < Qax.Count; i++)
             {
                 if (Qax[0] != -9999)
                 {
@@ -208,7 +208,14 @@ namespace NValue
                 else { alphaX.Add(1.0); }
                 if (Qay[0] != -9999)
                 {
-                    alphaY.Add(Qay[i] / Q[i]);
+                    if (Qay.Count == Q.Count)
+                    {
+                        alphaY.Add(Qay[i] / Q[i]);
+                    }
+                    else
+                    {
+                        alphaY.Add(Qay[i] / Q[i + Qay.Count]);
+                    }
                 }
                 else { alphaY.Add(1.0); }
             }
@@ -264,7 +271,7 @@ namespace NValue
                 else { Nname = "×"; Na = 50.0; color = new ColorHSL((1 - Math.Min(1.125, 1.0)) * 1.9 / 3.0, 1, 0.5); }
                 return new Tuple<string, double, ColorHSL>(Nname, Na, color);
             }
-            for (int i = 0; i < Q.Count; i++)
+            for (int i = 0; i < Qax.Count; i++)
             {
                 var bx = 1.0;var by = 1.0;
                 var tx = new List<GH_Number>(); var ty = new List<GH_Number>(); var tmax = new List<GH_Number>(); var name = new List<GH_String>(); var ta = new List<GH_Number>(); var colors = new List<ColorHSL>();
@@ -336,9 +343,16 @@ namespace NValue
                             "部材番号","階","Bx","By","NEx[kN]","NEy[kN]","NHx[kN]","NHy[kN]","Nw[kN]","Tx[kN]","Ty[kN]","T[kN]","必要金物","Ta[kN]","T/Ta"
                         };
                 }
+                else if (Qay.Count != Q.Count)
+                {
+                    labels = new List<string>
+                        {
+                            "部材番号","階","Bx","By","Qxi[kN]","Qyi[kN]","Qaxi[kN]","Qayi[kN]","αx","αy","NEx[kN]","NEy[kN]","NHx[kN]","NHy[kN]","Nw[kN]","Tx[kN]","Ty[kN]","T[kN]","必要金物","Ta[kN]","T/Ta"
+                        };
+                }
                 var label_width = 75; var offset_x = 25; var offset_y = 25; var pitchy = 12; var text_width = 45; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
                 var k = 0;
-                for (int i = 0; i< Q.Count; i++)
+                for (int i = 0; i< Qax.Count; i++)
                 {
                     for (int j = 0; j < NL[i].Count; j++)
                     {
@@ -354,6 +368,7 @@ namespace NValue
                         if (Qax[0] != -9999 || Qay[0] != -9999)
                         {
                             values.Add(Q[i].ToString("F6").Substring(0, Math.Max(4, Digit((int)Q[i]) + 2)));
+                            if (Qay.Count != Q.Count) { values.Add(Q[i + Qay.Count].ToString("F6").Substring(0, Math.Max(4, Digit((int)Q[i + Qay.Count]) + 2))); }
                             values.Add(Qax[i].ToString("F6").Substring(0, Math.Max(4, Digit((int)Qax[i]) + 2)));
                             values.Add(Qay[i].ToString("F6").Substring(0, Math.Max(4, Digit((int)Qay[i]) + 2)));
                             values.Add(alphaX[i].ToString("F6").Substring(0, 4));

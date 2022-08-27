@@ -29,6 +29,7 @@ namespace ChangeSection
             pManager.AddTextParameter("name -B", "name -B", "userstring for width subtracted from the original cross-section", GH_ParamAccess.item, "burnB");
             pManager.AddTextParameter("name -D", "name -D", "userstring for height subtracted from the original cross-section", GH_ParamAccess.item, "burnD");
             pManager.AddNumberParameter("accuracy", "accuracy", "oversection accuracy", GH_ParamAccess.item, 5e-3);
+            pManager[0].Optional = true; pManager[1].Optional = true; pManager[2].Optional = true;
         }
 
         /// <summary>
