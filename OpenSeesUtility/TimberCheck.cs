@@ -600,7 +600,7 @@ namespace TimberCheck
                                 else { k4list.Add(new GH_Number(Math.Abs(Nj - NYj) / a / ft2[mat] * unit)); }
                                 k4list.Add(new GH_Number((Qyj - QYyj) / a / fs2[mat] * unit * 1.5)); k4list.Add(new GH_Number((Qzj - QYzj) / a / fs2[mat] * unit * 1.5));
                                 k4list.Add(new GH_Number((Myj - MYyj) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzj - MYzj) / zz / fb2[mat] * unit));
-                                if (Nc - NYc < 0) { k4list.Add(new GH_Number(Math.Abs(Nc + NYc) / a / f_k2[ind] * unit)); }
+                                if (Nc - NYc < 0) { k4list.Add(new GH_Number(Math.Abs(Nc - NYc) / a / f_k2[ind] * unit)); }
                                 else { k4list.Add(new GH_Number(Math.Abs(Nc - NYc) / a / ft2[mat] * unit)); }
                                 k4list.Add(new GH_Number((Qyc - QYyc) / a / fs2[mat] * unit * 1.5)); k4list.Add(new GH_Number((Qzc - QYzc) / a / fs2[mat] * unit * 1.5));
                                 k4list.Add(new GH_Number((Myc - MYyc) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzc - MYzc) / zz / fb2[mat] * unit));
