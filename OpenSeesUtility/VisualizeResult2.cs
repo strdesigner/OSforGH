@@ -25,7 +25,7 @@ namespace OpenSeesUtility
         public static int on_off2_11 = 0; public static int on_off2_12 = 0; public static int on_off2_13 = 0; public static int on_off2_21 = 0; public static int on_off2_22 = 0; public static int on_off2_23 = 0;
         public static int on_off3_11 = 0; public static int on_off3_12 = 0; public static int on_off3_13 = 0; public static int on_off3_21 = 0; public static int on_off3_22 = 0; public static int on_off3_23 = 0; public static int on_off3_31 = 0;
         public static int Value = 0; public static int Delta = 0;
-        double fontsize = double.NaN;
+        double fontsize = double.NaN; double arrowsize = double.NaN;
         string unit_of_force = "kN"; string unit_of_length = "m"; int digit = 4;
         public static void SetButton(string s, int i)
         {
@@ -142,6 +142,7 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("scale_factor_for_M", "MS", "scale factor for M", GH_ParamAccess.item, 0.15);///
             pManager.AddNumberParameter("fontsize", "FS", "font size for display texts", GH_ParamAccess.item, 12.0);///
             pManager.AddNumberParameter("arcsize", "CS", "radius parameter for moment arc with arrow", GH_ParamAccess.item, 0.25);///
+            pManager.AddNumberParameter("arrowsize", "AS", "arrow size", GH_ParamAccess.item, 25.0);///
         }
 
         /// <summary>
@@ -170,7 +171,7 @@ namespace OpenSeesUtility
             double nscale = double.NaN; if (!DA.GetData("scale_factor_for_N,Q", ref nscale)) return;
             double mscale = double.NaN; if (!DA.GetData("scale_factor_for_M", ref mscale)) return;
             if (!DA.GetData("fontsize", ref fontsize)) return; int div = 10; if (!DA.GetData("divide_display_points", ref div)) return;
-            double arcsize = double.NaN; if (!DA.GetData("arcsize", ref arcsize)) return;
+            double arcsize = double.NaN; if (!DA.GetData("arcsize", ref arcsize)) return; if (!DA.GetData("arrowsize", ref arrowsize)) return;
             if (ij[0][0].Value != -9999 && r[0][0].Value != -9999)
             {
                 int m = ij.Count;
@@ -958,11 +959,11 @@ namespace OpenSeesUtility
                 args.Display.DrawLine(_p1[i], _p2[i], _c3[i]);
                 if (_Nvalue[i] > 0)
                 {
-                    args.Display.DrawArrowHead(_p1[i], l1, _c3[i], 25, 0); args.Display.DrawArrowHead(_p2[i], l2, _c3[i], 25, 0);
+                    args.Display.DrawArrowHead(_p1[i], l1, _c3[i], 25, 0); args.Display.DrawArrowHead(_p2[i], l2, _c3[i], arrowsize, 0);
                 }
                 else
                 {
-                    args.Display.DrawArrowHead(_p1[i], l2, _c3[i], 25, 0); args.Display.DrawArrowHead(_p2[i], l1, _c3[i], 25, 0);
+                    args.Display.DrawArrowHead(_p1[i], l2, _c3[i], 25, 0); args.Display.DrawArrowHead(_p2[i], l1, _c3[i], arrowsize, 0);
                 }
                 if (Value == 1)
                 {
@@ -997,7 +998,7 @@ namespace OpenSeesUtility
             {
                 var l1 = _kabew_p2[i] - _kabew_p1[i]; var l2 = _kabew_p1[i] - _kabew_p2[i];
                 args.Display.DrawLine(_kabew_p1[i], _kabew_p2[i], Color.Chocolate);
-                args.Display.DrawArrowHead(_kabew_p1[i], l2, Color.Chocolate, 25, 0); args.Display.DrawArrowHead(_kabew_p2[i], l1, Color.Chocolate, 25, 0);
+                args.Display.DrawArrowHead(_kabew_p1[i], l2, Color.Chocolate, arrowsize, 0); args.Display.DrawArrowHead(_kabew_p2[i], l1, Color.Chocolate, arrowsize, 0);
                 if (Value == 1)
                 {
                     double size = fontsize; Point3d point = (_kabew_p1[i] + _kabew_p2[i]) / 2.0; plane.Origin = point;
@@ -1036,7 +1037,7 @@ namespace OpenSeesUtility
             {
                 Line arrow = _arrow[i];
                 args.Display.DrawLine(arrow, _c2[i], 2);
-                args.Display.DrawArrowHead(arrow.To, arrow.Direction, _c2[i], 25, 0);
+                args.Display.DrawArrowHead(arrow.To, arrow.Direction, _c2[i], arrowsize, 0);
             }
             for (int i = 0; i < _value.Count; i++)
             {
@@ -1052,7 +1053,7 @@ namespace OpenSeesUtility
             for (int i = 0; i < _arc.Count; i++)
             {
                 args.Display.DrawArc(_arc[i], _c2[i], 2);
-                args.Display.DrawArrowHead(_arc[i].EndPoint, _vec[i], _c2[i], 25, 0);
+                args.Display.DrawArrowHead(_arc[i].EndPoint, _vec[i], _c2[i], arrowsize, 0);
             }
             for (int i = 0; i < _value2.Count; i++)
             {
