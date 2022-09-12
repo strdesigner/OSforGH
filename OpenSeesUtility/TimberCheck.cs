@@ -948,7 +948,8 @@ namespace TimberCheck
                         for (int i = 0; i < index.Count; i++)
                         {
                             int e = (int)index[i];
-                            kenteimax.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1[i]), new GH_Number(kmax2[i]) }, new GH_Path(i));
+                            if (m2 / 18 == 3 || m2 / 18 == 5) { kenteimax.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1[i]), new GH_Number(kmax2[i]) }, new GH_Path(i)); }
+                            else { kenteimax.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1[i]), new GH_Number(0.0) }, new GH_Path(i)); }
                         }
                         DA.SetDataTree(1, ij_new); DA.SetDataTree(8, sec_f_new); DA.SetDataTree(11, kentei); DA.SetDataList("lambda", Lambda);
                         DA.SetDataTree(3, f_ktree); DA.SetDataTree(4, f_ttree); DA.SetDataTree(5, f_btree); DA.SetDataTree(6, f_stree); DA.SetDataList("index", index); DA.SetDataTree(13, kenteimax);
@@ -960,8 +961,9 @@ namespace TimberCheck
                     DA.SetDataTree(15, kmax);
                 }
                 int L2 = 0; int S2 = 0; var kmaxL = 0.0; var kmaxS = 0.0;
-                if (KABE_W[0][0].Value!=-9999 && shear_w[0]!=-9999 && index2[0]!=9999)
+                if (KABE_W[0][0].Value!=-9999 && shear_w[0]!=-9999 && index2[0]!=-9999)
                 {
+                    RhinoApp.WriteLine("test1");
                     int jj = 0;
                     var kk = new List<double>(); var rclist = new List<Point3d>();
                     var k2max1 = new List<double>(); var k2max2 = new List<double>();
@@ -994,6 +996,32 @@ namespace TimberCheck
                                     if (ii >= 2) { k2max2[jj] = Math.Max(k2max2[jj], k); }
                                     jj += 1;
                                 }
+                            }
+                        }
+                    }
+                    else if (KABE_W[0].Count / 7 == 1)
+                    {
+                        jj = 0;
+                        for (int ind = 0; ind < index2.Count; ind++)
+                        {
+                            int e = (int)index2[ind];
+                            if (KABE_W[e][4].Value > 0)//倍率0は無視
+                            {
+                                var Qa = KABE_W[e][4].Value * 1.96;
+                                var Q = shear_w[e];
+                                int n1 = (int)KABE_W[e][0].Value; int n2 = (int)KABE_W[e][1].Value; int n3 = (int)KABE_W[e][2].Value; int n4 = (int)KABE_W[e][3].Value;
+                                var ri = new Point3d(r[n1][0].Value, r[n1][1].Value, r[n1][2].Value); var rj = new Point3d(r[n2][0].Value, r[n2][1].Value, r[n2][2].Value); var rk = new Point3d(r[n3][0].Value, r[n3][1].Value, r[n3][2].Value); var rl = new Point3d(r[n4][0].Value, r[n4][1].Value, r[n4][2].Value);//4隅の座標
+                                var l = Math.Min((new Point3d(r[n2][0].Value, r[n2][1].Value, r[n2][2].Value) - new Point3d(r[n1][0].Value, r[n1][1].Value, r[n1][2].Value)).Length, (new Point3d(r[n4][0].Value, r[n4][1].Value, r[n4][2].Value) - new Point3d(r[n3][0].Value, r[n3][1].Value, r[n3][2].Value)).Length);
+                                if (KABE_W[e][6].Value == 1) { l = Math.Min((new Point3d(r[n3][0].Value, r[n3][1].Value, r[n3][2].Value) - new Point3d(r[n2][0].Value, r[n2][1].Value, r[n2][2].Value)).Length, (new Point3d(r[n4][0].Value, r[n4][1].Value, r[n4][2].Value) - new Point3d(r[n1][0].Value, r[n1][1].Value, r[n1][2].Value)).Length); }
+                                var rc = new Point3d((r[n1][0].Value + r[n2][0].Value + r[n3][0].Value + r[n4][0].Value) / 4.0, (r[n1][1].Value + r[n2][1].Value + r[n3][1].Value + r[n4][1].Value) / 4.0, (r[n1][2].Value + r[n2][2].Value + r[n3][2].Value + r[n4][2].Value) / 4.0);
+                                var k = Math.Abs(Q) / (Qa * l);
+                                List<GH_Number> klist = new List<GH_Number>();
+                                klist.Add(new GH_Number(n1)); klist.Add(new GH_Number(n2)); klist.Add(new GH_Number(n3)); klist.Add(new GH_Number(n4));
+                                klist.Add(new GH_Number(l)); klist.Add(new GH_Number(Q)); klist.Add(new GH_Number(Qa * l)); klist.Add(new GH_Number(k));
+                                kentei2.AppendRange(klist, new GH_Path(jj));
+                                kk.Add(k); rclist.Add(rc);
+                                k2max1.Add(k); kmaxL = Math.Max(kmaxL, k); if (kmaxL == k) { L2 = e; }
+                                jj += 1;
                             }
                         }
                     }
