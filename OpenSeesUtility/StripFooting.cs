@@ -207,7 +207,10 @@ namespace StripFooting
                     for (int aa = 0; aa < nl; aa++) { lgh += l[aa].GetLength(); }
                     var b = float.Parse(obj.Attributes.GetUserString(nameB));
                     var t = float.Parse(obj.Attributes.GetUserString(namet));
-                    var rho = float.Parse(obj.Attributes.GetUserString(namerho));
+                    var text_rho = obj.Attributes.GetUserString(namerho);
+                    var rho = 24.0;
+                    if (text_rho == null) { rho = 24.0; }
+                    else { rho = float.Parse(text_rho); }
                     var N = 0.0; var Nx = 0.0; var Ny = 0.0; var Nx2 = 0.0; var Ny2 = 0.0;
                     for (int k = 0; k < m; k++)
                     {
