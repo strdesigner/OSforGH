@@ -211,6 +211,7 @@ namespace Kabecheck
             List<double> P = new List<double> { 0.0, 0.0, 0.0 }; if (!DA.GetDataList("p", P)) { };
             DA.GetData("fontsize", ref fontsize); var pdfname = "wkabe"; DA.GetData("outputname", ref pdfname);
             string name_K = "K"; if (!DA.GetData("name K", ref name_K)) { }; var type1 = 1; DA.GetData("type1", ref type1); var type2 = 1; DA.GetData("type2", ref type2);
+            var xy1 = new List<List<double>>(); var xy2 = new List<List<double>>(); var xy3 = new List<List<double>>();
             if (flayer1.Count!=0 && wlayer1.Count != 0)
             {
                 var Qax = new List<double>(); var Qay = new List<double>();
@@ -315,6 +316,7 @@ namespace Kabecheck
                         }
                         kabe.Add(new List<double> { 0, alpha, width, theta1, theta2, x, y });//層番号，壁倍率，壁幅，θ1，θ2，壁中心のx,y座標
                         qax += alpha * width * Math.Abs(Math.Cos(theta1 / 180 * Math.PI)) * 1.96; qay += alpha * width * Math.Abs(Math.Sin(theta1 / 180 * Math.PI)) * 1.96;
+                        xy1.Add(new List<double> { r[0][0], r[0][1], r[1][0], r[1][1] });
                     }
                 }
                 if (qax != 0.0 && qay != 0.0) { Qax.Add(qax); Qay.Add(qay); }
@@ -352,6 +354,7 @@ namespace Kabecheck
                         }
                         kabe.Add(new List<double> { 1, alpha, width, theta1, theta2, x, y });//層番号，壁倍率，壁幅，θ1，θ2，壁中心のx,y座標
                         qax += alpha * width * Math.Abs(Math.Cos(theta1 / 180 * Math.PI)) * 1.96; qay += alpha * width * Math.Abs(Math.Sin(theta1 / 180 * Math.PI)) * 1.96;
+                        xy2.Add(new List<double> { r[0][0], r[0][1], r[1][0], r[1][1] });
                     }
                 }
                 if (qax != 0.0 && qay != 0.0) { Qax.Add(qax); Qay.Add(qay); }
@@ -389,6 +392,7 @@ namespace Kabecheck
                         }
                         kabe.Add(new List<double> { 2, alpha, width, theta1, theta2, x, y });//層番号，壁倍率，壁幅，θ1，θ2，壁中心のx,y座標
                         qax += alpha * width * Math.Abs(Math.Cos(theta1 / 180 * Math.PI)) * 1.96; qay += alpha * width * Math.Abs(Math.Sin(theta1 / 180 * Math.PI)) * 1.96;
+                        xy3.Add(new List<double> { r[0][0], r[0][1], r[1][0], r[1][1] });
                     }
                 }
                 if (qax != 0.0 && qay != 0.0) { Qax.Add(qax); Qay.Add(qay); }
@@ -494,8 +498,8 @@ namespace Kabecheck
                                 if (yt <= (c2[0][1] + c2[1][1] + c2[2][1] + c2[3][1]) / 4.0) { at += b2.GetArea(); quarter.Add(b2); if (Top == 1 && Sou[i] == 1) { _shells.Add(b2); _color.Add(Color.Gold); } }
                             }
                         }
-                        if (y_max <= yb) { ab += b.GetArea(); quarter.Add(b); if (Bottom == 1 && Sou[i] == 1) { var c = b.GetBoundingBox(true).GetCorners(); _shells.Add(b); _color.Add(Color.MidnightBlue); } }
-                        if (yt <= y_min) { at += b.GetArea(); quarter.Add(b); if (Top == 1 && Sou[i] == 1) { var c = b.GetBoundingBox(true).GetCorners(); _shells.Add(b); _color.Add(Color.Gold); } }
+                        if (y_max <= yb) { ab += b.GetArea(); quarter.Add(b); if (Bottom == 1 && Sou[i] == 1) { _shells.Add(b); _color.Add(Color.MidnightBlue); } }
+                        if (yt <= y_min) { at += b.GetArea(); quarter.Add(b); if (Top == 1 && Sou[i] == 1) { _shells.Add(b); _color.Add(Color.Gold); } }
                     }
                     Al.Add(al); Ar.Add(ar); Ab.Add(ab); At.Add(at);
                 }
@@ -635,15 +639,16 @@ namespace Kabecheck
                     var pen = XPens.Black;
                     var labels = new List<string>
                         {
-                            "階","X[m]","Y[m]","L[m]","壁倍率","r1[°]","r2[°]","Lx[m]","Ly[m]","左1/4","右1/4","上1/4","下1/4"
+                            "No.","階","X[m]","Y[m]","L[m]","壁倍率","r1[°]","r2[°]","Lx[m]","Ly[m]","左1/4","右1/4","上1/4","下1/4"
                         };
-                    var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 42; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
+                    var offset_x = 25; var offset_y = 25; var pitchy = 13; var text_width = 40; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
                     for (int e = 0; e < kabe.Count; e++)
                     {
                         var values = new List<string>();
                         var floor = (int)kabe[e][0]; var alpha = kabe[e][1]; var width = kabe[e][2]; var theta1 = Math.Round(kabe[e][3], 0); var theta2 = Math.Round(kabe[e][4], 0); var x = kabe[e][5]; var y = kabe[e][6];
                         var lx = alpha * width * Math.Pow(Math.Cos(theta1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(theta2 / 180.0 * Math.PI));
                         var ly = alpha * width * Math.Pow(Math.Sin(theta1 / 180.0 * Math.PI), 2) * Math.Abs(Math.Cos(theta2 / 180.0 * Math.PI));
+                        values.Add(e.ToString());
                         values.Add(((int)(floor + 1)).ToString() + "F"); values.Add(x.ToString("F6").Substring(0, 4)); values.Add(y.ToString("F6").Substring(0, 4)); values.Add(width.ToString("F6").Substring(0, 4)); values.Add(alpha.ToString("F6").Substring(0, 4)); values.Add(((int)theta1).ToString()); values.Add(((int)theta2).ToString()); values.Add(lx.ToString("F6").Substring(0, 4)); values.Add(ly.ToString("F6").Substring(0, 4));
                         var l4 = ""; var r4 = ""; var t4 = ""; var b4 = "";
                         if (kabe[e][7] == 1) { l4 = "○"; }
@@ -678,6 +683,171 @@ namespace Kabecheck
                             gfx.DrawString(values[i], font, XBrushes.Black, new XRect(offset_x + text_width * i, offset_y + pitchy * (j + 1), text_width, offset_y + pitchy * (j + 1)), XStringFormats.TopCenter);
                         }
                     }
+                    var offset = 25.0; var scaling = 0.95; var rxmax = -9999.0; var rymax = -9999.0; var rxmin = 9999.0; var rymin = 9999.0;
+                    for (int i = 0; i < Xmax.Count; i++) { rxmax = Math.Max(rxmax, Xmax[i]); }
+                    for (int i = 0; i < Xmin.Count; i++) { rxmin = Math.Min(rxmin, Xmin[i]); }
+                    for (int i = 0; i < Ymax.Count; i++) { rymax = Math.Max(rymax, Ymax[i]); }
+                    for (int i = 0; i < Ymin.Count; i++) { rymin = Math.Min(rymin, Ymin[i]); }
+                    var rangex = Xmax[0] - Xmin[0]; var rangey = Ymax[0] - Ymin[0];
+                    ///壁配置図の描画1F///
+                    if (xy1.Count != 0)
+                    {
+                        page = document.AddPage(); gfx = XGraphics.FromPdfPage(page);
+                        var pen2 = new XPen(XColors.Gray, 2.0); var pen3 = new XPen(XColors.LightPink, 0.75);
+                        var scale = Math.Min(594.0 / rangex * scaling, 842.0 / rangey * scaling);
+                        for (int i = 0; i < xy1.Count; i++)
+                        {
+                            var r1 = new List<double>(); r1.Add(offset + (xy1[i][0] - rxmin) * scale); r1.Add(842 - offset - (xy1[i][1] - rymin) * scale);
+                            var r2 = new List<double>(); r2.Add(offset + (xy1[i][2] - rxmin) * scale); r2.Add(842 - offset - (xy1[i][3] - rymin) * scale);
+                            var rc = new List<double> { (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0 };
+                            gfx.DrawLine(pen2, r1[0], r1[1], r2[0], r2[1]);
+                            gfx.DrawString(i.ToString(), font, XBrushes.Blue, rc[0], rc[1], XStringFormats.Center);//番号
+                        }
+                        var q1 = q[0]; var q2 = q[1]; var q3 = q[2]; var q4 = q[3];
+                        
+                        var p1 = q1.DuplicateVertices(); var xp1list = new List<XPoint>();
+                        for (int i = 0; i < p1.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p1[i][0] - rxmin) * scale, 842 - offset - (p1[i][1] - rymin) * scale);
+                            xp1list.Add(xpt);
+                        }
+                        var xp1 = xp1list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp1, XFillMode.Winding);
+
+                        var p2 = q2.DuplicateVertices(); var xp2list = new List<XPoint>();
+                        for (int i = 0; i < p2.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p2[i][0] - rxmin) * scale, 842 - offset - (p2[i][1] - rymin) * scale);
+                            xp2list.Add(xpt);
+                        }
+                        var xp2 = xp2list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp2, XFillMode.Winding);
+
+                        var p3 = q3.DuplicateVertices(); var xp3list = new List<XPoint>();
+                        for (int i = 0; i < p3.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p3[i][0] - rxmin) * scale, 842 - offset - (p3[i][1] - rymin) * scale);
+                            xp3list.Add(xpt);
+                        }
+                        var xp3 = xp3list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp3, XFillMode.Winding);
+
+                        var p4 = q4.DuplicateVertices(); var xp4list = new List<XPoint>();
+                        for (int i = 0; i < p4.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p4[i][0] - rxmin) * scale, 842 - offset - (p4[i][1] - rymin) * scale);
+                            xp4list.Add(xpt);
+                        }
+                        var xp4 = xp4list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp4, XFillMode.Winding);
+                    }
+                    ///壁配置図の描画2F///
+                    int ii = xy1.Count;
+                    if (xy2.Count != 0)
+                    {
+                        page = document.AddPage(); gfx = XGraphics.FromPdfPage(page);
+                        var pen2 = new XPen(XColors.Gray, 2.0); var pen3 = new XPen(XColors.LightPink, 0.75);
+                        var scale = Math.Min(594.0 / rangex * scaling, 842.0 / rangey * scaling);
+                        for (int i = 0; i < xy2.Count; i++)
+                        {
+                            var r1 = new List<double>(); r1.Add(offset + (xy2[i][0] - rxmin) * scale); r1.Add(842 - offset - (xy2[i][1] - rymin) * scale);
+                            var r2 = new List<double>(); r2.Add(offset + (xy2[i][2] - rxmin) * scale); r2.Add(842 - offset - (xy2[i][3] - rymin) * scale);
+                            var rc = new List<double> { (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0 };
+                            gfx.DrawLine(pen2, r1[0], r1[1], r2[0], r2[1]);
+                            gfx.DrawString((ii + i).ToString(), font, XBrushes.Blue, rc[0], rc[1], XStringFormats.Center);//番号
+                        }
+                        var q1 = q[4]; var q2 = q[5]; var q3 = q[6]; var q4 = q[7];
+
+                        var p1 = q1.DuplicateVertices(); var xp1list = new List<XPoint>();
+                        for (int i = 0; i < p1.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p1[i][0] - rxmin) * scale, 842 - offset - (p1[i][1] - rymin) * scale);
+                            xp1list.Add(xpt);
+                        }
+                        var xp1 = xp1list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp1, XFillMode.Winding);
+
+                        var p2 = q2.DuplicateVertices(); var xp2list = new List<XPoint>();
+                        for (int i = 0; i < p2.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p2[i][0] - rxmin) * scale, 842 - offset - (p2[i][1] - rymin) * scale);
+                            xp2list.Add(xpt);
+                        }
+                        var xp2 = xp2list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp2, XFillMode.Winding);
+
+                        var p3 = q3.DuplicateVertices(); var xp3list = new List<XPoint>();
+                        for (int i = 0; i < p3.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p3[i][0] - rxmin) * scale, 842 - offset - (p3[i][1] - rymin) * scale);
+                            xp3list.Add(xpt);
+                        }
+                        var xp3 = xp3list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp3, XFillMode.Winding);
+
+                        var p4 = q4.DuplicateVertices(); var xp4list = new List<XPoint>();
+                        for (int i = 0; i < p4.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p4[i][0] - rxmin) * scale, 842 - offset - (p4[i][1] - rymin) * scale);
+                            xp4list.Add(xpt);
+                        }
+                        var xp4 = xp4list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp4, XFillMode.Winding);
+                    }
+                    ///壁配置図の描画3F///
+                    ii += xy2.Count;
+                    if (xy3.Count != 0)
+                    {
+                        page = document.AddPage(); gfx = XGraphics.FromPdfPage(page);
+                        var pen2 = new XPen(XColors.Gray, 2.0); var pen3 = new XPen(XColors.LightPink, 0.75);
+                        var scale = Math.Min(594.0 / rangex * scaling, 842.0 / rangey * scaling);
+                        for (int i = 0; i < xy3.Count; i++)
+                        {
+                            var r1 = new List<double>(); r1.Add(offset + (xy3[i][0] - rxmin) * scale); r1.Add(842 - offset - (xy3[i][1] - rymin) * scale);
+                            var r2 = new List<double>(); r2.Add(offset + (xy3[i][2] - rxmin) * scale); r2.Add(842 - offset - (xy3[i][3] - rymin) * scale);
+                            var rc = new List<double> { (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0 };
+                            gfx.DrawLine(pen2, r1[0], r1[1], r2[0], r2[1]);
+                            gfx.DrawString((ii + i).ToString(), font, XBrushes.Blue, rc[0], rc[1], XStringFormats.Center);//番号
+                        }
+                        var q1 = q[8]; var q2 = q[9]; var q3 = q[10]; var q4 = q[11];
+
+                        var p1 = q1.DuplicateVertices(); var xp1list = new List<XPoint>();
+                        for (int i = 0; i < p1.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p1[i][0] - rxmin) * scale, 842 - offset - (p1[i][1] - rymin) * scale);
+                            xp1list.Add(xpt);
+                        }
+                        var xp1 = xp1list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp1, XFillMode.Winding);
+
+                        var p2 = q2.DuplicateVertices(); var xp2list = new List<XPoint>();
+                        for (int i = 0; i < p2.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p2[i][0] - rxmin) * scale, 842 - offset - (p2[i][1] - rymin) * scale);
+                            xp2list.Add(xpt);
+                        }
+                        var xp2 = xp2list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp2, XFillMode.Winding);
+
+                        var p3 = q3.DuplicateVertices(); var xp3list = new List<XPoint>();
+                        for (int i = 0; i < p3.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p3[i][0] - rxmin) * scale, 842 - offset - (p3[i][1] - rymin) * scale);
+                            xp3list.Add(xpt);
+                        }
+                        var xp3 = xp3list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp3, XFillMode.Winding);
+
+                        var p4 = q4.DuplicateVertices(); var xp4list = new List<XPoint>();
+                        for (int i = 0; i < p4.Length; i++)
+                        {
+                            var xpt = new XPoint(offset + (p4[i][0] - rxmin) * scale, 842 - offset - (p4[i][1] - rymin) * scale);
+                            xp4list.Add(xpt);
+                        }
+                        var xp4 = xp4list.ToArray();
+                        gfx.DrawPolygon(pen3, XBrushes.Transparent, xp4, XFillMode.Winding);
+                    }
+
                     // 空白ページを作成。
                     page = document.AddPage(); gfx = XGraphics.FromPdfPage(page);
                     // 描画するためにXGraphicsオブジェクトを取得。
