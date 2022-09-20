@@ -747,18 +747,18 @@ namespace TimberCheck
                                 var MYyj = Math.Abs(sec_f[e][18 * 2 + 10].Value); var MYzj = Math.Abs(sec_f[e][18 * 2 + 11].Value);
                                 var NYc = -sec_f[e][18 * 2 + 12].Value; var QYyc = Math.Abs(sec_f[e][18 * 2 + 13].Value); var QYzc = Math.Abs(sec_f[e][18 * 2 + 14].Value);
                                 var MYyc = Math.Abs(sec_f[e][18 * 2 + 16].Value); var MYzc = Math.Abs(sec_f[e][18 * 2 + 17].Value);
-                                var NXi2 = -sec_f[e][18 + 0 + 18 * 3].Value; var QXyi2 = Math.Abs(sec_f[e][18 + 1 + 18 * 3].Value); var QXzi2 = Math.Abs(sec_f[e][18 + 2 + 18 * 3].Value);
-                                var MXyi2 = Math.Abs(sec_f[e][18 + 4 + 18 * 3].Value); var MXzi2 = Math.Abs(sec_f[e][18 + 5 + 18 * 3].Value);
-                                var NXj2 = sec_f[e][18 + 6 + 18 * 3].Value; var QXyj2 = Math.Abs(sec_f[e][18 + 7 + 18 * 3].Value); var QXzj2 = Math.Abs(sec_f[e][18 + 8 + 18 * 3].Value);
-                                var MXyj2 = Math.Abs(sec_f[e][18 + 10 + 18 * 3].Value); var MXzj2 = Math.Abs(sec_f[e][18 + 11 + 18 * 3].Value);
-                                var NXc2 = -sec_f[e][18 + 12 + 18 * 3].Value; var QXyc2 = Math.Abs(sec_f[e][18 + 13 + 18 * 3].Value); var QXzc2 = Math.Abs(sec_f[e][18 + 14 + 18 * 3].Value);
-                                var MXyc2 = Math.Abs(sec_f[e][18 + 16 + 18 * 3].Value); var MXzc2 = Math.Abs(sec_f[e][18 + 17 + 18 * 3].Value);
-                                var NYi2 = -sec_f[e][18 * 2 + 0 + 18 * 3].Value; var QYyi2 = Math.Abs(sec_f[e][18 * 2 + 1 + 18 * 3].Value); var QYzi2 = Math.Abs(sec_f[e][18 * 2 + 2 + 18 * 3].Value);
-                                var MYyi2 = Math.Abs(sec_f[e][18 * 2 + 4 + 18 * 3].Value); var MYzi2 = Math.Abs(sec_f[e][18 * 2 + 5 + 18 * 3].Value);
-                                var NYj2 = sec_f[e][18 * 2 + 6 + 18 * 3].Value; var QYyj2 = Math.Abs(sec_f[e][18 * 2 + 7 + 18 * 3].Value); var QYzj2 = Math.Abs(sec_f[e][18 * 2 + 8 + 18 * 3].Value);
-                                var MYyj2 = Math.Abs(sec_f[e][18 * 2 + 10 + 18 * 3].Value); var MYzj2 = Math.Abs(sec_f[e][18 * 2 + 11 + 18 * 3].Value);
-                                var NYc2 = -sec_f[e][18 * 2 + 12 + 18 * 3].Value; var QYyc2 = Math.Abs(sec_f[e][18 * 2 + 13 + 18 * 3].Value); var QYzc2 = Math.Abs(sec_f[e][18 * 2 + 14 + 18 * 3].Value);
-                                var MYyc2 = Math.Abs(sec_f[e][18 * 2 + 16 + 18 * 3].Value); var MYzc2 = Math.Abs(sec_f[e][18 * 2 + 17 + 18 * 3].Value);
+                                var NXi2 = -sec_f[e][18 + 0 + 18 * 2].Value; var QXyi2 = Math.Abs(sec_f[e][18 + 1 + 18 * 2].Value); var QXzi2 = Math.Abs(sec_f[e][18 + 2 + 18 * 2].Value);
+                                var MXyi2 = Math.Abs(sec_f[e][18 + 4 + 18 * 2].Value); var MXzi2 = Math.Abs(sec_f[e][18 + 5 + 18 * 2].Value);
+                                var NXj2 = sec_f[e][18 + 6 + 18 * 2].Value; var QXyj2 = Math.Abs(sec_f[e][18 + 7 + 18 * 2].Value); var QXzj2 = Math.Abs(sec_f[e][18 + 8 + 18 * 2].Value);
+                                var MXyj2 = Math.Abs(sec_f[e][18 + 10 + 18 * 2].Value); var MXzj2 = Math.Abs(sec_f[e][18 + 11 + 18 * 2].Value);
+                                var NXc2 = -sec_f[e][18 + 12 + 18 * 2].Value; var QXyc2 = Math.Abs(sec_f[e][18 + 13 + 18 * 2].Value); var QXzc2 = Math.Abs(sec_f[e][18 + 14 + 18 * 2].Value);
+                                var MXyc2 = Math.Abs(sec_f[e][18 + 16 + 18 * 2].Value); var MXzc2 = Math.Abs(sec_f[e][18 + 17 + 18 * 2].Value);
+                                var NYi2 = -sec_f[e][18 * 2 + 0 + 18 * 2].Value; var QYyi2 = Math.Abs(sec_f[e][18 * 2 + 1 + 18 * 2].Value); var QYzi2 = Math.Abs(sec_f[e][18 * 2 + 2 + 18 * 2].Value);
+                                var MYyi2 = Math.Abs(sec_f[e][18 * 2 + 4 + 18 * 2].Value); var MYzi2 = Math.Abs(sec_f[e][18 * 2 + 5 + 18 * 2].Value);
+                                var NYj2 = sec_f[e][18 * 2 + 6 + 18 * 2].Value; var QYyj2 = Math.Abs(sec_f[e][18 * 2 + 7 + 18 * 2].Value); var QYzj2 = Math.Abs(sec_f[e][18 * 2 + 8 + 18 * 2].Value);
+                                var MYyj2 = Math.Abs(sec_f[e][18 * 2 + 10 + 18 * 2].Value); var MYzj2 = Math.Abs(sec_f[e][18 * 2 + 11 + 18 * 2].Value);
+                                var NYc2 = -sec_f[e][18 * 2 + 12 + 18 * 2].Value; var QYyc2 = Math.Abs(sec_f[e][18 * 2 + 13 + 18 * 2].Value); var QYzc2 = Math.Abs(sec_f[e][18 * 2 + 14 + 18 * 2].Value);
+                                var MYyc2 = Math.Abs(sec_f[e][18 * 2 + 16 + 18 * 2].Value); var MYzc2 = Math.Abs(sec_f[e][18 * 2 + 17 + 18 * 2].Value);
 
                                 if (Ni + NXi < 0) { k1list.Add(new GH_Number(Math.Abs(Ni + NXi) / a / f_k2[ind] * unit)); }
                                 else { k1list.Add(new GH_Number(Math.Abs(Ni + NXi) / a / ft2[mat] * unit)); }
@@ -805,7 +805,7 @@ namespace TimberCheck
                                 k3list.Add(new GH_Number((Qyc + QXyc2) / a / fs2[mat] * unit * 1.5)); k3list.Add(new GH_Number((Qzc + QXzc2) / a / fs2[mat] * unit * 1.5));
                                 k3list.Add(new GH_Number((Myc + MXyc2) / zy / fb2[mat] * unit)); k3list.Add(new GH_Number((Mzc + MXzc2) / zz / fb2[mat] * unit));
                                 flist = new List<GH_Number>();
-                                for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][18 + i + 18 * 3].Value)); }//-X
+                                for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][18 + i + 18 * 2].Value)); }//-X
                                 kentei.AppendRange(k3list, new GH_Path(new int[] { 3, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 3, ind }));
 
                                 if (Ni + NYi2 < 0) { k4list.Add(new GH_Number(Math.Abs(Ni + NYi2) / a / f_k2[ind] * unit)); }
@@ -821,7 +821,7 @@ namespace TimberCheck
                                 k4list.Add(new GH_Number((Qyc + QYyc2) / a / fs2[mat] * unit * 1.5)); k4list.Add(new GH_Number((Qzc + QYzc2) / a / fs2[mat] * unit * 1.5));
                                 k4list.Add(new GH_Number((Myc + MYyc2) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzc + MYzc2) / zz / fb2[mat] * unit));
                                 flist = new List<GH_Number>();
-                                for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][18 * 2 + i + 18 * 3].Value)); }//-Y
+                                for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][18 * 2 + i + 18 * 2].Value)); }//-Y
                                 kentei.AppendRange(k4list, new GH_Path(new int[] { 4, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 4, ind }));
 
                                 var k1 = Math.Max(Math.Max(k1list[3].Value, k1list[4].Value) + k1list[0].Value, Math.Max(Math.Max(k1list[1].Value, k1list[2].Value), k1list[0].Value));
@@ -963,7 +963,6 @@ namespace TimberCheck
                 int L2 = 0; int S2 = 0; var kmaxL = 0.0; var kmaxS = 0.0;
                 if (KABE_W[0][0].Value!=-9999 && shear_w[0]!=-9999 && index2[0]!=-9999)
                 {
-                    RhinoApp.WriteLine("test1");
                     int jj = 0;
                     var kk = new List<double>(); var rclist = new List<Point3d>();
                     var k2max1 = new List<double>(); var k2max2 = new List<double>();

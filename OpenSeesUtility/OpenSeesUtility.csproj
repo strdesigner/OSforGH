@@ -90,6 +90,7 @@
     <Compile Include="AnalysisResultPDFroof.cs" />
     <Compile Include="AssembleTreeText.cs" />
     <Compile Include="kabeQ.cs" />
+    <Compile Include="merikomicheck.cs" />
     <Compile Include="RcBucklingCheck.cs" />
     <Compile Include="VisualizeResult2.cs" />
     <Compile Include="VisualizeResultSpring.cs" />
@@ -397,6 +398,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\kabeq.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\merikomicheck.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
