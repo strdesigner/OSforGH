@@ -199,7 +199,7 @@ namespace TimberCheckPDF
                     var name_text = secname[sec]; var lambda_text = Lambda[e].ToString("F").Substring(0, Digit((int)Lambda[e]));
                     var A_text = (A[sec] * 1e+4).ToString("F").Substring(0, Digit((int)(A[sec] * 1e+4)));
                     var b = 0.0; var d = 0.0;
-                    if (burnB.Count != 0 && burnD.Count != 0) { b = Math.Pow(6 * Math.Pow(Zz[sec], 2) / Zy[sec], 1.0 / 3.0); d = Math.Pow(6 * Math.Pow(Zy[sec], 2) / Zz[sec], 1.0 / 3.0); }
+                    if (burnB.Count != 0 && burnD.Count != 0) { b = Math.Pow(6 * Math.Pow(Zz[sec], 2) / Zy[sec], 1.0 / 3.0) - burnB[e]; d = Math.Pow(6 * Math.Pow(Zy[sec], 2) / Zz[sec], 1.0 / 3.0) - burnD[e]; }
                     if (burnB.Count != 0 && burnD.Count != 0)
                     {
                         A_text = (b*d * 1e+4).ToString("F").Substring(0, Digit((int)(b*d * 1e+4)));
@@ -267,7 +267,12 @@ namespace TimberCheckPDF
                     values.Add(new List<string> { Zy_text }); values.Add(new List<string> { Zz_text }); values.Add(new List<string> { "長期","","短期" });
                     if (burnB.Count == 0 && burnD.Count == 0) { values.Add(new List<string> { fk_text, "", fk2_text }); }
                     else { values.Add(new List<string> { "", "", fk_text }); }
-                    values.Add(new List<string> { ft_text,"",ft2_text }); values.Add(new List<string> { fb_text,"",fb2_text }); values.Add(new List<string> { fs_text,"",fs2_text });
+                    if (burnB.Count == 0 && burnD.Count == 0) { values.Add(new List<string> { ft_text, "", ft2_text }); }
+                    else { values.Add(new List<string> { "", "", ft_text }); }
+                    if (burnB.Count == 0 && burnD.Count == 0) { values.Add(new List<string> { fb_text, "", fb2_text }); }
+                    else { values.Add(new List<string> { "", "", fb_text }); }
+                    if (burnB.Count == 0 && burnD.Count == 0) { values.Add(new List<string> { fs_text, "", fs2_text }); }
+                    else { values.Add(new List<string> { "", "", fs_text }); }
                     values.Add(new List<string> { "i端", "中央", "j端" }); values.Add(new List<string> { ni_text, "", nj_text });
                     if (burnB.Count == 0 && burnD.Count == 0) { values.Add(new List<string> { "長期検討" }); }
                     else { values.Add(new List<string> { "短期検討" }); }
