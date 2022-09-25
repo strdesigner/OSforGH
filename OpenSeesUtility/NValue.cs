@@ -319,7 +319,7 @@ namespace NValue
                 COLOR.Add(colors);
                 TX.AppendRange(tx, new GH_Path(i)); TY.AppendRange(ty, new GH_Path(i)); TMAX.AppendRange(tmax, new GH_Path(i)); NAME.AppendRange(name, new GH_Path(i)); TA.AppendRange(ta, new GH_Path(i));
             }
-            DA.SetDataTree(0, NAME); DA.SetDataTree(1, TX); DA.SetDataTree(2, TY); DA.SetDataTree(3, TMAX); DA.SetDataTree(4, TA); DA.SetDataList("pts", _pts);
+            DA.SetDataTree(0, NAME); DA.SetDataTree(1, TX); DA.SetDataTree(2, TY); DA.SetDataTree(3, TMAX); DA.SetDataTree(4, TA);
             if (PDF == 1)
             {
                 // フォントリゾルバーのグローバル登録
