@@ -172,7 +172,7 @@ namespace OpenSeesUtility
                     {
                         int e = (int)index[ind]; int s = (int)ij[e][3].Value;
                         NL.Add(sec_f[e][0].Value); sec.Add(secname[s]); A1.Add(A[s] * 1e+6); NaL.Add(f1 * (A1[ind] - A2) / 1000);
-                        k1.Add(NL[ind] / NaL[ind]);
+                        k1.Add(Math.Max(0.0,NL[ind] / NaL[ind]));
                         var ni = (int)ij[e][0].Value; var nj = (int)ij[e][1].Value;
                         var r1 = new Point3d(r[ni][0].Value, r[ni][1].Value, r[ni][2].Value); var r2 = new Point3d(r[nj][0].Value, r[nj][1].Value, r[nj][2].Value);
                         rc.Add((r1 + r2) / 2.0);
