@@ -457,7 +457,7 @@ namespace Kabecheck
                                 if ((c2[0][0] + c2[1][0] + c2[2][0] + c2[3][0]) / 4.0 <= xl) { al += b2.GetArea(); quarter.Add(b2); if (Left == 1 && Sou[i] == 1) { _shells.Add(b2); _color.Add(Color.GreenYellow); } }
                             }
                         }
-                        else if (x_min < xr && xr < x_max)
+                        if (x_min < xr && xr < x_max)
                         {
                             var splitline = new Polyline(new List<Point3d> { new Point3d(xr, -9999, -9999), new Point3d(xr, -9999, 9999), new Point3d(xr, 9999, 9999), new Point3d(xr, 9999, -9999), new Point3d(xr, -9999, -9999) }).ToNurbsCurve();
                             var splitbrep = Brep.CreatePlanarBreps(splitline)[0];
@@ -470,8 +470,8 @@ namespace Kabecheck
                                 if (xr <= (c2[0][0] + c2[1][0] + c2[2][0] + c2[3][0]) / 4.0) { ar += b2.GetArea(); quarter.Add(b2); if (Right == 1 && Sou[i] == 1) { _shells.Add(b2); _color.Add(Color.LightPink); } }
                             }
                         }
-                        else if (x_max <= xl) { al += b.GetArea(); quarter.Add(b); if (Left == 1 && Sou[i] == 1) { var c = b.GetBoundingBox(true).GetCorners(); _shells.Add(b); _color.Add(Color.GreenYellow); } }
-                        else if (xr <= x_min) { ar += b.GetArea(); quarter.Add(b); if (Right == 1 && Sou[i] == 1) { var c = b.GetBoundingBox(true).GetCorners(); _shells.Add(b); _color.Add(Color.LightPink); } }
+                        if (x_max <= xl) { al += b.GetArea(); quarter.Add(b); if (Left == 1 && Sou[i] == 1) { var c = b.GetBoundingBox(true).GetCorners(); _shells.Add(b); _color.Add(Color.GreenYellow); } }
+                        if (xr <= x_min) { ar += b.GetArea(); quarter.Add(b); if (Right == 1 && Sou[i] == 1) { var c = b.GetBoundingBox(true).GetCorners(); _shells.Add(b); _color.Add(Color.LightPink); } }
                         if (y_min < yb && yb < y_max)
                         {
                             var splitline = new Polyline(new List<Point3d> { new Point3d(-9999, yb, -9999), new Point3d(-9999, yb, 9999), new Point3d(9999, yb, 9999), new Point3d(9999, yb, -9999), new Point3d(-9999, yb, -9999) }).ToNurbsCurve();
@@ -606,7 +606,7 @@ namespace Kabecheck
                 }
                 if (ylayer3.Count != 0) { Ay.Add(ay); }
 
-                DA.SetDataList("A", A); DA.SetDataList("At", At); DA.SetDataList("Ab", Ab); DA.SetDataList("Al", Al); DA.SetDataList("Ar", Ar); DA.SetDataList("Ax", Al); DA.SetDataList("Ay", Ar);
+                DA.SetDataList("A", A); DA.SetDataList("At", At); DA.SetDataList("Ab", Ab); DA.SetDataList("Al", Al); DA.SetDataList("Ar", Ar); DA.SetDataList("Ax", Ax); DA.SetDataList("Ay", Ay);
                 DA.SetDataList("beta", beta);
                 DA.SetDataList("Lx", Lx);
                 DA.SetDataList("Ly", Ly);
