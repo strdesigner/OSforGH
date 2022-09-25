@@ -217,12 +217,12 @@ namespace OpenSeesUtility
                 if (plan[0] == "-9999")
                 {
                     plan = new List<string>();
-                    for (int i = 0; i < 20; i++){ plan.Add(i.ToString()); }
+                    for (int i = 0; i < 100; i++){ plan.Add(i.ToString()); }
                 }
                 else
                 {
                     var ii = plan.Count;
-                    for (int i = ii; i < 20; i++) { plan.Add(ii.ToString()); }
+                    for (int i = ii; i < 100; i++) { plan.Add(ii.ToString()); }
                 }
                 if (index[0] == -9999)
                 {
@@ -277,7 +277,7 @@ namespace OpenSeesUtility
                     var rangex = Xmax - Xmin; var rangey = Ymax - Ymin;//架構の範囲
                     var scale = Math.Min(594.0 / rangex * scaling, 842.0 / rangey * scaling); var pinwidth = 0.04;
                     var tri = lw * 3;
-                    for (int i = 0; i < 20; i++)
+                    for (int i = 0; i < 100; i++)
                     {
                         List<Curve> lines = new List<Curve>();
                         var ij_new = new List<List<double>>();//その面の要素節点関係
@@ -579,7 +579,7 @@ namespace OpenSeesUtility
                             document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu";
                             var reac_f_index = new List<int>();
                             for (int i = 0; i < reac_f.Count; i++) { reac_f_index.Add((int)reac_f[i][0].Value); }
-                            for (int i = 0; i < 20; i++)
+                            for (int i = 0; i < 100; i++)
                             {
                                 List<Curve> lines = new List<Curve>();
                                 var ij_new = new List<List<double>>();//その面の要素節点関係
@@ -731,7 +731,7 @@ namespace OpenSeesUtility
                     if (kentei[0][0].Value != -9999) { figname.Add("長期最大検定比伏図"); if (kentei[0].Count == 3) { figname.Add("短期最大検定比伏図"); } }
                     if (kentei1[0][0].Value != -9999) { figname.Add("長期最大検定比伏図(壁床線材置換)"); if (kentei1[0].Count == 3) { figname.Add("短期最大検定比伏図(壁床線材置換)"); } }
                     if (kentei2[0][0].Value != -9999) { figname.Add("長期最大検定比伏図(ばね)"); if (kentei2[0].Count == 3) { figname.Add("短期最大検定比伏図(ばね)"); } }
-                    for (int i = 0; i < 20; i++)
+                    for (int i = 0; i < 100; i++)
                     {
                         List<Curve> lines = new List<Curve>();
                         var ij_new = new List<List<double>>();//その面の要素節点関係
@@ -990,7 +990,7 @@ namespace OpenSeesUtility
                             document = new PdfDocument();// PDFドキュメントを作成。
                             document.Info.Title = pdfname;
                             document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu shinnosuke@dn-archi.com";
-                            for (int i = 0; i < 20; i++)
+                            for (int i = 0; i < 100; i++)
                             {
                                 List<Curve> lines = new List<Curve>();
                                 var ij_new = new List<List<double>>();//その面の要素節点関係
