@@ -1317,8 +1317,8 @@ namespace OpenSeesUtility
                                             var color = RGB(Math.Max(0, (1 - val / Math.Max(1e-10, Qwmax)) * 1.9 / 3.0), 1, 0.5);
                                             var pens = new XPen(color, lw * 0.5);
                                             gfx.DrawLine(pens, rc[0] - val, rc[1], rc[0] + val, rc[1]);//せん断力矢印線の描画
-                                            gfx.DrawLine(pens, rc[0] - val, rc[1], rc[0] - val + fontsize, rc[1] + fontsize);//せん断力矢印線のarrowの描画
-                                            gfx.DrawLine(pens, rc[0] + val, rc[1], rc[0] + val - fontsize, rc[1] - fontsize);//せん断力矢印線のarrowの描画
+                                            gfx.DrawLine(pens, rc[0] - val, rc[1], rc[0] - val + fontsize * 0.5, rc[1] + fontsize * 0.5);//せん断力矢印線のarrowの描画
+                                            gfx.DrawLine(pens, rc[0] + val, rc[1], rc[0] + val - fontsize * 0.5, rc[1] - fontsize * 0.5);//せん断力矢印線のarrowの描画
                                         }
                                     }
                                 }
