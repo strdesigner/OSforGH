@@ -193,7 +193,10 @@ namespace OpenSeesUtility
                             ks.Add(Math.Max(Math.Max(k2[ind], k3[ind]), Math.Max(k4[ind], k5[ind])));
                         }
                     }
-                    else { ks.Add(0.0); }
+                    else
+                    {
+                        for (int ind = 0; ind < index.Count; ind++) { ks.Add(0.0); }
+                    }
                     var n1 = 0; var n2 = 0; var kmax1 = 0.0; var kmax2 = 0.0;
                     for (int i = 0; i < index.Count; i++)
                     {
