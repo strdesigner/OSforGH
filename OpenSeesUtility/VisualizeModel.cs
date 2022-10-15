@@ -450,7 +450,8 @@ namespace VisualizeModel
                                 if (wx1 != 0)
                                 {
                                     var px = new Point3d((ri[0] + rj[0]) / 2.0 - wx1 * arrowsize, (ri[1] + rj[1]) / 2.0, (ri[2] + rj[2]) / 2.0);
-                                    _arrows2.Add(new Line(ri, px)); _arrows2.Add(new Line(rj, px));
+                                    var px1 = new Point3d(ri[0], ri[1], ri[2] - wx1 * arrowsize); var px2 = new Point3d(rj[0], rj[1], rj[2] - wx1 * arrowsize);
+                                    _arrows2.Add(new Line(ri, px1)); _arrows2.Add(new Line(px1, px2)); _arrows2.Add(new Line(px2, rj));
                                     if (Value == 1)
                                     {
                                         _epts.Add(px);
@@ -460,7 +461,8 @@ namespace VisualizeModel
                                 if (wy1 != 0)
                                 {
                                     var py = new Point3d((ri[0] + rj[0]) / 2.0, (ri[1] + rj[1]) / 2.0 - wy1 * arrowsize, (ri[2] + rj[2]) / 2.0);
-                                    _arrows2.Add(new Line(ri, py)); _arrows2.Add(new Line(rj, py));
+                                    var py1 = new Point3d(ri[0], ri[1], ri[2] - wy1 * arrowsize); var py2 = new Point3d(rj[0], rj[1], rj[2] - wy1 * arrowsize);
+                                    _arrows2.Add(new Line(ri, py1)); _arrows2.Add(new Line(py1, py2)); _arrows2.Add(new Line(py2, rj));
                                     if (Value == 1)
                                     {
                                         _epts.Add(py);
@@ -470,7 +472,8 @@ namespace VisualizeModel
                                 if (wz1 != 0)
                                 {
                                     var pz = new Point3d((ri[0] + rj[0]) / 2.0, (ri[1] + rj[1]) / 2.0, (ri[2] + rj[2]) / 2.0 - wz1 * arrowsize);
-                                    _arrows2.Add(new Line(ri, pz)); _arrows2.Add(new Line(rj, pz));
+                                    var pz1 = new Point3d(ri[0], ri[1], ri[2] - wz1 * arrowsize); var pz2 = new Point3d(rj[0], rj[1], rj[2] - wz1 * arrowsize);
+                                    _arrows2.Add(new Line(ri, pz1)); _arrows2.Add(new Line(pz1, pz2)); _arrows2.Add(new Line(pz2, rj));
                                     if (Value == 1)
                                     {
                                         _epts.Add(pz);
@@ -501,6 +504,7 @@ namespace VisualizeModel
                                         _e_load.Add(Math.Round(Math.Abs(wx1), 2).ToString());
                                     }
                                 }
+                                else if (wx2 != 0) { _arrows2.Add(new Line(ri, rx1)); }
                                 if (wx2 != 0)
                                 {
                                     _arrows2.Add(new Line(rx1, rx2));
@@ -511,6 +515,7 @@ namespace VisualizeModel
                                         _e_load.Add(Math.Round(Math.Abs(wx2), 2).ToString());
                                     }
                                 }
+                                else if (wx1 != 0) { _arrows2.Add(new Line(rx1, rx2)); _arrows2.Add(new Line(rx2, rj)); }
                                 if (wy1 != 0)
                                 {
                                     _arrows2.Add(new Line(ri, ry1));
@@ -520,6 +525,7 @@ namespace VisualizeModel
                                         _e_load.Add(Math.Round(Math.Abs(wy1), 2).ToString());
                                     }
                                 }
+                                else if (wy2 != 0) { _arrows2.Add(new Line(ri, ry1)); }
                                 if (wy2 != 0)
                                 {
                                     _arrows2.Add(new Line(ry1, ry2));
@@ -530,6 +536,7 @@ namespace VisualizeModel
                                         _e_load.Add(Math.Round(Math.Abs(wy2), 2).ToString());
                                     }
                                 }
+                                else if (wy1 != 0) { _arrows2.Add(new Line(ry1, ry2)); _arrows2.Add(new Line(ry2, rj)); }
                                 if (wz1 != 0)
                                 {
                                     _arrows2.Add(new Line(ri, rz1));
@@ -539,6 +546,7 @@ namespace VisualizeModel
                                         _e_load.Add(Math.Round(Math.Abs(wz1), 2).ToString());
                                     }
                                 }
+                                else if (wz2 != 0) { _arrows2.Add(new Line(ri, rz1)); }
                                 if (wz2 != 0)
                                 {
                                     _arrows2.Add(new Line(rz1, rz2));
@@ -549,6 +557,7 @@ namespace VisualizeModel
                                         _e_load.Add(Math.Round(Math.Abs(wz2), 2).ToString());
                                     }
                                 }
+                                else if (wz1 != 0) { _arrows2.Add(new Line(rz1, rz2)); _arrows2.Add(new Line(rz2, rj)); }
                             }
                         }
                     }
