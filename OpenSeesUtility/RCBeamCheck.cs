@@ -790,11 +790,11 @@ namespace OpenSeesUtility
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(ki2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kc2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kj2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
-                            if (ki < 1 && kc < 1 && kj < 1 && ki2 < 1 && kc2 < 1 && kj2 < 1)
-                            {
-                                values.Add(new List<string> { "O.K.", "O.K.", "O.K." });
-                            }
-                            else { values.Add(new List<string> { "N.G.", "N.G.", "N.G." }); }
+                            var judgei = "O.K."; var judgec = "O.K."; var judgej = "O.K.";
+                            if (ki > 1 || ki2 > 1) { judgei = "N.G."; }
+                            if (kc > 1 || kc2 > 1) { judgec = "N.G."; }
+                            if (kj > 1 || kj2 > 1) { judgej = "N.G."; }
+                            values.Add(new List<string> { judgei, judgec, judgej });
                             if (ind % 3 == 0)
                             {
                                 // 空白ページを作成。
@@ -895,11 +895,11 @@ namespace OpenSeesUtility
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(ki2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kc2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kj2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
-                            if (ki < 1 && kc < 1 && kj < 1 && ki2 < 1 && kc2 < 1 && kj2 < 1)
-                            {
-                                values.Add(new List<string> { "O.K.", "O.K.", "O.K." });
-                            }
-                            else { values.Add(new List<string> { "N.G.", "N.G.", "N.G." }); }
+                            var judgei = "O.K."; var judgec = "O.K."; var judgej = "O.K.";
+                            if (ki > 1 || ki2 > 1) { judgei = "N.G."; }
+                            if (kc > 1 || kc2 > 1) { judgec = "N.G."; }
+                            if (kj > 1 || kj2 > 1) { judgej = "N.G."; }
+                            values.Add(new List<string> { judgei, judgec, judgej });
                             values.Add(new List<string> { "短期(L+X)検討" });
                             Mit = 0.0; Mib = 0.0; Mct = 0.0; Mcb = 0.0; Mjt = 0.0; Mjb = 0.0;
                             Mit_text = ""; Mib_text = ""; Mct_text = ""; Mcb_text = ""; Mjt_text = ""; Mjb_text = "";
@@ -939,11 +939,11 @@ namespace OpenSeesUtility
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(ki2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kc2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kj2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
-                            if (ki < 1 && kc < 1 && kj < 1 && ki2 < 1 && kc2 < 1 && kj2 < 1)
-                            {
-                                values.Add(new List<string> { "O.K.", "O.K.", "O.K." });
-                            }
-                            else { values.Add(new List<string> { "N.G.", "N.G.", "N.G." }); }
+                            judgei = "O.K."; judgec = "O.K."; judgej = "O.K.";
+                            if (ki > 1 || ki2 > 1) { judgei = "N.G."; }
+                            if (kc > 1 || kc2 > 1) { judgec = "N.G."; }
+                            if (kj > 1 || kj2 > 1) { judgej = "N.G."; }
+                            values.Add(new List<string> { judgei, judgec, judgej });
                             values.Add(new List<string> { "短期(L+Y)検討" });
                             Mit = 0.0; Mib = 0.0; Mct = 0.0; Mcb = 0.0; Mjt = 0.0; Mjb = 0.0;
                             Mit_text = ""; Mib_text = ""; Mct_text = ""; Mcb_text = ""; Mjt_text = ""; Mjb_text = "";
@@ -981,11 +981,11 @@ namespace OpenSeesUtility
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(ki2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kc2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kj2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
-                            if (ki < 1 && kc < 1 && kj < 1 && ki2 < 1 && kc2 < 1 && kj2 < 1)
-                            {
-                                values.Add(new List<string> { "O.K.", "O.K.", "O.K." });
-                            }
-                            else { values.Add(new List<string> { "N.G.", "N.G.", "N.G." }); }
+                            judgei = "O.K."; judgec = "O.K."; judgej = "O.K.";
+                            if (ki > 1 || ki2 > 1) { judgei = "N.G."; }
+                            if (kc > 1 || kc2 > 1) { judgec = "N.G."; }
+                            if (kj > 1 || kj2 > 1) { judgej = "N.G."; }
+                            values.Add(new List<string> { judgei, judgec, judgej });
                             values.Add(new List<string> { "短期(L-X)検討" });
                             Mit = 0.0; Mib = 0.0; Mct = 0.0; Mcb = 0.0; Mjt = 0.0; Mjb = 0.0;
                             Mit_text = ""; Mib_text = ""; Mct_text = ""; Mcb_text = ""; Mjt_text = ""; Mjb_text = "";
@@ -1023,11 +1023,11 @@ namespace OpenSeesUtility
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(ki2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kc2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kj2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
-                            if (ki < 1 && kc < 1 && kj < 1 && ki2 < 1 && kc2 < 1 && kj2 < 1)
-                            {
-                                values.Add(new List<string> { "O.K.", "O.K.", "O.K." });
-                            }
-                            else { values.Add(new List<string> { "N.G.", "N.G.", "N.G." }); }
+                            judgei = "O.K."; judgec = "O.K."; judgej = "O.K.";
+                            if (ki > 1 || ki2 > 1) { judgei = "N.G."; }
+                            if (kc > 1 || kc2 > 1) { judgec = "N.G."; }
+                            if (kj > 1 || kj2 > 1) { judgej = "N.G."; }
+                            values.Add(new List<string> { judgei, judgec, judgej });
                             values.Add(new List<string> { "短期(L-Y)検討" });
                             Mit = 0.0; Mib = 0.0; Mct = 0.0; Mcb = 0.0; Mjt = 0.0; Mjb = 0.0;
                             Mit_text = ""; Mib_text = ""; Mct_text = ""; Mcb_text = ""; Mjt_text = ""; Mjb_text = "";
@@ -1065,11 +1065,11 @@ namespace OpenSeesUtility
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(ki2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kc2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
                             k2_color.Add(new XSolidBrush(RGB((1 - Math.Min(kj2, 1.0)) * 1.9 / 3.0, 1, 0.5)));
-                            if (ki < 1 && kc < 1 && kj < 1 && ki2 < 1 && kc2 < 1 && kj2 < 1)
-                            {
-                                values.Add(new List<string> { "O.K.", "O.K.", "O.K." });
-                            }
-                            else { values.Add(new List<string> { "N.G.", "N.G.", "N.G." }); }
+                            judgei = "O.K."; judgec = "O.K."; judgej = "O.K.";
+                            if (ki > 1 || ki2 > 1) { judgei = "N.G."; }
+                            if (kc > 1 || kc2 > 1) { judgec = "N.G."; }
+                            if (kj > 1 || kj2 > 1) { judgej = "N.G."; }
+                            values.Add(new List<string> { judgei, judgec, judgej });
                             if (ind % 3 == 0)
                             {
                                 // 空白ページを作成。

@@ -493,6 +493,16 @@ namespace OpenSeesUtility.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap rcbeamcheck2 {
+            get {
+                object obj = ResourceManager.GetObject("rcbeamcheck2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap rcbucklingcheck {
             get {
                 object obj = ResourceManager.GetObject("rcbucklingcheck", resourceCulture);
