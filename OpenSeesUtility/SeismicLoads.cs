@@ -118,7 +118,7 @@ namespace SeismicLoads
             {
                 for (int i = 1; i < n; i++) { C0.Add(C0[0]); }
             }
-            var arrow = new List<Line>();
+            var arrow = new List<Line>(); var underground = 0;
             if (r[0][0].Value!=-9999 && f_v[0][0].Value!=-9999 && layer[0][0].Value != -9999)
             {
                 var index = new List<List<int>>();//各層に所属する節点番号リスト
@@ -133,6 +133,7 @@ namespace SeismicLoads
                             var z = r[j][2].Value;
                             if (zmin <= z && z <= zmax) { ind.Add(j); }
                         }
+                        if (zmin < 0) { underground = 1; }
                     }
                     index.Add(ind);
                 }
@@ -157,7 +158,7 @@ namespace SeismicLoads
                             Wi[i] += -f_v[j][3].Value;
                         }
                     }
-                    W += Wi[i];
+                    if (underground == 0 || i != 0) { W += Wi[i]; }
                 }
                 DA.SetDataList("Wi", Wi);
                 var sumWi = new List<double>();//各層の負担重量の計算
@@ -174,10 +175,17 @@ namespace SeismicLoads
                     {
                         sumWi[i] += Wi[j];
                     }
-                    ai.Add(sumWi[i] / W);
-                    Ai.Add(1.0 + (1.0 / Math.Sqrt(ai[i]) - ai[i]) * 2 * T / (1.0 + 3 * T));
-                    Ci.Add(Z * Rt * Ai[i] * C0[i]);
-                    Qi.Add(sumWi[i] * Ci[i]);
+                    if (underground == 0 || i != 0)
+                    {
+                        ai.Add(sumWi[i] / W);
+                        Ai.Add(1.0 + (1.0 / Math.Sqrt(ai[i]) - ai[i]) * 2 * T / (1.0 + 3 * T));
+                        Ci.Add(Z * Rt * Ai[i] * C0[i]);
+                        Qi.Add(sumWi[i] * Ci[i]);
+                    }
+                    else
+                    {
+                        ai.Add(1.0); Ai.Add(1.0); Ci.Add(Z * 0.10); Qi.Add(sumWi[i] * Ci[i]);
+                    }
                 }
                 for (int i = 0; i < n; i++)
                 {

@@ -456,6 +456,7 @@ namespace ElasticAnalysis
                         xave += r[(int)rigid[i][j].Value][0].Value; yave += r[(int)rigid[i][j].Value][1].Value; zave += r[(int)rigid[i][j].Value][2].Value;
                     }
                     xave /= (double)rigid[i].Count; yave /= (double)rigid[i].Count; zave /= (double)rigid[i].Count;
+                    xave += 0.12345; yave += 0.12345;//avoid node wrapping
                     int ii = theDomain.GetNumNodes();
                     var node = new OpenSees.Components.NodeWrapper(ii + 1, 6, xave, yave, zave);
                     theDomain.AddNode(node);
