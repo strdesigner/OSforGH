@@ -36,10 +36,12 @@ namespace ReadBeam3
             pManager.AddNumberParameter("Lbz", "Lbz", "[float,float,...](Datalist)", GH_ParamAccess.list);
             pManager.AddIntegerParameter("joint", "joint", "[int,int,...](Datalist)", GH_ParamAccess.list);
             pManager.AddIntegerParameter("bar", "bar", "[int,int,...](Datalist)", GH_ParamAccess.list);
+            pManager.AddCurveParameter("spring", "spring", "Line of spring elements", GH_ParamAccess.list);
+            pManager.AddNumberParameter("E", "E", "[[kx+,kx-,ky+,ky-,kz+,kz-,mx,my,mz],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddTextParameter("layer(beam)", "layer(beam)", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
             pManager.AddTextParameter("layer(spring)", "layer(spring)", "[layername1,layername2,...](Datalist)", GH_ParamAccess.list);
             pManager.AddNumberParameter("rigid & pin value", "rigid & pin value", "[para_rigid,para_pin](Datalist) stiffness of rigid and pin joint", GH_ParamAccess.list, new List<double> { 1.0e+12, 0.001 });
-            pManager[0].Optional = true; pManager[1].Optional = true; pManager[2].Optional = true; pManager[3].Optional = true; pManager[4].Optional = true; pManager[5].Optional = true; pManager[6].Optional = true; pManager[7].Optional = true; pManager[8].Optional = true; pManager[9].Optional = true;
+            pManager[0].Optional = true; pManager[1].Optional = true; pManager[2].Optional = true; pManager[3].Optional = true; pManager[4].Optional = true; pManager[5].Optional = true; pManager[6].Optional = true; pManager[7].Optional = true; pManager[8].Optional = true; pManager[9].Optional = true; pManager[10].Optional = true; pManager[11].Optional = true;
         }
 
         /// <summary>
@@ -80,6 +82,8 @@ namespace ReadBeam3
             List<int> mat = new List<int>(); List<int> sec = new List<int>(); List<double> angle = new List<double>();
             List<int> gh_mat = new List<int>(); List<int> gh_sec = new List<int>(); List<double> gh_angle = new List<double>(); List<double> gh_lby = new List<double>(); List<double> gh_lbz = new List<double>(); List<int> gh_bar = new List<int>(); List<int> gh_joint = new List<int>();
             DA.GetDataList("mat", gh_mat); DA.GetDataList("sec", gh_sec); DA.GetDataList("angle", gh_angle); DA.GetDataList("Lby", gh_lby); DA.GetDataList("Lbz", gh_lbz); DA.GetDataList("bar", gh_bar); DA.GetDataList("joint", gh_joint);
+            List<Curve> slines = new List<Curve>(); List<Curve> ghslines = new List<Curve>(); DA.GetDataList("spring", ghslines);
+            DA.GetDataTree("E", out GH_Structure<GH_Number> _gh_E); var gh_E = _gh_E.Branches;
             List<double> lby = new List<double>(); List<double> lbz = new List<double>(); List<double> bar = new List<double>(); GH_Structure<GH_Number> joint = new GH_Structure<GH_Number>(); GH_Structure<GH_Number> e_load = new GH_Structure<GH_Number>(); var names = new GH_Structure<GH_String>();
             List<Line> lines_new = new List<Line>(); List<int> mat_new = new List<int>(); List<int> sec_new = new List<int>(); List<double> angle_new = new List<double>();
             List<double> lby_new = new List<double>(); List<double> lbz_new = new List<double>(); List<double> bar_new = new List<double>(); GH_Structure<GH_Number> joint_new = new GH_Structure<GH_Number>(); GH_Structure<GH_Number> e_load_new = new GH_Structure<GH_Number>(); List<int> index_new = new List<int>(); var joint_No = new List<int>(); var e_load_No = new List<int>();
@@ -237,6 +241,20 @@ namespace ReadBeam3
                     index2.Add(e2);
                     e2 += 1;
                 }
+            }
+            for (int i = 0; i < ghslines.Count; i++)
+            {
+                lines2.Add(ghslines[i]);
+                List<GH_Number> Elist = new List<GH_Number>();
+                for (int j = 0; j < gh_E[e2].Count; j++)
+                {
+                    Elist.Add(new GH_Number(gh_E[e2][j].Value));
+                }
+                E.AppendRange(Elist, new GH_Path(e2));
+                var namelist = new List<GH_String>(); namelist.Add(new GH_String("grasshopper"));
+                names2.AppendRange(namelist, new GH_Path(e2));
+                index2.Add(e2);
+                e2 += 1;
             }
             var xyz = new List<Point3d>();
             for (e = 0; e < lines.Count; e++)//節点生成
