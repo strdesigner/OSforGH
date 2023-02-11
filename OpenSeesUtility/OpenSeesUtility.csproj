@@ -91,6 +91,7 @@
     <Compile Include="AssembleTreeText.cs" />
     <Compile Include="kabeQ.cs" />
     <Compile Include="merikomicheck.cs" />
+    <Compile Include="SurfAutoCreation2.cs" />
     <Compile Include="RCBeamCheck2.cs" />
     <Compile Include="RcBucklingCheck.cs" />
     <Compile Include="VisualizeResult2.cs" />
@@ -405,6 +406,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\rcbeamcheck2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\surfautocreation2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

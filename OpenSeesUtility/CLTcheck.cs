@@ -111,6 +111,7 @@ namespace CLTCheck
             pManager.AddNumberParameter("kentei_hi", "kentei", "[[for Ni,for Qyi,for Qzi,for Myi,for Mzi,for Nj,for Qyj,for Qzj,for Myj,for Mzj,for Nc,for Qyc,for Qzc,for Myc,for Mzc],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("burnB", "burnB", "[double,double,...](Datalist)[m]", GH_ParamAccess.list);///
             pManager.AddNumberParameter("burnD", "burnD", "[double,double,...](Datalist)[m]", GH_ParamAccess.list);///
+            pManager.AddNumberParameter("kmax", "kmax", "[[ele. No.,Long-term max],[ele. No.,Short-term max]](DataTree)", GH_ParamAccess.tree);///
         }
         /// <summary>
         /// This is the method that actually does the work.
@@ -517,7 +518,7 @@ namespace CLTCheck
                                 }
                             }
                         }
-                        if (m2 / 18 == 3)
+                        if (m2 / 18 == 3 || m2 / 18 == 5)
                         {
                             for (int ind = 0; ind < index.Count; ind++)
                             {
@@ -547,6 +548,27 @@ namespace CLTCheck
                                 var MYyj = Math.Abs(sec_f[e][18 * 2 + 10].Value); var MYzj = Math.Abs(sec_f[e][18 * 2 + 11].Value);
                                 var NYc = -sec_f[e][18 * 2 + 12].Value; var QYyc = Math.Abs(sec_f[e][18 * 2 + 13].Value); var QYzc = Math.Abs(sec_f[e][18 * 2 + 14].Value);
                                 var MYyc = Math.Abs(sec_f[e][18 * 2 + 16].Value); var MYzc = Math.Abs(sec_f[e][18 * 2 + 17].Value);
+                                var NXi2 = -NXi; var QXyi2 = -QXyi; var QXzi2 = -QXzi; var MXyi2 = -MXyi; var MXzi2 = -MXzi;
+                                var NXj2 = -NXj; var QXyj2 = -QXyj; var QXzj2 = -QXzj; var MXyj2 = -MXyj; var MXzj2 = -MXzj;
+                                var NXc2 = -NXc; var QXyc2 = -QXyc; var QXzc2 = -QXzc; var MXyc2 = -MXyc; var MXzc2 = -MXzc;
+                                var NYi2 = -NYi; var QYyi2 = -QYyi; var QYzi2 = -QYzi; var MYyi2 = -MYyi; var MYzi2 = -MYzi;
+                                var NYj2 = -NYj; var QYyj2 = -QYyj; var QYzj2 = -QYzj; var MYyj2 = -MYyj; var MYzj2 = -MYzj;
+                                var NYc2 = -NYc; var QYyc2 = -QYyc; var QYzc2 = -QYzc; var MYyc2 = -MYyc; var MYzc2 = -MYzc;
+                                if (m2 / 18 == 5)
+                                {
+                                    NXi2 = -sec_f[e][18 + 0 + 18 * 2].Value; QXyi2 = Math.Abs(sec_f[e][18 + 1 + 18 * 2].Value); QXzi2 = Math.Abs(sec_f[e][18 + 2 + 18 * 2].Value);
+                                    MXyi2 = Math.Abs(sec_f[e][18 + 4 + 18 * 2].Value); MXzi2 = Math.Abs(sec_f[e][18 + 5 + 18 * 2].Value);
+                                    NXj2 = sec_f[e][18 + 6 + 18 * 2].Value; QXyj2 = Math.Abs(sec_f[e][18 + 7 + 18 * 2].Value); QXzj2 = Math.Abs(sec_f[e][18 + 8 + 18 * 2].Value);
+                                    MXyj2 = Math.Abs(sec_f[e][18 + 10 + 18 * 2].Value); MXzj2 = Math.Abs(sec_f[e][18 + 11 + 18 * 2].Value);
+                                    NXc2 = -sec_f[e][18 + 12 + 18 * 2].Value; QXyc2 = Math.Abs(sec_f[e][18 + 13 + 18 * 2].Value); QXzc2 = Math.Abs(sec_f[e][18 + 14 + 18 * 2].Value);
+                                    MXyc2 = Math.Abs(sec_f[e][18 + 16 + 18 * 2].Value); MXzc2 = Math.Abs(sec_f[e][18 + 17 + 18 * 2].Value);
+                                    NYi2 = -sec_f[e][18 * 2 + 0 + 18 * 2].Value; QYyi2 = Math.Abs(sec_f[e][18 * 2 + 1 + 18 * 2].Value); QYzi2 = Math.Abs(sec_f[e][18 * 2 + 2 + 18 * 2].Value);
+                                    MYyi2 = Math.Abs(sec_f[e][18 * 2 + 4 + 18 * 2].Value); MYzi2 = Math.Abs(sec_f[e][18 * 2 + 5 + 18 * 2].Value);
+                                    NYj2 = sec_f[e][18 * 2 + 6 + 18 * 2].Value; QYyj2 = Math.Abs(sec_f[e][18 * 2 + 7 + 18 * 2].Value); QYzj2 = Math.Abs(sec_f[e][18 * 2 + 8 + 18 * 2].Value);
+                                    MYyj2 = Math.Abs(sec_f[e][18 * 2 + 10 + 18 * 2].Value); MYzj2 = Math.Abs(sec_f[e][18 * 2 + 11 + 18 * 2].Value);
+                                    NYc2 = -sec_f[e][18 * 2 + 12 + 18 * 2].Value; QYyc2 = Math.Abs(sec_f[e][18 * 2 + 13 + 18 * 2].Value); QYzc2 = Math.Abs(sec_f[e][18 * 2 + 14 + 18 * 2].Value);
+                                    MYyc2 = Math.Abs(sec_f[e][18 * 2 + 16 + 18 * 2].Value); MYzc2 = Math.Abs(sec_f[e][18 * 2 + 17 + 18 * 2].Value);
+                                }
 
                                 if (Ni + NXi < 0) { k1list.Add(new GH_Number(Math.Abs(Ni + NXi) / a / f_k2[ind] * unit)); }
                                 else { k1list.Add(new GH_Number(Math.Abs(Ni + NXi) / a / ft2[mat] * unit)); }
@@ -580,36 +602,50 @@ namespace CLTCheck
                                 for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][18 * 2 + i].Value)); }//+Y
                                 kentei.AppendRange(k2list, new GH_Path(new int[] { 2, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 2, ind }));
 
-                                if (Ni - NXi < 0) { k3list.Add(new GH_Number(Math.Abs(Ni - NXi) / a / f_k2[ind] * unit)); }
-                                else { k3list.Add(new GH_Number(Math.Abs(Ni - NXi) / a / ft2[mat] * unit)); }
-                                k3list.Add(new GH_Number((Qyi - QXyi) / a / fso2[mat] * unit)); k3list.Add(new GH_Number((Qzi - QXzi) / a / fs2[mat] * unit));
-                                k3list.Add(new GH_Number((Myi - MXyi) / zy / fb2[mat] * unit)); k3list.Add(new GH_Number((Mzi - MXzi) / zz / fbo2[mat] * unit));
-                                if (Nj - NXj < 0) { k3list.Add(new GH_Number(Math.Abs(Nj - NXj) / a / f_k2[ind] * unit)); }
-                                else { k3list.Add(new GH_Number(Math.Abs(Nj - NXj) / a / ft2[mat] * unit)); }
-                                k3list.Add(new GH_Number((Qyj - QXyj) / a / fso2[mat] * unit)); k3list.Add(new GH_Number((Qzj - QXzj) / a / fs2[mat] * unit));
-                                k3list.Add(new GH_Number((Myj - MXyj) / zy / fb2[mat] * unit)); k3list.Add(new GH_Number((Mzj - MXzj) / zz / fbo2[mat] * unit));
-                                if (Nc - NXc < 0) { k3list.Add(new GH_Number(Math.Abs(Nc + NXc) / a / f_k2[ind] * unit)); }
-                                else { k3list.Add(new GH_Number(Math.Abs(Nc - NXc) / a / ft2[mat] * unit)); }
-                                k3list.Add(new GH_Number((Qyc - QXyc) / a / fso2[mat] * unit)); k3list.Add(new GH_Number((Qzc - QXzc) / a / fs2[mat] * unit));
-                                k3list.Add(new GH_Number((Myc - MXyc) / zy / fb2[mat] * unit)); k3list.Add(new GH_Number((Mzc - MXzc) / zz / fbo2[mat] * unit));
+                                if (Ni + NXi2 < 0) { k3list.Add(new GH_Number(Math.Abs(Ni + NXi2) / a / f_k2[ind] * unit)); }
+                                else { k3list.Add(new GH_Number(Math.Abs(Ni + NXi2) / a / ft2[mat] * unit)); }
+                                k3list.Add(new GH_Number((Qyi + QXyi2) / a / fso2[mat] * unit)); k3list.Add(new GH_Number((Qzi + QXzi2) / a / fs2[mat] * unit));
+                                k3list.Add(new GH_Number((Myi + MXyi2) / zy / fb2[mat] * unit)); k3list.Add(new GH_Number((Mzi + MXzi2) / zz / fbo2[mat] * unit));
+                                if (Nj + NXj2 < 0) { k3list.Add(new GH_Number(Math.Abs(Nj + NXj2) / a / f_k2[ind] * unit)); }
+                                else { k3list.Add(new GH_Number(Math.Abs(Nj + NXj2) / a / ft2[mat] * unit)); }
+                                k3list.Add(new GH_Number((Qyj + QXyj2) / a / fso2[mat] * unit)); k3list.Add(new GH_Number((Qzj + QXzj2) / a / fs2[mat] * unit));
+                                k3list.Add(new GH_Number((Myj + MXyj2) / zy / fb2[mat] * unit)); k3list.Add(new GH_Number((Mzj + MXzj2) / zz / fbo2[mat] * unit));
+                                if (Nc + NXc2 < 0) { k3list.Add(new GH_Number(Math.Abs(Nc + NXc) / a / f_k2[ind] * unit)); }
+                                else { k3list.Add(new GH_Number(Math.Abs(Nc + NXc2) / a / ft2[mat] * unit)); }
+                                k3list.Add(new GH_Number((Qyc + QXyc2) / a / fso2[mat] * unit)); k3list.Add(new GH_Number((Qzc + QXzc2) / a / fs2[mat] * unit));
+                                k3list.Add(new GH_Number((Myc + MXyc2) / zy / fb2[mat] * unit)); k3list.Add(new GH_Number((Mzc + MXzc2) / zz / fbo2[mat] * unit));
                                 flist = new List<GH_Number>();
-                                for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(-sec_f[e][18 + i].Value)); }//-X
+                                if (m2 / 18 == 3)//-X
+                                {
+                                    for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(-sec_f[e][18 + i].Value)); }
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][18 * 3 + i].Value)); }
+                                }
                                 kentei.AppendRange(k3list, new GH_Path(new int[] { 3, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 3, ind }));
 
-                                if (Ni - NYi < 0) { k4list.Add(new GH_Number(Math.Abs(Ni - NYi) / a / f_k2[ind] * unit)); }
-                                else { k4list.Add(new GH_Number(Math.Abs(Ni - NYi) / a / ft2[mat] * unit)); }
-                                k4list.Add(new GH_Number((Qyi - QYyi) / a / fso2[mat] * unit)); k4list.Add(new GH_Number((Qzi - QYzi) / a / fs2[mat] * unit));
-                                k4list.Add(new GH_Number((Myi - MYyi) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzi - MYzi) / zz / fbo2[mat] * unit));
-                                if (Nj - NYj < 0) { k4list.Add(new GH_Number(Math.Abs(Nj - NYj) / a / f_k2[ind] * unit)); }
-                                else { k4list.Add(new GH_Number(Math.Abs(Nj - NYj) / a / ft2[mat] * unit)); }
-                                k4list.Add(new GH_Number((Qyj - QYyj) / a / fso2[mat] * unit)); k4list.Add(new GH_Number((Qzj - QYzj) / a / fs2[mat] * unit));
-                                k4list.Add(new GH_Number((Myj - MYyj) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzj - MYzj) / zz / fbo2[mat] * unit));
-                                if (Nc - NYc < 0) { k4list.Add(new GH_Number(Math.Abs(Nc + NYc) / a / f_k2[ind] * unit)); }
-                                else { k4list.Add(new GH_Number(Math.Abs(Nc - NYc) / a / ft2[mat] * unit)); }
-                                k4list.Add(new GH_Number((Qyc - QYyc) / a / fso2[mat] * unit)); k4list.Add(new GH_Number((Qzc - QYzc) / a / fs2[mat] * unit));
-                                k4list.Add(new GH_Number((Myc - MYyc) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzc - MYzc) / zz / fbo2[mat] * unit));
+                                if (Ni + NYi2 < 0) { k4list.Add(new GH_Number(Math.Abs(Ni + NYi2) / a / f_k2[ind] * unit)); }
+                                else { k4list.Add(new GH_Number(Math.Abs(Ni + NYi2) / a / ft2[mat] * unit)); }
+                                k4list.Add(new GH_Number((Qyi + QYyi2) / a / fso2[mat] * unit)); k4list.Add(new GH_Number((Qzi + QYzi2) / a / fs2[mat] * unit));
+                                k4list.Add(new GH_Number((Myi + MYyi2) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzi + MYzi2) / zz / fbo2[mat] * unit));
+                                if (Nj + NYj2 < 0) { k4list.Add(new GH_Number(Math.Abs(Nj + NYj2) / a / f_k2[ind] * unit)); }
+                                else { k4list.Add(new GH_Number(Math.Abs(Nj + NYj2) / a / ft2[mat] * unit)); }
+                                k4list.Add(new GH_Number((Qyj + QYyj2) / a / fso2[mat] * unit)); k4list.Add(new GH_Number((Qzj + QYzj2) / a / fs2[mat] * unit));
+                                k4list.Add(new GH_Number((Myj + MYyj2) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzj + MYzj2) / zz / fbo2[mat] * unit));
+                                if (Nc + NYc2 < 0) { k4list.Add(new GH_Number(Math.Abs(Nc + NYc) / a / f_k2[ind] * unit)); }
+                                else { k4list.Add(new GH_Number(Math.Abs(Nc + NYc2) / a / ft2[mat] * unit)); }
+                                k4list.Add(new GH_Number((Qyc + QYyc2) / a / fso2[mat] * unit)); k4list.Add(new GH_Number((Qzc + QYzc2) / a / fs2[mat] * unit));
+                                k4list.Add(new GH_Number((Myc + MYyc2) / zy / fb2[mat] * unit)); k4list.Add(new GH_Number((Mzc + MYzc2) / zz / fbo2[mat] * unit));
                                 flist = new List<GH_Number>();
-                                for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(-sec_f[e][18 * 2 + i].Value)); }//-Y
+                                if (m2 / 18 == 3)//-Y
+                                {
+                                    for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(-sec_f[e][18 * 2 + i].Value)); }
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][18 * 4 + i].Value)); }
+                                }
                                 kentei.AppendRange(k4list, new GH_Path(new int[] { 4, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 4, ind }));
 
                                 if (on_off_12 == 1)
@@ -734,6 +770,36 @@ namespace CLTCheck
                         f_sotree.AppendRange(f_solist, new GH_Path(0)); f_sotree.AppendRange(f_so2list, new GH_Path(1));
                         DA.SetDataTree(1, ij_new); DA.SetDataTree(13, sec_f_new); DA.SetDataTree(14, kentei); DA.SetDataList("lambda", Lambda);
                         DA.SetDataTree(6, f_ktree); DA.SetDataTree(7, f_ttree); DA.SetDataTree(8, f_btree); DA.SetDataTree(9, f_stree); DA.SetDataTree(10, f_botree); DA.SetDataTree(11, f_sotree); DA.SetDataList("index", index);
+                        var kk = kentei.Branches;
+                        var k1max = 0.0; var k2max = 0.0; var ij1 = -1; var ij2 = -1;
+                        for (int i = 0; i < kk.Count / index.Count; i++)
+                        {
+                            for (int j = 0; j < index.Count; j++)
+                            {
+                                int ii = index.Count * i + j;
+                                var k1 = Math.Max(Math.Max(kk[ii][3].Value, kk[ii][4].Value) + kk[ii][0].Value, Math.Max(Math.Max(kk[ii][1].Value, kk[ii][2].Value), kk[ii][0].Value));
+                                var k2 = Math.Max(Math.Max(kk[ii][5 + 3].Value, kk[ii][5 + 4].Value) + kk[ii][5 + 0].Value, Math.Max(Math.Max(kk[ii][5 + 1].Value, kk[ii][5 + 2].Value), kk[ii][5 + 0].Value));
+                                var k3 = Math.Max(Math.Max(kk[ii][10 + 3].Value, kk[ii][10 + 4].Value) + kk[ii][10 + 0].Value, Math.Max(Math.Max(kk[ii][10 + 1].Value, kk[ii][10 + 2].Value), kk[ii][10 + 0].Value));
+                                var k = Math.Max(Math.Max(k1, k2), k3);
+                                if (i == 0)
+                                {
+                                    k1max = Math.Max(k1max, k);
+                                    if (k1max == k) { ij1 = j; }
+                                }
+                                else
+                                {
+                                    k2max = Math.Max(k2max, k);
+                                    if (k2max == k) { ij2 = j; }
+                                }
+                            }
+                        }
+                        var llist = new List<GH_Number>(); var slist = new List<GH_Number>();
+                        llist.Add(new GH_Number(ij1)); llist.Add(new GH_Number(k1max));
+                        slist.Add(new GH_Number(ij2)); slist.Add(new GH_Number(k2max));
+                        var kmax = new GH_Structure<GH_Number>();
+                        kmax.AppendRange(llist, new GH_Path(0));
+                        if (ij2 != -1) { kmax.AppendRange(slist, new GH_Path(1)); }
+                        DA.SetDataTree(17, kmax);
                     }
                 }
             }
