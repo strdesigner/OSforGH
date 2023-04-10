@@ -334,7 +334,7 @@ namespace TimberCheck
                             var lam = Math.Max(Lby[e] / iby, Lbz[e] / ibz);
                             Lambda.Add(lam); f_c.Add(fc[mat]); f_t.Add(ft[mat]); f_b.Add(fb[mat]); f_s.Add(fs[mat]); f_c2.Add(fc2[mat]); f_t2.Add(ft2[mat]); f_b2.Add(fb2[mat]); f_s2.Add(fs2[mat]);
                             if (lam <= 30.0) { f_k.Add(fc[mat]); f_k2.Add(fc2[mat]); }
-                            else if (lam <= 100.0) { f_k.Add(fc[mat] * 1.1 / 3.0 * (1.3 - 0.01 * lam)); f_k2.Add(fc2[mat] * 1.1 / 3.0 * (1.3 - 0.01 * lam)); }
+                            else if (lam <= 100.0) { f_k.Add(fc[mat] * (1.3 - 0.01 * lam)); f_k2.Add(fc2[mat] * (1.3 - 0.01 * lam)); }
                             else { f_k.Add(fc[mat] * 3000 / Math.Pow(lam, 2)); f_k2.Add(fc2[mat] * 3000 / Math.Pow(lam, 2)); }
                             ///f_k.Add(fc[mat] / Math.Max(1.0, 1.0 / (3000 / Math.Pow(lam, 2)))); f_k2.Add(fc2[mat] / Math.Max(1.0, 1.0 / (3000 / Math.Pow(lam, 2)))); 2023.04.09 modified
                             var zy = Zy[sec]; var zz = Zz[sec];
