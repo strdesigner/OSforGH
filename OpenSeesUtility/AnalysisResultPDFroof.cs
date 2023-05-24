@@ -286,64 +286,80 @@ namespace OpenSeesUtility
                         var spring_f_new = new List<List<double>>();//その面の断面力(ばね)
                         var line = doc.Objects.FindByUserString(floorname, i.ToString(), true);
                         if (line.Length == 0) { break; }
+                        var nod_No = new List<int>(); var nod_No_all = new List<int>(); var nod_P = new List<int>();
                         for (int j = 0; j < line.Length; j++)
                         {
-                            var obj = line[j]; Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() };
-                            int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
-                            if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
-                            for (int jj = 0; jj < nl; jj++)
+                            var obj = line[j];
+                            if (obj.GetType().ToString() != "Rhino.DocObjects.PointObject")
                             {
-                                lines.Add(l[jj]);
-                                var p0 = l[jj].PointAtStart; var p1 = l[jj].PointAtEnd; var lgh = l[jj].GetLength();
-                                for (int e = 0; e < ij.Count; e++)
+
+                                Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() };
+                                int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
+                                if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
+                                for (int jj = 0; jj < nl; jj++)
                                 {
-                                    var list = new List<double>(); var flist = new List<double>();
-                                    int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
-                                    var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
-                                    var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
-                                    if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                    lines.Add(l[jj]);
+                                    var p0 = l[jj].PointAtStart; var p1 = l[jj].PointAtEnd; var lgh = l[jj].GetLength();
+                                    for (int e = 0; e < ij.Count; e++)
                                     {
-                                        list.Add(e);
-                                        for (int a = 0; a < ij[e].Count; a++) { list.Add(ij[e][a].Value); }
-                                        if (index.Contains(e) == true && sec_f[0][0].Value != -9999)
-                                        {
-                                            flist.Add(e);
-                                            for (int ii = 0; ii < sec_f[0].Count; ii++)
-                                            {
-                                                flist.Add(sec_f[e][ii].Value);
-                                            }
-                                            sec_f_new.Add(flist);
-                                        }
-                                        ij_new.Add(list);
-                                    }
-                                }
-                                if (spring[0][0].Value != -9999)
-                                {
-                                    for (int ind = 0; ind < index_spring.Count; ind++)
-                                    {
-                                        var slist = new List<double>(); var sflist = new List<double>();
-                                        int e = (int)index_spring[ind];
-                                        int ni = (int)spring[e][0].Value; int nj = (int)spring[e][1].Value;
+                                        var list = new List<double>(); var flist = new List<double>();
+                                        int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
                                         var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
                                         var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
                                         if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
                                         {
-                                            sflist.Add(e); slist.Add(e);
-                                            for (int ii = 0; ii < spring_f[0].Count; ii++)
+                                            list.Add(e);
+                                            for (int a = 0; a < ij[e].Count; a++) { list.Add(ij[e][a].Value); }
+                                            if (index.Contains(e) == true && sec_f[0][0].Value != -9999)
                                             {
-                                                sflist.Add(spring_f[e][ii].Value);
+                                                flist.Add(e);
+                                                for (int ii = 0; ii < sec_f[0].Count; ii++)
+                                                {
+                                                    flist.Add(sec_f[e][ii].Value);
+                                                }
+                                                sec_f_new.Add(flist);
                                             }
-                                            for (int ii = 0; ii < spring[0].Count; ii++)
+                                            ij_new.Add(list);
+                                        }
+                                    }
+                                    if (spring[0][0].Value != -9999)
+                                    {
+                                        for (int ind = 0; ind < index_spring.Count; ind++)
+                                        {
+                                            var slist = new List<double>(); var sflist = new List<double>();
+                                            int e = (int)index_spring[ind];
+                                            int ni = (int)spring[e][0].Value; int nj = (int)spring[e][1].Value;
+                                            var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                            var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                            if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
                                             {
-                                                slist.Add(spring[e][ii].Value);
+                                                sflist.Add(e); slist.Add(e);
+                                                for (int ii = 0; ii < spring_f[0].Count; ii++)
+                                                {
+                                                    sflist.Add(spring_f[e][ii].Value);
+                                                }
+                                                for (int ii = 0; ii < spring[0].Count; ii++)
+                                                {
+                                                    slist.Add(spring[e][ii].Value);
+                                                }
+                                                spring_f_new.Add(sflist); spring_new.Add(slist);
                                             }
-                                            spring_f_new.Add(sflist); spring_new.Add(slist);
                                         }
                                     }
                                 }
                             }
+                            else
+                            {
+                                var p = (new ObjRef(obj)).Point().Location;
+                                for (int k = 0; k < R.Count; k++)
+                                {
+                                    if (Math.Abs(p[0] - R[k][0].Value) < 5e-3 && Math.Abs(p[1] - R[k][1].Value) < 5e-3 && Math.Abs(p[2] - R[k][2].Value) < 5e-3)
+                                    {
+                                        nod_No_all.Add(k); nod_No.Add(k); nod_P.Add(k);
+                                    }
+                                }
+                            }
                         }
-                        var nod_No = new List<int>(); var nod_No_all = new List<int>();
                         for (int k = 0; k < figname.Count; k++)
                         {
                             PdfPage page = new PdfPage(); page.Size = PageSize.A4;// 空白ページを作成。width x height = 594 x 842
@@ -455,6 +471,23 @@ namespace OpenSeesUtility
                                     }
                                 }
                             }
+                            for (int j = 0; j < nod_P.Count; j++)
+                            {
+                                int ni = nod_P[j];
+                                xmin = Math.Min(xmin, R[ni][0].Value); xmax = Math.Max(xmax, R[ni][0].Value); ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value);
+                            }
+                            if (figname[k] == "節点番号伏図")
+                            {
+                                for (int j = 0; j < nod_P.Count; j++)
+                                {
+                                    var position = XStringFormats.BaseLineLeft;
+                                    var ni = nod_P[j];
+                                    var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
+                                    gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//節点の描画
+                                    gfx.DrawString(ni.ToString(), font, XBrushes.Red, r1[0], r1[1], position);//節点の節点番号描画
+                                    RhinoApp.WriteLine(R[ni][0].Value.ToString() + " " + xmin.ToString());
+                                }
+                            }
                             if (figname[k] == "集中荷重伏図[kN]")
                             {
                                 for (int j = 0; j < p_load.Count; j++)
@@ -501,7 +534,7 @@ namespace OpenSeesUtility
                                 for (int j = 0; j < f_load.Count; j++)
                                 {
                                     var fz = Math.Round(f_load[j][4].Value,3); int ni = (int)f_load[j][0].Value; int nj = (int)f_load[j][1].Value; int nk = (int)f_load[j][2].Value; int nl = (int)f_load[j][3].Value;
-                                    if (nod_No_all.Contains(ni) == true && nod_No_all.Contains(nj) == true && nod_No_all.Contains(nk) == true && (nod_No_all.Contains(nk) == true || nk == -1))
+                                    if (nod_No_all.Contains(ni) == true && nod_No_all.Contains(nj) == true && nod_No_all.Contains(nk) == true && (nod_No_all.Contains(nl) == true || nl == -1))
                                     {
                                         var rc = new List<double> { (R[ni][0].Value + R[nj][0].Value + R[nk][0].Value) / 3.0, (R[ni][1].Value + R[nj][1].Value + R[nk][1].Value) / 3.0 };
                                         
@@ -587,58 +620,75 @@ namespace OpenSeesUtility
                                 var spring_new = new List<List<double>>();//その面の要素節点関係(ばね)
                                 var spring_f_new = new List<List<double>>();//その面の断面力(ばね)
                                 var line = doc.Objects.FindByUserString(floorname, i.ToString(), true); if (line.Length == 0) { break; }
+                                var nod_No = new List<int>(); var nod_P = new List<int>();
                                 for (int j = 0; j < line.Length; j++)
                                 {
-                                    var obj = line[j]; Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() };
-                                    int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
-                                    if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
-                                    for (int jj = 0; jj < nl; jj++)
+                                    var obj = line[j];
+                                    if (obj.GetType().ToString() != "Rhino.DocObjects.PointObject")
                                     {
-                                        lines.Add(l[jj]);
-                                        var p0 = l[jj].PointAtStart; var p1 = l[jj].PointAtEnd; var lgh = l[jj].GetLength();
-                                        for (int e = 0; e < ij.Count; e++)
+
+                                        Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() };
+                                        int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
+                                        if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
+                                        for (int jj = 0; jj < nl; jj++)
                                         {
-                                            var list = new List<double>(); var flist = new List<double>();
-                                            int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
-                                            var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
-                                            var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
-                                            if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                            lines.Add(l[jj]);
+                                            var p0 = l[jj].PointAtStart; var p1 = l[jj].PointAtEnd; var lgh = l[jj].GetLength();
+                                            for (int e = 0; e < ij.Count; e++)
                                             {
-                                                list.Add(e);
-                                                for (int a = 0; a < ij[e].Count; a++) { list.Add(ij[e][a].Value); }
-                                                if (index.Contains(e) == true && sec_f[0][0].Value != -9999)
-                                                {
-                                                    flist.Add(e);
-                                                    for (int ii = 0; ii < sec_f[0].Count; ii++)
-                                                    {
-                                                        flist.Add(sec_f[e][ii].Value);
-                                                    }
-                                                    ij_new.Add(list); sec_f_new.Add(flist);
-                                                }
-                                            }
-                                        }
-                                        if (spring[0][0].Value != -9999)
-                                        {
-                                            for (int ind = 0; ind < index_spring.Count; ind++)
-                                            {
-                                                var slist = new List<double>(); var sflist = new List<double>();
-                                                int e = (int)index_spring[ind];
-                                                int ni = (int)spring[e][0].Value; int nj = (int)spring[e][1].Value;
+                                                var list = new List<double>(); var flist = new List<double>();
+                                                int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
                                                 var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
                                                 var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
                                                 if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
                                                 {
-                                                    sflist.Add(e); slist.Add(e);
-                                                    for (int ii = 0; ii < spring_f[0].Count; ii++)
+                                                    list.Add(e);
+                                                    for (int a = 0; a < ij[e].Count; a++) { list.Add(ij[e][a].Value); }
+                                                    if (index.Contains(e) == true && sec_f[0][0].Value != -9999)
                                                     {
-                                                        sflist.Add(spring_f[e][ii].Value);
+                                                        flist.Add(e);
+                                                        for (int ii = 0; ii < sec_f[0].Count; ii++)
+                                                        {
+                                                            flist.Add(sec_f[e][ii].Value);
+                                                        }
+                                                        ij_new.Add(list); sec_f_new.Add(flist);
                                                     }
-                                                    for (int ii = 0; ii < spring[0].Count; ii++)
-                                                    {
-                                                        slist.Add(spring[e][ii].Value);
-                                                    }
-                                                    spring_f_new.Add(sflist); spring_new.Add(slist);
                                                 }
+                                            }
+                                            if (spring[0][0].Value != -9999)
+                                            {
+                                                for (int ind = 0; ind < index_spring.Count; ind++)
+                                                {
+                                                    var slist = new List<double>(); var sflist = new List<double>();
+                                                    int e = (int)index_spring[ind];
+                                                    int ni = (int)spring[e][0].Value; int nj = (int)spring[e][1].Value;
+                                                    var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                                    var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                                    if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                                    {
+                                                        sflist.Add(e); slist.Add(e);
+                                                        for (int ii = 0; ii < spring_f[0].Count; ii++)
+                                                        {
+                                                            sflist.Add(spring_f[e][ii].Value);
+                                                        }
+                                                        for (int ii = 0; ii < spring[0].Count; ii++)
+                                                        {
+                                                            slist.Add(spring[e][ii].Value);
+                                                        }
+                                                        spring_f_new.Add(sflist); spring_new.Add(slist);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var p = (new ObjRef(obj)).Point().Location;
+                                        for (int k = 0; k < R.Count; k++)
+                                        {
+                                            if (Math.Abs(p[0] - R[k][0].Value) < 5e-3 && Math.Abs(p[1] - R[k][1].Value) < 5e-3 && Math.Abs(p[2] - R[k][2].Value) < 5e-3)
+                                            {
+                                                nod_No.Add(k); nod_P.Add(k);
                                             }
                                         }
                                     }
@@ -653,7 +703,11 @@ namespace OpenSeesUtility
                                     xmin = Math.Min(xmin, R[ni][0].Value); xmax = Math.Max(xmax, R[ni][0].Value); xmin = Math.Min(xmin, R[nj][0].Value); xmax = Math.Max(xmax, R[nj][0].Value);
                                     ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value); ymin = Math.Min(ymin, R[nj][1].Value); ymax = Math.Max(ymax, R[nj][1].Value);
                                 }
-                                var nod_No = new List<int>();
+                                for (int j = 0; j < nod_P.Count; j++)
+                                {
+                                    int ni = nod_P[j];
+                                    xmin = Math.Min(xmin, R[ni][0].Value); xmax = Math.Max(xmax, R[ni][0].Value); ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value);
+                                }
                                 for (int e = 0; e < spring_new.Count; e++)
                                 {
                                     var position = XStringFormats.BaseLineLeft;
@@ -700,6 +754,15 @@ namespace OpenSeesUtility
                                     if (nod_No.Contains(ni) != true) { nod_No.Add(ni); }
                                     if (nod_No.Contains(nj) != true) { nod_No.Add(nj); }
                                 }
+                                for (int j = 0; j < nod_P.Count; j++)
+                                {
+                                    var position = XStringFormats.BaseLineLeft;
+                                    var ni = nod_P[j];
+                                    var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
+                                    gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//節点の描画
+                                    gfx.DrawString(ni.ToString(), font, XBrushes.Red, r1[0], r1[1], position);//節点の節点番号描画
+                                    RhinoApp.WriteLine(R[ni][0].Value.ToString() + " " + xmin.ToString());
+                                }
                                 for (int e = 0; e < reac_f_index.Count; e++)
                                 {
                                     if (nod_No.Contains(reac_f_index[e]) == true)
@@ -743,55 +806,59 @@ namespace OpenSeesUtility
                         if (line.Length == 0) { break; }
                         for (int j = 0; j < line.Length; j++)
                         {
-                            var obj = line[j]; Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() };
-                            int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
-                            if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
-                            for (int jj = 0; jj < nl; jj++)
+                            var obj = line[j];
+                            if (obj.GetType().ToString() != "Rhino.DocObjects.PointObject")
                             {
-                                lines.Add(l[jj]);
-                                var p0 = l[jj].PointAtStart; var p1 = l[jj].PointAtEnd; var lgh = l[jj].GetLength();
-                                for (int e = 0; e < ij.Count; e++)
+                                Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() };
+                                int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
+                                if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
+                                for (int jj = 0; jj < nl; jj++)
                                 {
-                                    var list = new List<double>(); var flist = new List<double>();
-                                    int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
-                                    var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
-                                    var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
-                                    if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                    lines.Add(l[jj]);
+                                    var p0 = l[jj].PointAtStart; var p1 = l[jj].PointAtEnd; var lgh = l[jj].GetLength();
+                                    for (int e = 0; e < ij.Count; e++)
                                     {
-                                        list.Add(e);
-                                        for (int a = 0; a < ij[e].Count; a++) { list.Add(ij[e][a].Value); }
-                                        if (index.Contains(e) == true && sec_f[0][0].Value != -9999)
-                                        {
-                                            flist.Add(e);
-                                            for (int ii = 0; ii < sec_f[0].Count; ii++)
-                                            {
-                                                flist.Add(sec_f[e][ii].Value);
-                                            }
-                                            ij_new.Add(list); sec_f_new.Add(flist);
-                                        }
-                                    }
-                                }
-                                if (spring[0][0].Value != -9999)
-                                {
-                                    for (int ind = 0; ind < index_spring.Count; ind++)
-                                    {
-                                        var slist = new List<double>(); var sflist = new List<double>();
-                                        int e = (int)index_spring[ind];
-                                        int ni = (int)spring[e][0].Value; int nj = (int)spring[e][1].Value;
+                                        var list = new List<double>(); var flist = new List<double>();
+                                        int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
                                         var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
                                         var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
                                         if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
                                         {
-                                            sflist.Add(e); slist.Add(e);
-                                            for (int ii = 0; ii < spring_f[0].Count; ii++)
+                                            list.Add(e);
+                                            for (int a = 0; a < ij[e].Count; a++) { list.Add(ij[e][a].Value); }
+                                            if (index.Contains(e) == true && sec_f[0][0].Value != -9999)
                                             {
-                                                sflist.Add(spring_f[e][ii].Value);
+                                                flist.Add(e);
+                                                for (int ii = 0; ii < sec_f[0].Count; ii++)
+                                                {
+                                                    flist.Add(sec_f[e][ii].Value);
+                                                }
+                                                ij_new.Add(list); sec_f_new.Add(flist);
                                             }
-                                            for (int ii = 0; ii < spring[0].Count; ii++)
+                                        }
+                                    }
+                                    if (spring[0][0].Value != -9999)
+                                    {
+                                        for (int ind = 0; ind < index_spring.Count; ind++)
+                                        {
+                                            var slist = new List<double>(); var sflist = new List<double>();
+                                            int e = (int)index_spring[ind];
+                                            int ni = (int)spring[e][0].Value; int nj = (int)spring[e][1].Value;
+                                            var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                            var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                            if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
                                             {
-                                                slist.Add(spring[e][ii].Value);
+                                                sflist.Add(e); slist.Add(e);
+                                                for (int ii = 0; ii < spring_f[0].Count; ii++)
+                                                {
+                                                    sflist.Add(spring_f[e][ii].Value);
+                                                }
+                                                for (int ii = 0; ii < spring[0].Count; ii++)
+                                                {
+                                                    slist.Add(spring[e][ii].Value);
+                                                }
+                                                spring_f_new.Add(sflist); spring_new.Add(slist);
                                             }
-                                            spring_f_new.Add(sflist); spring_new.Add(slist);
                                         }
                                     }
                                 }
@@ -996,55 +1063,71 @@ namespace OpenSeesUtility
                                 var ij_new = new List<List<double>>();//その面の要素節点関係
                                 var spring_new = new List<List<double>>();//その面の要素節点関係(ばね)
                                 var spring_f_new = new List<List<double>>();//その面の断面力(ばね)
-                                var line = doc.Objects.FindByUserString(floorname, i.ToString(), true);
+                                var line = doc.Objects.FindByUserString(floorname, i.ToString(), true); var nod_P = new List<int>();
                                 if (line.Length == 0) { break; }
                                 for (int j = 0; j < line.Length; j++)
                                 {
-                                    var obj = line[j]; Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() };
-                                    int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
-                                    if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
-                                    for (int jj = 0; jj < nl; jj++)
+                                    var obj = line[j];
+                                    if (obj.GetType().ToString() != "Rhino.DocObjects.PointObject")
                                     {
-                                        lines.Add(l[jj]);
-                                        var p0 = l[jj].PointAtStart; var p1 = l[jj].PointAtEnd; var lgh = l[jj].GetLength();
-                                        for (int e = 0; e < ij.Count; e++)
+
+                                        Curve[] l = new Curve[] { (new ObjRef(obj)).Curve() };
+                                        int nl = (new ObjRef(obj)).Curve().SpanCount;//ポリラインのセグメント数
+                                        if (nl > 1) { l = (new ObjRef(obj)).Curve().DuplicateSegments(); }
+                                        for (int jj = 0; jj < nl; jj++)
                                         {
-                                            var list = new List<double>(); var flist = new List<double>();
-                                            int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
-                                            var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
-                                            var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
-                                            if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                            lines.Add(l[jj]);
+                                            var p0 = l[jj].PointAtStart; var p1 = l[jj].PointAtEnd; var lgh = l[jj].GetLength();
+                                            for (int e = 0; e < ij.Count; e++)
                                             {
-                                                list.Add(e);
-                                                for (int a = 0; a < ij[e].Count; a++) { list.Add(ij[e][a].Value); }
-                                                if (index.Contains(e) == true)
-                                                {
-                                                    ij_new.Add(list);
-                                                }
-                                            }
-                                        }
-                                        if (spring[0][0].Value != -9999)
-                                        {
-                                            for (int ind = 0; ind < index_spring.Count; ind++)
-                                            {
-                                                var slist = new List<double>(); var sflist = new List<double>();
-                                                int e = (int)index_spring[ind];
-                                                int ni = (int)spring[e][0].Value; int nj = (int)spring[e][1].Value;
+                                                var list = new List<double>(); var flist = new List<double>();
+                                                int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
                                                 var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
                                                 var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
                                                 if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
                                                 {
-                                                    sflist.Add(e); slist.Add(e);
-                                                    for (int iii = 0; iii < spring_f[0].Count; iii++)
+                                                    list.Add(e);
+                                                    for (int a = 0; a < ij[e].Count; a++) { list.Add(ij[e][a].Value); }
+                                                    if (index.Contains(e) == true)
                                                     {
-                                                        sflist.Add(spring_f[e][iii].Value);
+                                                        ij_new.Add(list);
                                                     }
-                                                    for (int iii = 0; iii < spring[0].Count; iii++)
-                                                    {
-                                                        slist.Add(spring[e][iii].Value);
-                                                    }
-                                                    spring_f_new.Add(sflist); spring_new.Add(slist);
                                                 }
+                                            }
+                                            if (spring[0][0].Value != -9999)
+                                            {
+                                                for (int ind = 0; ind < index_spring.Count; ind++)
+                                                {
+                                                    var slist = new List<double>(); var sflist = new List<double>();
+                                                    int e = (int)index_spring[ind];
+                                                    int ni = (int)spring[e][0].Value; int nj = (int)spring[e][1].Value;
+                                                    var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
+                                                    var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
+                                                    if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                                    {
+                                                        sflist.Add(e); slist.Add(e);
+                                                        for (int iii = 0; iii < spring_f[0].Count; iii++)
+                                                        {
+                                                            sflist.Add(spring_f[e][iii].Value);
+                                                        }
+                                                        for (int iii = 0; iii < spring[0].Count; iii++)
+                                                        {
+                                                            slist.Add(spring[e][iii].Value);
+                                                        }
+                                                        spring_f_new.Add(sflist); spring_new.Add(slist);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var p = (new ObjRef(obj)).Point().Location;
+                                        for (int k = 0; k < R.Count; k++)
+                                        {
+                                            if (Math.Abs(p[0] - R[k][0].Value) < 5e-3 && Math.Abs(p[1] - R[k][1].Value) < 5e-3 && Math.Abs(p[2] - R[k][2].Value) < 5e-3)
+                                            {
+                                                nod_P.Add(k);
                                             }
                                         }
                                     }

@@ -87,6 +87,9 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("Qmin", "Qmin", "lower bound to show Q value", GH_ParamAccess.item, 0.1);///
             pManager.AddNumberParameter("Mmin", "Mmin", "lower bound to show M value", GH_ParamAccess.item, 0.1);///
             pManager.AddNumberParameter("kenteimin", "kenteimin", "lower bound to show kenteihi", GH_ParamAccess.item, 0.01);///
+            pManager.AddNumberParameter("p_load", "p_load", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("e_load", "e_load", "[[Element No.,line_load],...](DataTree)", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("w_load", "w_load", "[[No.i,No.j,No.k,No.l,wall_load],...](DataTree)", GH_ParamAccess.tree, -9999);///
         }
 
         /// <summary>
@@ -201,6 +204,9 @@ namespace OpenSeesUtility
                 var name_sec = new List<string>(); DA.GetDataList("name(sec)", name_sec);
                 var Nbound = 0.1; var Qbound = 0.1; var Mbound = 0.1; var kbound = 0.1;
                 DA.GetData("Nmin", ref Nbound); DA.GetData("Qmin", ref Qbound); DA.GetData("Mmin", ref Mbound); DA.GetData("kenteimin", ref kbound);
+                DA.GetDataTree("p_load", out GH_Structure<GH_Number> _p_load); var p_load = _p_load.Branches;
+                DA.GetDataTree("e_load", out GH_Structure<GH_Number> _e_load); var e_load = _e_load.Branches;
+                DA.GetDataTree("w_load", out GH_Structure<GH_Number> _w_load); var w_load = _w_load.Branches;
                 if (index[0] == -9999)
                 {
                     index = new List<double>();
@@ -306,6 +312,9 @@ namespace OpenSeesUtility
                 figname = new List<string> { "通り節点番号図", "通り部材番号図", "通り材料番号図", "通り断面番号図", "通りコードアングル図", "通り部材番号図(ばね)" };
                 if (bar[0] != -9999 && name_bar[0]!="-9999") { figname.Add("通り配筋符号図"); }
                 if (name_sec[0] != "-9999") { figname.Add("通り断面符号図"); }
+                if (p_load[0][0].Value != -9999) { figname.Add("通り集中荷重図[kN]"); }
+                if (e_load[0][0].Value != -9999) { figname.Add("通り分布荷重図[kN/m]"); }
+                if (w_load[0][0].Value != -9999) { figname.Add("通り壁荷重図[kN/m2]"); }
                 for (int j = 0; j < wick.Count; j++)//1; j++)//
                 {
                     for (int k = 0; k < figname.Count; k++)
@@ -463,9 +472,10 @@ namespace OpenSeesUtility
                                 }
                             }
                         }
+                        var ele_No = new List<int>(); var nod_No_all = new List<int>();
                         for (int e = 0; e < ij_new.Count; e++)//紙面に平行に回転後の骨組
                         {
-                            int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2]; int nel = (int)ij_new[e][0];
+                            int ni = (int)ij_new[e][1]; int nj = (int)ij_new[e][2]; int nel = (int)ij_new[e][0]; ele_No.Add(nel); nod_No_all.Add(ni); nod_No_all.Add(nj);
                             int mat = (int)ij_new[e][3]; int sec = (int)ij_new[e][4]; int angle = 0;//(int)ij_new[e][5];
                             var vi = rotation(new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value), zvec, theta) - r0;
                             var vj = rotation(new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value), zvec, theta) - r0;
@@ -557,6 +567,84 @@ namespace OpenSeesUtility
                                         gfx.DrawString(secname, font, XBrushes.BlueViolet, (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0, position);
                                     }
                                 }//断面符号描画
+                            }
+                        }
+                        if (figname[k] == "通り集中荷重図[kN]")
+                        {
+                            for (int i = 0; i < p_load.Count; i++)
+                            {
+                                var ni = (int)p_load[i][0].Value;
+                                if (nod_No.Contains(ni)==true)
+                                {
+                                    var fz = Math.Round(p_load[i][3].Value, 3);
+                                    var vi = rotation(new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value), zvec, theta) - r0;
+                                    var r1 = new List<double>(); r1.Add(offset + vi[0] * scale); r1.Add(842 - offsety - vi[2] * scale);
+                                    var position = XStringFormats.BottomCenter;
+                                    var pts = new XPoint[3]; pts[0].X = r1[0]; pts[0].Y = r1[1]; pts[1].X = r1[0] - tri / 2.0; pts[1].Y = r1[1] - tri / 2.0 * Math.Sqrt(3); pts[2].X = r1[0] + tri / 2.0; pts[2].Y = r1[1] - tri / 2.0 * Math.Sqrt(3);
+                                    if (fz > 0)
+                                    {
+                                        pts = new XPoint[3]; pts[0].X = r1[0]; pts[0].Y = r1[1]; pts[1].X = r1[0] - tri / 2.0; pts[1].Y = r1[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = r1[0] + tri / 2.0; pts[2].Y = r1[1] + tri / 2.0 * Math.Sqrt(3);
+                                        position = XStringFormats.TopCenter;
+                                    }
+                                    gfx.DrawPolygon(new XPen(XColors.Black, 0), XBrushes.Red, pts, XFillMode.Winding);
+                                    gfx.DrawString(Math.Abs(fz).ToString().Substring(0, Math.Min(Math.Abs(fz).ToString().Length, 4)), font, XBrushes.Blue, (pts[1].X + pts[2].X) / 2.0, (pts[1].Y + pts[2].Y) / 2.0, position);//鉛直集中荷重値
+                                }
+                            }
+                        }
+                        if (figname[k] == "通り分布荷重図[kN/m]")
+                        {
+                            for (int i = 0; i < e_load.Count; i++)
+                            {
+                                var e = (int)e_load[i][0].Value;
+                                if (ele_No.Contains(e) == true)
+                                {
+                                    var fz = Math.Round(e_load[i][3].Value, 3); int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
+                                    var vi = rotation(new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value), zvec, theta) - r0;
+                                    var vj = rotation(new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value), zvec, theta) - r0;
+                                    var r1 = new List<double>(); r1.Add(offset + vi[0] * scale); r1.Add(842 - offsety - vi[2] * scale);
+                                    var r2 = new List<double>(); r2.Add(offset + vj[0] * scale); r2.Add(842 - offsety - vj[2] * scale);
+                                    var rc = new List<double> { (r1[0] + r2[0]) / 2.0, (r1[1] + r2[1]) / 2.0 };
+                                    var position = XStringFormats.BottomCenter;
+                                    var pts = new XPoint[3]; pts[0].X = rc[0]; pts[0].Y = rc[1]; pts[1].X = rc[0] - tri / 2.0; pts[1].Y = rc[1] - tri / 2.0 * Math.Sqrt(3); pts[2].X = rc[0] + tri / 2.0; pts[2].Y = rc[1] - tri / 2.0 * Math.Sqrt(3);
+                                    if (fz > 0)
+                                    {
+                                        pts = new XPoint[3]; pts[0].X = rc[0]; pts[0].Y = rc[1]; pts[1].X = rc[0] - tri / 2.0; pts[1].Y = rc[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = rc[0] + tri / 2.0; pts[2].Y = rc[1] + tri / 2.0 * Math.Sqrt(3);
+                                        position = XStringFormats.TopCenter;
+                                    }
+                                    gfx.DrawPolygon(new XPen(XColors.Black, 0), XBrushes.Green, pts, XFillMode.Winding);
+                                    gfx.DrawString(Math.Abs(fz).ToString("F").Substring(0, Math.Min(Math.Abs(fz).ToString().Length, 4)), font, XBrushes.Blue, (pts[1].X + pts[2].X) / 2.0, (pts[1].Y + pts[2].Y) / 2.0, position);//鉛直分布荷重値
+                                }
+                            }
+                        }
+                        if (figname[k] == "通り壁荷重図[kN/m2]")
+                        {
+                            var semiTransBrush = new XSolidBrush(XColor.FromArgb(50, 192, 192, 192));
+                            for (int i = 0; i < w_load.Count; i++)
+                            {
+                                int ni = (int)w_load[i][0].Value; int nj = (int)w_load[i][1].Value; int nk = (int)w_load[i][2].Value; int nl = (int)w_load[i][3].Value;
+                                if (nod_No_all.Contains(ni) == true && nod_No_all.Contains(nj) == true && nod_No_all.Contains(nk) == true && (nod_No_all.Contains(nl) == true || nl == -1))
+                                {
+                                    var fz = Math.Round(w_load[i][4].Value, 3);
+                                    var vi = rotation(new Vector3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value), zvec, theta) - r0;
+                                    var vj = rotation(new Vector3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value), zvec, theta) - r0;
+                                    var vk = rotation(new Vector3d(R[nk][0].Value, R[nk][1].Value, R[nk][2].Value), zvec, theta) - r0;
+                                    var r1 = new List<double>(); r1.Add(offset + vi[0] * scale); r1.Add(842 - offsety - vi[2] * scale);
+                                    var r2 = new List<double>(); r2.Add(offset + vj[0] * scale); r2.Add(842 - offsety - vj[2] * scale);
+                                    var r3 = new List<double>(); r3.Add(offset + vk[0] * scale); r3.Add(842 - offsety - vk[2] * scale);
+                                    var rc = new List<double> { (r1[0] + r2[0] + r3[0]) / 3.0, (r1[1] + r2[1] + r3[1]) / 3.0 };
+                                    var position = XStringFormats.Center; var arrow = "⇊"; if (fz > 0) { arrow = "⇈"; }
+                                    var pts = new XPoint[3]; if (nl != -1) { pts = new XPoint[4]; }
+                                    pts[0].X = r1[0]; pts[0].Y = r1[1]; pts[1].X = r2[0]; pts[1].Y = r2[1]; pts[2].X = r3[0]; pts[2].Y = r3[1];
+                                    if (nl != -1)
+                                    {
+                                        var vl = rotation(new Vector3d(R[nl][0].Value, R[nl][1].Value, R[nl][2].Value), zvec, theta) - r0;
+                                        var r4 = new List<double>(); r4.Add(offset + vl[0] * scale); r4.Add(842 - offsety - vl[2] * scale);
+                                        rc = new List<double> { (r1[0] + r2[0] + r3[0] + r4[0]) / 4.0, (r1[1] + r2[1] + r3[1] + r4[1]) / 4.0 };
+                                        pts[3].X = r4[0]; pts[3].Y = r4[1];
+                                    }
+                                    gfx.DrawPolygon(penreaction, semiTransBrush, pts, XFillMode.Winding);
+                                    gfx.DrawString(arrow + Math.Abs(fz).ToString().Substring(0, Math.Min(Math.Abs(fz).ToString().Length, 4)), font, XBrushes.Black, rc[0], rc[1], position);//鉛直面荷重値
+                                }
                             }
                         }
                         gfx.DrawString(wick[j] + figname[k], titlefont, XBrushes.Black, offset, 842 - offset, XStringFormats.BaseLineLeft);
