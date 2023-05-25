@@ -485,7 +485,6 @@ namespace OpenSeesUtility
                                     var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
                                     gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//節点の描画
                                     gfx.DrawString(ni.ToString(), font, XBrushes.Red, r1[0], r1[1], position);//節点の節点番号描画
-                                    RhinoApp.WriteLine(R[ni][0].Value.ToString() + " " + xmin.ToString());
                                 }
                             }
                             if (figname[k] == "集中荷重伏図[kN]")
@@ -754,22 +753,14 @@ namespace OpenSeesUtility
                                     if (nod_No.Contains(ni) != true) { nod_No.Add(ni); }
                                     if (nod_No.Contains(nj) != true) { nod_No.Add(nj); }
                                 }
-                                for (int j = 0; j < nod_P.Count; j++)
-                                {
-                                    var position = XStringFormats.BaseLineLeft;
-                                    var ni = nod_P[j];
-                                    var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
-                                    gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//節点の描画
-                                    gfx.DrawString(ni.ToString(), font, XBrushes.Red, r1[0], r1[1], position);//節点の節点番号描画
-                                    RhinoApp.WriteLine(R[ni][0].Value.ToString() + " " + xmin.ToString());
-                                }
                                 for (int e = 0; e < reac_f_index.Count; e++)
                                 {
                                     if (nod_No.Contains(reac_f_index[e]) == true)
                                     {
                                         int ni = (int)reac_f[e][0].Value;
                                         var r1 = new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
-                                        gfx.DrawString(ni.ToString(), font, XBrushes.Red, r1[0], r1[1], XStringFormats.BottomCenter);
+                                        gfx.DrawEllipse(XBrushes.Black, r1[0] - ps / 2.0, r1[1] - ps / 2.0, ps, ps);//節点の描画
+                                        gfx.DrawString(ni.ToString(), font, XBrushes.Red, r1[0], r1[1], XStringFormats.BottomCenter);//節点の節点番号描画
                                         gfx.DrawString(reac_f[e][kkk*7+3].Value.ToString().Substring(0, Math.Min(reac_f[e][kkk * 7 + 3].Value.ToString().Length, 4)), font, XBrushes.Black, r1[0], r1[1], XStringFormats.TopCenter);
                                     }
                                 }
