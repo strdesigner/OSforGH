@@ -491,19 +491,44 @@ namespace OpenSeesUtility
                             {
                                 for (int j = 0; j < p_load.Count; j++)
                                 {
-                                    var ni = (int)p_load[j][0].Value; var fz = Math.Round(p_load[j][3].Value,3);
+                                    var ni = (int)p_load[j][0].Value; var fx = Math.Round(p_load[j][1].Value, 3); var fy = Math.Round(p_load[j][2].Value, 3); var fz = Math.Round(p_load[j][3].Value,3);
                                     if (nod_No_all.Contains(ni)==true)
                                     {
                                         var r1= new List<double>(); r1.Add(offset + (R[ni][0].Value - xmin) * scale); r1.Add(842 - offsety - (R[ni][1].Value - ymin) * scale);
                                         var position = XStringFormats.BottomCenter;
                                         var pts = new XPoint[3]; pts[0].X = r1[0]; pts[0].Y = r1[1]; pts[1].X = r1[0] - tri / 2.0; pts[1].Y = r1[1] - tri / 2.0 * Math.Sqrt(3); pts[2].X = r1[0] + tri / 2.0; pts[2].Y = r1[1] - tri / 2.0 * Math.Sqrt(3);
-                                        if (fz > 0)
+                                        var pts2 = new XPoint[3]; pts2[0].X = r1[0]; pts2[0].Y = r1[1]; pts2[1].X = r1[0] - tri / 2.0 * Math.Sqrt(3); pts2[1].Y = r1[1] + tri / 2.0; pts2[2].X = r1[0] - tri / 2.0 * Math.Sqrt(3); pts2[2].Y = r1[1] - tri / 2.0;
+                                        var pts3 = new XPoint[3]; pts3[0].X = r1[0]; pts3[0].Y = r1[1]; pts3[1].X = r1[0] - tri / 2.0; pts3[1].Y = r1[1] + tri / 2.0 * Math.Sqrt(3); pts3[2].X = r1[0] + tri / 2.0; pts3[2].Y = r1[1] + tri / 2.0 * Math.Sqrt(3);
+                                        if (Math.Abs(fz) != 0)
                                         {
-                                            pts = new XPoint[3]; pts[0].X = r1[0]; pts[0].Y = r1[1]; pts[1].X = r1[0] - tri / 2.0; pts[1].Y = r1[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = r1[0] + tri / 2.0; pts[2].Y = r1[1] + tri / 2.0 * Math.Sqrt(3);
-                                            position = XStringFormats.TopCenter;
+                                            if (fz > 0)
+                                            {
+                                                pts = new XPoint[3]; pts[0].X = r1[0]; pts[0].Y = r1[1]; pts[1].X = r1[0] - tri / 2.0; pts[1].Y = r1[1] + tri / 2.0 * Math.Sqrt(3); pts[2].X = r1[0] + tri / 2.0; pts[2].Y = r1[1] + tri / 2.0 * Math.Sqrt(3);
+                                                position = XStringFormats.TopCenter;
+                                            }
+                                            gfx.DrawPolygon(new XPen(XColors.Black, 0), XBrushes.Red, pts, XFillMode.Winding);
+                                            gfx.DrawString(Math.Abs(fz).ToString().Substring(0, Math.Min(Math.Abs(fz).ToString().Length, 4)), font, XBrushes.Blue, (pts[1].X + pts[2].X) / 2.0, (pts[1].Y + pts[2].Y) / 2.0, position);//鉛直集中荷重値
                                         }
-                                        gfx.DrawPolygon(new XPen(XColors.Black, 0), XBrushes.Red, pts, XFillMode.Winding);
-                                        gfx.DrawString(Math.Abs(fz).ToString().Substring(0, Math.Min(Math.Abs(fz).ToString().Length, 4)), font, XBrushes.Blue, (pts[1].X + pts[2].X) / 2.0, (pts[1].Y + pts[2].Y) / 2.0, position);//鉛直集中荷重値
+                                        if (Math.Abs(fy) != 0)
+                                        {
+                                            position = XStringFormats.TopCenter;
+                                            if (fy < 0)
+                                            {
+                                                pts3[1].Y = -pts3[1].Y; pts3[2].Y = -pts3[2].Y; position = XStringFormats.BottomCenter;
+                                            }
+                                            gfx.DrawPolygon(new XPen(XColors.Black, 0), XBrushes.Red, pts3, XFillMode.Winding);
+                                            gfx.DrawString(Math.Abs(fy).ToString().Substring(0, Math.Min(Math.Abs(fy).ToString().Length, 4)), font, XBrushes.Blue, (pts3[1].X + pts3[2].X) / 2.0, (pts3[1].Y + pts3[2].Y) / 2.0, position);//X集中荷重値
+                                        }
+                                        if (Math.Abs(fx) != 0)
+                                        {
+                                            position = XStringFormats.CenterRight;
+                                            if (fx < 0)
+                                            {
+                                                pts2[1].X = -pts2[1].X; pts2[2].X = -pts2[2].X; position = XStringFormats.CenterLeft;
+                                            }
+                                            gfx.DrawPolygon(new XPen(XColors.Black, 0), XBrushes.Red, pts2, XFillMode.Winding);
+                                            gfx.DrawString(Math.Abs(fx).ToString().Substring(0, Math.Min(Math.Abs(fx).ToString().Length, 4)), font, XBrushes.Blue, (pts2[1].X + pts2[2].X) / 2.0, (pts2[1].Y + pts2[2].Y) / 2.0, position);//X集中荷重値
+                                        }
                                     }
                                 }
                             }
