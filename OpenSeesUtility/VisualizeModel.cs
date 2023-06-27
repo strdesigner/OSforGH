@@ -568,47 +568,43 @@ namespace VisualizeModel
                 else if (_ijkl.Branches[0][0].Value != -9999)
                 {
                     DA.SetDataTree(2, _ijkl);
-                    if (Shell == 1)
+                    ijkl = _ijkl.Branches; int m2 = ijkl.Count; DA.SetDataTree(2, _ijkl);
+                    if (index2[0] == -9999)
                     {
-                        if (index2[0] != 9999)
-                        {
-                            ijkl = _ijkl.Branches; int m2 = ijkl.Count; DA.SetDataTree(2, _ijkl);
-                            if (index2[0] == -9999)
-                            {
-                                index2 = new List<double>();
-                                for (int e = 0; e < m2; e++) { index2.Add(e); }
-                            }
-                            DA.SetDataList("index(shell)", index2);
-                            for (int ind = 0; ind < index2.Count; ind++)
-                            {
-                                int e = (int)index2[ind];
-                                int i = (int)ijkl[e][0].Value; int j = (int)ijkl[e][1].Value; int k = (int)ijkl[e][2].Value; int l = (int)ijkl[e][3].Value; int mat = (int)ijkl[e][4].Value; double t = ijkl[e][5].Value;
-                                r1 = new Point3d(r[i][0].Value, r[i][1].Value, r[i][2].Value); r2 = new Point3d(r[j][0].Value, r[j][1].Value, r[j][2].Value); r3 = new Point3d(r[k][0].Value, r[k][1].Value, r[k][2].Value);
-                                _sline.Add(new Line(r1, r2)); _sline.Add(new Line(r2, r3));
-                                if (l >= 0)
-                                {
-                                    Point3d r4 = new Point3d(r[l][0].Value, r[l][1].Value, r[l][2].Value);
-                                    Brep brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { r1, r2, r3, r4, r1 }).ToNurbsCurve(), 9999)[0];
-                                    _shells.Add(brep);
-                                    _sline.Add(new Line(r3, r4)); _sline.Add(new Line(r4, r1));
-                                    _points.Add((r1 + r2 + r3 + r4) / 4.0);
-                                    _shell_No.Add(e.ToString());
-                                    _shell_mat_No.Add(mat.ToString());
-                                    _valuet.Add(t);
-                                }
-                                else
-                                {
-                                    Brep brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { r1, r2, r3, r1 }).ToNurbsCurve(), 0.001)[0];
-                                    _shells.Add(brep);
-                                    _sline.Add(new Line(r3, r1));
-                                    _points.Add((r1 + r2 + r3) / 3.0);
-                                    _shell_No.Add(e.ToString());
-                                    _shell_mat_No.Add(mat.ToString());
-                                    _valuet.Add(t);
-                                }
-                            }
-                        }
+                        index2 = new List<double>();
+                        for (int e = 0; e < m2; e++) { index2.Add(e); }
                     }
+                    DA.SetDataList("index(shell)", index2);
+                    for (int ind = 0; ind < index2.Count; ind++)
+                    {
+                        int e = (int)index2[ind];
+                        int i = (int)ijkl[e][0].Value; int j = (int)ijkl[e][1].Value; int k = (int)ijkl[e][2].Value; int l = (int)ijkl[e][3].Value; int mat = (int)ijkl[e][4].Value; double t = ijkl[e][5].Value;
+                        r1 = new Point3d(r[i][0].Value, r[i][1].Value, r[i][2].Value); r2 = new Point3d(r[j][0].Value, r[j][1].Value, r[j][2].Value); r3 = new Point3d(r[k][0].Value, r[k][1].Value, r[k][2].Value);
+                        _sline.Add(new Line(r1, r2)); _sline.Add(new Line(r2, r3));
+                        if (l >= 0)
+                        {
+                            Point3d r4 = new Point3d(r[l][0].Value, r[l][1].Value, r[l][2].Value);
+                            Brep brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { r1, r2, r3, r4, r1 }).ToNurbsCurve(), 9999)[0];
+                            _shells.Add(brep);
+                            _sline.Add(new Line(r3, r4)); _sline.Add(new Line(r4, r1));
+                            _points.Add((r1 + r2 + r3 + r4) / 4.0);
+                            _shell_No.Add(e.ToString());
+                            _shell_mat_No.Add(mat.ToString());
+                            _valuet.Add(t);
+                            _point.Add(r1); _point.Add(r2); _point.Add(r3); _point.Add(r4); _node_No.Add(i.ToString()); _node_No.Add(j.ToString()); _node_No.Add(k.ToString()); _node_No.Add(l.ToString());
+                        }
+                        else
+                        {
+                            Brep brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { r1, r2, r3, r1 }).ToNurbsCurve(), 0.001)[0];
+                            _shells.Add(brep);
+                            _sline.Add(new Line(r3, r1));
+                            _points.Add((r1 + r2 + r3) / 3.0);
+                            _shell_No.Add(e.ToString());
+                            _shell_mat_No.Add(mat.ToString());
+                            _valuet.Add(t);
+                            _point.Add(r1); _point.Add(r2); _point.Add(r3); _node_No.Add(i.ToString()); _node_No.Add(j.ToString()); _node_No.Add(k.ToString());
+                        }
+                        }
                 }
                 ///線材置換壁の描画************************************************************************************
                 DA.GetDataTree("KABE_W", out GH_Structure<GH_Number> _kabe); DA.SetDataTree(3, _kabe);
