@@ -72,7 +72,7 @@ namespace SeismicLoads
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("R", "R", "[[x1,y1,z1],...](DataTree)", GH_ParamAccess.tree, -9999);///
+            pManager.AddNumberParameter("Rj", "Rj", "[[x1,y1,z1],...](DataTree)", GH_ParamAccess.tree, -9999);///
             pManager.AddNumberParameter("F", "F", "[[node No.,Px,Py,Pz,Mx,My,Mz],...](DataTree)", GH_ParamAccess.tree, -9999);///
             pManager.AddNumberParameter("layer", "layer", "[[zmin,zmax],...](DataTree)", GH_ParamAccess.tree, -9999);///
             pManager.AddNumberParameter("Z", "Z", "Regional coefficient", GH_ParamAccess.item, 1.0);///

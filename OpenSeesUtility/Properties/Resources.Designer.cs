@@ -793,6 +793,16 @@ namespace OpenSeesUtility.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap timberchecksnow {
+            get {
+                object obj = ResourceManager.GetObject("timberchecksnow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap timehistoryanalysis {
             get {
                 object obj = ResourceManager.GetObject("timehistoryanalysis", resourceCulture);
