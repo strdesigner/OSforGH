@@ -111,7 +111,7 @@ namespace SeismicLoads
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            DA.GetDataTree("R", out GH_Structure<GH_Number> _r); DA.GetDataTree("F", out GH_Structure<GH_Number> _f_v); DA.GetDataTree("layer", out GH_Structure<GH_Number> _layer);
+            DA.GetDataTree("Rj", out GH_Structure<GH_Number> _r); DA.GetDataTree("F", out GH_Structure<GH_Number> _f_v); DA.GetDataTree("layer", out GH_Structure<GH_Number> _layer);
             var r= _r.Branches; var f_v = _f_v.Branches; var layer = _layer.Branches; int n = layer.Count;
             var Z = 0.0; DA.GetData("Z", ref Z); var Rt = 0.0; DA.GetData("Rt", ref Rt); var C0 = new List<double>(); DA.GetDataList("C0", C0); var T = 0.0; DA.GetData("T", ref T); var color = Color.MintCream; DA.GetData("C", ref color);
             if (C0.Count != n)
