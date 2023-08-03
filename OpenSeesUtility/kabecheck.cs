@@ -295,7 +295,7 @@ namespace Kabecheck
                         var r = new List<Point3d> { r1, r2, r3, r4 }; var c = (r1 + r2 + r3 + r4) / 4.0; var x = c[0]; var y = c[1]; var alpha = 0.0;
                         var text = obj.Attributes.GetUserString(name_K);//壁量情報
                         if (text != null) { alpha = float.Parse(text); }
-                        var width = 0.0; var theta1 = 90.0; var theta2 = 0.0;
+                        var width = 0.0; var theta1 = 90.0; var theta2 = 0.0; var alpha2 = Math.Min(5.0, alpha);
                         if (Math.Abs(r1[2] - r2[2]) < Math.Abs(r2[2] - r3[2]))//ij辺が幅方向の時
                         {
                             width = ((r2 - r1).Length + (r4 - r3).Length) / 2.0;
@@ -314,7 +314,7 @@ namespace Kabecheck
                             }
                             theta2 = Math.Acos(Math.Sqrt(Math.Pow(r1[2] - r2[2], 2)) / (r1 - r2).Length) / Math.PI * 180.0;
                         }
-                        kabe.Add(new List<double> { 0, alpha, width, theta1, theta2, x, y });//層番号，壁倍率，壁幅，θ1，θ2，壁中心のx,y座標
+                        kabe.Add(new List<double> { 0, alpha2, width, theta1, theta2, x, y });//層番号，壁倍率，壁幅，θ1，θ2，壁中心のx,y座標
                         qax += alpha * width * Math.Abs(Math.Cos(theta1 / 180 * Math.PI)) * 1.96; qay += alpha * width * Math.Abs(Math.Sin(theta1 / 180 * Math.PI)) * 1.96;
                         xy1.Add(new List<double> { r[0][0], r[0][1], r[1][0], r[1][1] });
                     }
@@ -333,7 +333,7 @@ namespace Kabecheck
                         var r = new List<Point3d> { r1, r2, r3, r4 }; var c = (r1 + r2 + r3 + r4) / 4.0; var x = c[0]; var y = c[1]; var alpha = 0.0;
                         var text = obj.Attributes.GetUserString(name_K);//壁量情報
                         if (text != null) { alpha = float.Parse(text); }
-                        var width = 0.0; var theta1 = 90.0; var theta2 = 0.0;
+                        var width = 0.0; var theta1 = 90.0; var theta2 = 0.0; var alpha2 = Math.Min(5.0, alpha);
                         if (Math.Abs(r1[2] - r2[2]) < Math.Abs(r2[2] - r3[2]))//ij辺が幅方向の時
                         {
                             width = ((r2 - r1).Length + (r4 - r3).Length) / 2.0;
@@ -352,7 +352,7 @@ namespace Kabecheck
                             }
                             theta2 = Math.Acos(Math.Sqrt(Math.Pow(r1[2] - r2[2], 2)) / (r1 - r2).Length) / Math.PI * 180.0;
                         }
-                        kabe.Add(new List<double> { 1, alpha, width, theta1, theta2, x, y });//層番号，壁倍率，壁幅，θ1，θ2，壁中心のx,y座標
+                        kabe.Add(new List<double> { 1, alpha2, width, theta1, theta2, x, y });//層番号，壁倍率，壁幅，θ1，θ2，壁中心のx,y座標
                         qax += alpha * width * Math.Abs(Math.Cos(theta1 / 180 * Math.PI)) * 1.96; qay += alpha * width * Math.Abs(Math.Sin(theta1 / 180 * Math.PI)) * 1.96;
                         xy2.Add(new List<double> { r[0][0], r[0][1], r[1][0], r[1][1] });
                     }
@@ -371,7 +371,7 @@ namespace Kabecheck
                         var r = new List<Point3d> { r1, r2, r3, r4 }; var c = (r1 + r2 + r3 + r4) / 4.0; var x = c[0]; var y = c[1]; var alpha = 0.0;
                         var text = obj.Attributes.GetUserString(name_K);//壁量情報
                         if (text != null) { alpha = float.Parse(text); }
-                        var width = 0.0; var theta1 = 90.0; var theta2 = 0.0;
+                        var width = 0.0; var theta1 = 90.0; var theta2 = 0.0; var alpha2 = Math.Min(5.0, alpha);
                         if (Math.Abs(r1[2] - r2[2]) < Math.Abs(r2[2] - r3[2]))//ij辺が幅方向の時
                         {
                             width = ((r2 - r1).Length + (r4 - r3).Length) / 2.0;
@@ -390,7 +390,7 @@ namespace Kabecheck
                             }
                             theta2 = Math.Acos(Math.Sqrt(Math.Pow(r1[2] - r2[2], 2)) / (r1 - r2).Length) / Math.PI * 180.0;
                         }
-                        kabe.Add(new List<double> { 2, alpha, width, theta1, theta2, x, y });//層番号，壁倍率，壁幅，θ1，θ2，壁中心のx,y座標
+                        kabe.Add(new List<double> { 2, alpha2, width, theta1, theta2, x, y });//層番号，壁倍率，壁幅，θ1，θ2，壁中心のx,y座標
                         qax += alpha * width * Math.Abs(Math.Cos(theta1 / 180 * Math.PI)) * 1.96; qay += alpha * width * Math.Abs(Math.Sin(theta1 / 180 * Math.PI)) * 1.96;
                         xy3.Add(new List<double> { r[0][0], r[0][1], r[1][0], r[1][1] });
                     }

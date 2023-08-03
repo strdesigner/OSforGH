@@ -372,6 +372,11 @@ namespace OpenSeesUtility
                                 xmin = Math.Min(xmin, R[ni][0].Value); xmax = Math.Max(xmax, R[ni][0].Value); xmin = Math.Min(xmin, R[nj][0].Value); xmax = Math.Max(xmax, R[nj][0].Value);
                                 ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value); ymin = Math.Min(ymin, R[nj][1].Value); ymax = Math.Max(ymax, R[nj][1].Value);
                             }
+                            for (int j = 0; j < nod_P.Count; j++)
+                            {
+                                int ni = nod_P[j];
+                                xmin = Math.Min(xmin, R[ni][0].Value); xmax = Math.Max(xmax, R[ni][0].Value); ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value);
+                            }
                             for (int e = 0; e < spring_new.Count; e++)
                             {
                                 var position = XStringFormats.BaseLineLeft;
@@ -470,11 +475,6 @@ namespace OpenSeesUtility
                                         nod_No_all.Add(nj);//j節点の節点番号描画
                                     }
                                 }
-                            }
-                            for (int j = 0; j < nod_P.Count; j++)
-                            {
-                                int ni = nod_P[j];
-                                xmin = Math.Min(xmin, R[ni][0].Value); xmax = Math.Max(xmax, R[ni][0].Value); ymin = Math.Min(ymin, R[ni][1].Value); ymax = Math.Max(ymax, R[ni][1].Value);
                             }
                             if (figname[k] == "節点番号伏図")
                             {

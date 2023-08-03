@@ -442,6 +442,7 @@ namespace TimberCheckPDF
                         }
                         gfx.DrawLine(pen, offset_x + width1, offset_y + pitchy * (e % nline + 2), offset_x + width1, offset_y + pitchy * (e % nline + 3));//縦線最後尾
                         gfx.DrawLine(pen, offset_x, offset_y + pitchy * (e % nline + 3), offset_x + widths1.Sum(), offset_y + pitchy * (e % nline + 3));//横線
+                        gfx.DrawString(e.ToString(), font, color[0], new XRect(offset_x - widths2[0], offset_y + pitchy * (e % nline + 2), widths2[0], offset_y + pitchy * (e % nline + 3)), XStringFormats.TopCenter);
                     }
                 }
                 var dir = Path.GetDirectoryName(Rhino.RhinoDoc.ActiveDoc.Path);

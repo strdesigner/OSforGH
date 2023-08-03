@@ -253,6 +253,16 @@ namespace OpenSeesUtility.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap ElasticAnalysisforN {
+            get {
+                object obj = ResourceManager.GetObject("ElasticAnalysisforN", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap fromgridpoints {
             get {
                 object obj = ResourceManager.GetObject("fromgridpoints", resourceCulture);

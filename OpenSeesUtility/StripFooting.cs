@@ -79,13 +79,13 @@ namespace StripFooting
             pManager.AddTextParameter("name rho", "name rho", "name of unit volume weight[kN/m3]", GH_ParamAccess.item,"ρ");
             pManager.AddTextParameter("name bar", "name bar", "name of bar size [mm]", GH_ParamAccess.item, "D");
             pManager.AddTextParameter("name pitch", "name pitch", "name of bar pitch [mm]", GH_ParamAccess.item, "@");
-            pManager.AddTextParameter("name w", "name w", "name of base beam width [m]", GH_ParamAccess.item, "w");
+            pManager.AddTextParameter("name w & e", "name w & e", "name of base beam width & eccentric distance [m]", GH_ParamAccess.list, new List<string> { "w","e" });
             pManager.AddTextParameter("name ft", "name ft", "name of long-term arrowable stress [N/mm2]", GH_ParamAccess.item, "ft");
             pManager.AddTextParameter("name as", "name as", "name of long-term arrowable pressure [kN/m2]", GH_ParamAccess.item, "as");
             pManager.AddNumberParameter("FS", "FS", "font size for display texts", GH_ParamAccess.item, 10.0);///
             pManager.AddTextParameter("outputname", "outputname", "output file name", GH_ParamAccess.item, "StripBase");///
             pManager.AddNumberParameter("offset", "offset", "boundary level from base line", GH_ParamAccess.item, 0.0);
-            pManager.AddIntegerParameter("option", "option", "1:floating check", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("option", "option", "1:floating check, 2:no moment check", GH_ParamAccess.item, 0);
         }
 
         /// <summary>
@@ -180,14 +180,14 @@ namespace StripFooting
             var doc = RhinoDoc.ActiveDoc;
             DA.GetDataTree("R", out GH_Structure<GH_Number> _r); var r = _r.Branches; var option = 0; DA.GetData("option", ref option);
             DA.GetDataTree("reac_f", out GH_Structure<GH_Number> _reac_f); var reac_f = _reac_f.Branches; var m = reac_f.Count;
-            List<string> layer = new List<string>(); var nameB = "布基礎"; var namet = "t"; var namerho = "ρ"; var nameD = "D"; var namepitch = "@"; var nameft = "ft"; var namew = "w"; var nameac = "as";
-            DA.GetDataList("layer", layer); DA.GetData("name B", ref nameB); DA.GetData("name t", ref namet); DA.GetData("name rho", ref namerho); DA.GetData("name bar", ref nameD); DA.GetData("name pitch", ref namepitch); DA.GetData("name ft", ref nameft); DA.GetData("name w", ref namew); DA.GetData("name as", ref nameac);
+            List<string> layer = new List<string>(); var nameB = "布基礎"; var namet = "t"; var namerho = "ρ"; var nameD = "D"; var namepitch = "@"; var nameft = "ft"; var namew = new List<string> {}; var nameac = "as";
+            DA.GetDataList("layer", layer); DA.GetData("name B", ref nameB); DA.GetData("name t", ref namet); DA.GetData("name rho", ref namerho); DA.GetData("name bar", ref nameD); DA.GetData("name pitch", ref namepitch); DA.GetData("name ft", ref nameft); DA.GetDataList("name w & e", namew); DA.GetData("name as", ref nameac);
             DA.GetData("FS", ref fontsize);
             var pdfname = "StripBase"; DA.GetData("outputname", ref pdfname);
 
             var pressure = new List<double>(); var baseshape = new List<Curve>();
             var B = new List<double>(); var T = new List<double>(); var L = new List<double>(); var Rz = new List<double>(); var Sz = new List<double>(); var A = new List<double>();
-            var bar = new List<string>(); var M = new List<double>(); var Ma = new List<double>(); var LL = new List<double>(); var Ft = new List<double>(); var J = new List<double>(); var At = new List<double>(); var Ac = new List<double>();
+            var bar = new List<string>(); var M = new List<double>(); var Ma = new List<double>(); var LL = new List<double>(); var Ft = new List<double>(); var J = new List<double>(); var At = new List<double>(); var Ac = new List<double>(); var Ecc = new List<double>(); var Z = new List<double>();
             var Rzx = new List<double>(); var Rzy = new List<double>(); var Rzx2 = new List<double>(); var Rzy2 = new List<double>();
             var lines = new List<List<Curve>>(); GH_Structure<GH_Number> B_number = new GH_Structure<GH_Number>();
             var Rz_all = new GH_Structure<GH_Number>(); var Rzx_all = new GH_Structure<GH_Number>(); var Rzy_all = new GH_Structure<GH_Number>(); var Rzx2_all = new GH_Structure<GH_Number>(); var Rzy2_all = new GH_Structure<GH_Number>();
@@ -211,6 +211,10 @@ namespace StripFooting
                     var rho = 24.0;
                     if (text_rho == null) { rho = 24.0; }
                     else { rho = float.Parse(text_rho); }
+                    var text = "0.0";
+                    if (namew.Count > 1) { text = obj.Attributes.GetUserString(namew[1]); }
+                    var ecc = 0.0;//[m]
+                    if (text != null) { ecc = float.Parse(text); }
                     var N = 0.0; var Nx = 0.0; var Ny = 0.0; var Nx2 = 0.0; var Ny2 = 0.0;
                     for (int k = 0; k < m; k++)
                     {
@@ -240,8 +244,9 @@ namespace StripFooting
                         nlist.Add(new GH_Number(N)); nxlist.Add(new GH_Number(Nx)); nylist.Add(new GH_Number(Ny)); nx2list.Add(new GH_Number(Nx)); ny2list.Add(new GH_Number(Ny));
                     }
                     L.Add(lgh); A.Add(b * L[j]);
-                    B.Add(b); T.Add(t); Rz.Add(N); Sz.Add(t * A[j] * rho); Rzx.Add(Nx); Rzy.Add(Ny); Rzx2.Add(Nx2); Rzy2.Add(Ny2);
-                    var prs = (N + Sz[j]) / A[j];
+                    B.Add(b); T.Add(t); Rz.Add(N); Sz.Add(t * A[j] * rho); Rzx.Add(Nx); Rzy.Add(Ny); Rzx2.Add(Nx2); Rzy2.Add(Ny2); Ecc.Add(ecc);
+                    Z.Add(L[j] * Math.Pow(b, 2) / 6.0);
+                    var prs = (N + Sz[j]) / A[j] + N * Math.Abs(ecc / Z[j]);
                     pressure.Add(prs);
                     var xc = 0.0; var yc = 0.0; var zc = 0.0;
                     for (int aa = 0; aa < nl; aa++) { var pts = (l[aa].PointAtStart + l[aa].PointAtEnd) / 2.0; xc += pts[0]; yc += pts[1]; zc += pts[2]; }
@@ -279,12 +284,12 @@ namespace StripFooting
                             _c.Add(c);
                             var r1 = l[aa].PointAtStart; var r2 = l[aa].PointAtEnd;
                             var l1 = rotation(r2-r1, new Vector3d(0, 0, 1), 90); l1 = l1 / l1.Length;
-                            var p1 = r1 + l1 * b / 2.0; var p2 = r2 + l1 * b / 2.0; var p3 = r2 - l1 * b / 2.0; var p4 = r1 - l1 * b / 2.0;
+                            var p1 = r1 + l1 * (b / 2.0 + ecc); var p2 = r2 + l1 * (b / 2.0 + ecc); var p3 = r2 - l1 * (b / 2.0 - ecc); var p4 = r1 - l1 * (b / 2.0 - ecc);
                             var brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { p1, p2, p3, p4, p1 }).ToNurbsCurve(), 0.001)[0];
                             _s.Add(brep);
                         }
                     }
-                    var text = obj.Attributes.GetUserString(nameD);
+                    text = obj.Attributes.GetUserString(nameD);
                     var D = 10.0;//[mm]
                     if (text != null) { D = float.Parse(text); }
                     text = obj.Attributes.GetUserString(namepitch);
@@ -293,8 +298,8 @@ namespace StripFooting
                     var ft = 195.0;//[mm2]
                     text = obj.Attributes.GetUserString(nameft);
                     if (text != null) { ft = float.Parse(text); }
-                    text = obj.Attributes.GetUserString(namew);
-                    var w = 0.2;//[mm]
+                    text = obj.Attributes.GetUserString(namew[0]);
+                    var w = 0.2;//[m]
                     if (text != null) { w = float.Parse(text); }
                     text = obj.Attributes.GetUserString(nameac);
                     var ac = 30.0;//[kN/m2]
@@ -303,7 +308,7 @@ namespace StripFooting
                     var at = Math.PI * Math.Pow(D, 2) / 4.0 * 1000.0 / pitch;//[mm2]
                     var dj = (t * 1000 - 60) * 7 / 8;//[mm]
                     J.Add(dj); At.Add(at);
-                    var span = (b - w) / 2.0; LL.Add(span);
+                    var span = (b - w) / 2.0 + ecc; LL.Add(span);
                     M.Add(prs * Math.Pow(span, 2) / 2.0);//[kNm]
                     Ma.Add(at * ft * dj / 1e+6);//[kNm]
                     bar.Add("D" + ((int)D).ToString() + "@" + ((int)pitch).ToString()); Ft.Add(ft);
@@ -363,14 +368,22 @@ namespace StripFooting
                 document.Info.Author = "Shinnosuke Fujita, Assoc. Prof., The Univ. of Kitakyushu";
                 var labels = new List<string>
                         {
-                            "基礎番号","幅B[m]","厚みt[m]","長さL[m]","底面積A[m2]","反力合計[kN]","基礎自重[kN]","接地圧N/A[kN/m2]","許容地耐力[kN/m2]","地耐力検定比","基礎出幅[m]","M[kNm]","配筋","断面積at[mm2]","ft[N/mm2]","応力中心間距離j[mm]","Ma[kNm]","曲げ検定比M/Ma","反力合計(L+X)[kN]","反力合計(L+Y)[kN]","反力合計(L-X)[kN]","反力合計(L-Y)[kN]","浮き上がり"
+                            "基礎番号","幅B[m]","厚みt[m]","長さL[m]","偏心距離e[m]","底面積A[m2]","断面係数Z[m3]","反力合計[kN]","基礎自重[kN]","接地圧N/A+M/Z[kN/m2]","許容地耐力[kN/m2]","地耐力検定比","基礎出幅[m]","M[kNm]","配筋","断面積at[mm2]","ft[N/mm2]","応力中心間距離j[mm]","Ma[kNm]","曲げ検定比M/Ma","反力合計(L+X)[kN]","反力合計(L+Y)[kN]","反力合計(L-X)[kN]","反力合計(L-Y)[kN]","浮き上がり"
                         };
                 if (option == 0)
                 {
                     labels = new List<string>
                         {
-                            "基礎番号","幅B[m]","厚みt[m]","長さL[m]","底面積A[m2]","反力合計[kN]","基礎自重[kN]","接地圧N/A[kN/m2]","許容地耐力[kN/m2]","地耐力検定比","基礎出幅[m]","M[kNm]","配筋","断面積at[mm2]","ft[N/mm2]","応力中心間距離j[mm]","Ma[kNm]","曲げ検定比M/Ma"
+                            "基礎番号","幅B[m]","厚みt[m]","長さL[m]","偏心距離e[m]","底面積A[m2]","断面係数Z[m3]","反力合計[kN]","基礎自重[kN]","接地圧N/A+M/Z[kN/m2]","許容地耐力[kN/m2]","地耐力検定比","基礎出幅[m]","M[kNm]","配筋","断面積at[mm2]","ft[N/mm2]","応力中心間距離j[mm]","Ma[kNm]","曲げ検定比M/Ma"
                         };
+                }
+                else if (option == 2)
+                {
+                    labels = new List<string>
+                        {
+                            "基礎番号","幅B[m]","厚みt[m]","長さL[m]","偏心距離e[m]","底面積A[m2]","断面係数Z[m3]","反力合計[kN]","基礎自重[kN]","接地圧N/A+M/Z[kN/m2]","許容地耐力[kN/m2]","地耐力検定比"
+                        };
+
                 }
                 var label_width = 105; var offset_x = 25; var offset_y = 25; var pitchy = 11; var text_width = 20; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
                 for (int e = 0; e < pressure.Count; e++)
@@ -379,7 +392,9 @@ namespace StripFooting
                     var B_text = B[e].ToString("F").Substring(0, Digit((int)(B[e])) + 3);
                     var t_text = T[e].ToString("F").Substring(0, Digit((int)(T[e])) + 3);
                     var L_text = L[e].ToString("F").Substring(0, Digit((int)(L[e])) + 3);
+                    var ecc_text = Ecc[e].ToString("F").Substring(0, Digit((int)(Ecc[e])) + 3);
                     var A_text = A[e].ToString("F").Substring(0, Digit((int)(A[e])) + 3);
+                    var Z_text = Z[e].ToString("F").Substring(0, Digit((int)(Z[e])) + 3);
                     var Rz_text = Rz[e].ToString("F").Substring(0, Digit((int)(Rz[e])) + 3);
                     var Sz_text = Sz[e].ToString("F").Substring(0, Digit((int)(Sz[e])) + 3);
                     var P_text = pressure[e].ToString("F").Substring(0, Digit((int)(pressure[e])) + 3);
@@ -402,12 +417,12 @@ namespace StripFooting
                     var ukiagari = "なし";
                     if (Rz[e] + Sz[e] + Rzx[e] < 0 || Rz[e] + Sz[e] + Rzy[e] < 0|| Rz[e] + Sz[e] + Rzx2[e] < 0|| Rz[e] + Sz[e] + Rzy2[e] < 0) { ukiagari = "あり"; }
                     var values = new List<string>();
-                    values.Add(e_text); values.Add(B_text); values.Add(t_text); values.Add(L_text); values.Add(A_text); values.Add(Rz_text); values.Add(Sz_text); values.Add(P_text); values.Add(ac_text); values.Add(k2_text); values.Add(l_text); values.Add(M_text); values.Add(bar_text); values.Add(at_text); values.Add(ft_text); values.Add(j_text); values.Add(Ma_text);
+                    values.Add(e_text); values.Add(B_text); values.Add(t_text); values.Add(L_text); values.Add(ecc_text); values.Add(A_text); values.Add(Z_text); values.Add(Rz_text); values.Add(Sz_text); values.Add(P_text); values.Add(ac_text); values.Add(k2_text); values.Add(l_text); values.Add(M_text); values.Add(bar_text); values.Add(at_text); values.Add(ft_text); values.Add(j_text); values.Add(Ma_text);
                     values.Add(k_text);
                     if (option == 1) { values.Add(Rzx_text); values.Add(Rzy_text); values.Add(Rzx2_text); values.Add(Rzy2_text); values.Add(ukiagari); }
                     var slide = 0.0;
-                    if (6 <= e % 18 && e % 18 < 12) { slide = pitchy * 23.5; }
-                    if (12 <= e % 18 && e % 18 < 18) { slide = pitchy * 23.5 * 2; }
+                    if (6 <= e % 18 && e % 18 < 12) { slide = pitchy * 25.5; }
+                    if (12 <= e % 18 && e % 18 < 18) { slide = pitchy * 25.5 * 2; }
                     if ((e % 18) % 6 == 0)
                     {
                         // 空白ページを作成。
@@ -425,17 +440,17 @@ namespace StripFooting
                             }
                         }//***********************************************************************************************************************
                     }
-                    for (int i = 0; i < values.Count; i++)
+                    for (int i = 0; i < labels.Count; i++)
                     {
                         var j = e % 6;
                         gfx.DrawLine(pen, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, offset_x + label_width + text_width * 3 * (j + 1), offset_y + pitchy * i + slide);//横線
                         gfx.DrawLine(pen, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * (i + 1) + slide);//縦線
-                        if (i == values.Count - 1)
+                        if (i == labels.Count - 1)
                         {
                             gfx.DrawLine(pen, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * (i + 1) + slide, offset_x + label_width + text_width * 3 * (j + 1), offset_y + pitchy * (i + 1) + slide);//横線
                         }
                         var color = XBrushes.Black;
-                        if (i == 9 || i == 17) { color = k2_color; }
+                        if (i == 11 || i == 19) { color = k2_color; }
                         if (values[i] == "なし") { color = XBrushes.Blue; }
                         if (values[i] == "あり") { color = XBrushes.Red; }
                         gfx.DrawString(values[i], font, color, new XRect(offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, text_width * 3, offset_y + pitchy * (i + 1) + slide), XStringFormats.TopCenter);
