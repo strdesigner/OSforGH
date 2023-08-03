@@ -750,11 +750,9 @@ namespace OpenSeesUtility
                                             List<GH_Number> flist = new List<GH_Number>();
                                             for (int jj = 0; jj < 18; jj++)
                                             {
-                                                if (jj != 0) { flist.Add(new GH_Number(f[jj].Value)); }
-                                                else
-                                                {
-                                                    flist.Add(new GH_Number(f[jj].Value - N));
-                                                }
+                                                if (jj == 0) { flist.Add(new GH_Number(f[jj].Value - N)); }
+                                                else if (jj == 12) { flist.Add(new GH_Number(f[jj].Value - N / 2.0)); }
+                                                else { flist.Add(new GH_Number(f[jj].Value)); }
                                             }
                                             sec_f2.RemovePath(new GH_Path(ee));
                                             sec_f2.AppendRange(flist, new GH_Path(ee));
@@ -765,11 +763,9 @@ namespace OpenSeesUtility
                                             List<GH_Number> flist = new List<GH_Number>();
                                             for (int jj = 0; jj < 18; jj++)
                                             {
-                                                if (jj != 0) { flist.Add(new GH_Number(f[jj].Value)); }
-                                                else
-                                                {
-                                                    flist.Add(new GH_Number(f[jj].Value + N));
-                                                }
+                                                if (jj == 0) { flist.Add(new GH_Number(f[jj].Value + N)); }
+                                                else if (jj == 12) { flist.Add(new GH_Number(f[jj].Value + N / 2.0)); }
+                                                else { flist.Add(new GH_Number(f[jj].Value)); }
                                             }
                                             sec_f2.RemovePath(new GH_Path(ee));
                                             sec_f2.AppendRange(flist, new GH_Path(ee));
