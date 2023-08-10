@@ -721,7 +721,11 @@ namespace OpenSeesUtility
                 }
                 if (_kabe_w.Branches[0][0].Value != -9999)
                 {
-                    GH_Structure<GH_Number> kabe_w_new = new GH_Structure<GH_Number>(); e2 = 0; var shear_w = new List<double>();
+                    GH_Structure<GH_Number> kabe_w_new = new GH_Structure<GH_Number>(); e2 = 0; var shear_w = new List<double>(); var Nlist = new List<double>();
+                    for (int e = 0; e < m; e++)
+                    {
+                        Nlist.Add(0.0);
+                    }
                     for (int e = 0; e < m3; e++)
                     {
                         int i = (int)kabe_w[e][0].Value; int j = (int)kabe_w[e][1].Value; int k = (int)kabe_w[e][2].Value; int l = (int)kabe_w[e][3].Value; double alpha = kabe_w[e][4].Value;
@@ -746,69 +750,11 @@ namespace OpenSeesUtility
                                         var ni = ij[ee][0].Value; var nj = ij[ee][1].Value;
                                         if (i==ni && l == nj)
                                         {
-                                            var f = sec_f2.Branches[ee];
-                                            List<GH_Number> flist = new List<GH_Number>();
-                                            for (int jj = 0; jj < 18; jj++)
-                                            {
-                                                if (jj == 0)
-                                                {
-                                                    if (f[jj].Value <= 0)
-                                                    {
-                                                        flist.Add(new GH_Number(f[jj].Value - N));
-                                                    }
-                                                    else
-                                                    {
-                                                        flist.Add(new GH_Number(f[jj].Value + N));
-                                                    }
-                                                }
-                                                else if (jj == 12)
-                                                {
-                                                    if (f[jj].Value <= 0)
-                                                    {
-                                                        flist.Add(new GH_Number(f[jj].Value - N / 2.0));
-                                                    }
-                                                    else
-                                                    {
-                                                        flist.Add(new GH_Number(f[jj].Value + N / 2.0));
-                                                    }
-                                                }
-                                                else { flist.Add(new GH_Number(f[jj].Value)); }
-                                            }
-                                            sec_f2.RemovePath(new GH_Path(ee));
-                                            sec_f2.AppendRange(flist, new GH_Path(ee));
+                                            Nlist[ee] = Nlist[ee] - N;
                                         }
                                         if (j == ni && k == nj)
                                         {
-                                            var f = sec_f2.Branches[ee];
-                                            List<GH_Number> flist = new List<GH_Number>();
-                                            for (int jj = 0; jj < 18; jj++)
-                                            {
-                                                if (jj == 0)
-                                                {
-                                                    if (f[jj].Value <= 0)
-                                                    {
-                                                        flist.Add(new GH_Number(f[jj].Value - N));
-                                                    }
-                                                    else
-                                                    {
-                                                        flist.Add(new GH_Number(f[jj].Value + N));
-                                                    }
-                                                }
-                                                else if (jj == 12)
-                                                {
-                                                    if (f[jj].Value <= 0)
-                                                    {
-                                                        flist.Add(new GH_Number(f[jj].Value - N / 2.0));
-                                                    }
-                                                    else
-                                                    {
-                                                        flist.Add(new GH_Number(f[jj].Value + N / 2.0));
-                                                    }
-                                                }
-                                                else { flist.Add(new GH_Number(f[jj].Value)); }
-                                            }
-                                            sec_f2.RemovePath(new GH_Path(ee));
-                                            sec_f2.AppendRange(flist, new GH_Path(ee));
+                                            Nlist[ee] = Nlist[ee] + N;
                                         }
                                     }
                                 }
@@ -858,6 +804,39 @@ namespace OpenSeesUtility
                             kabe_w_new.AppendRange(klist, new GH_Path(e));
                             shear_w.Add(0.0);
                         }
+                    }
+                    for (int e = 0; e < m; e++)
+                    {
+                        var f = sec_f2.Branches[e];
+                        List<GH_Number> flist = new List<GH_Number>();
+                        for (int jj = 0; jj < 18; jj++)
+                        {
+                            if (jj == 0)
+                            {
+                                if ((f[jj].Value<0 && Nlist[e]<0)|| (f[jj].Value >= 0 && Nlist[e] >= 0))
+                                {
+                                    flist.Add(new GH_Number(f[jj].Value + Nlist[e]));
+                                }
+                                else
+                                {
+                                    flist.Add(new GH_Number(f[jj].Value - Nlist[e]));
+                                }
+                            }
+                            else if (jj == 12)
+                            {
+                                if ((f[jj].Value < 0 && Nlist[e] < 0) || (f[jj].Value >= 0 && Nlist[e] >= 0))
+                                {
+                                    flist.Add(new GH_Number(f[jj].Value + Nlist[e] / 2.0));
+                                }
+                                else
+                                {
+                                    flist.Add(new GH_Number(f[jj].Value - Nlist[e] / 2.0));
+                                }
+                            }
+                            else { flist.Add(new GH_Number(f[jj].Value)); }
+                        }
+                        sec_f2.RemovePath(new GH_Path(e));
+                        sec_f2.AppendRange(flist, new GH_Path(e));
                     }
                     DA.SetDataTree(9, kabe_w_new);
                     DA.SetDataList("shear_w", shear_w);
