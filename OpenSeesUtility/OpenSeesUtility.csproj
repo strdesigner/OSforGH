@@ -92,6 +92,7 @@
     <Compile Include="kabeQ.cs" />
     <Compile Include="merikomicheck.cs" />
     <Compile Include="ElasticAnalysisforN.cs" />
+    <Compile Include="FromGridPoints2.cs" />
     <Compile Include="TimberCheckSnow.cs" />
     <Compile Include="SurfAutoCreation2.cs" />
     <Compile Include="RCBeamCheck2.cs" />
@@ -417,6 +418,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ElasticAnalysisforN.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fromgridpoints2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

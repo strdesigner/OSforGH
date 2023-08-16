@@ -181,6 +181,9 @@
   <data name="fromgridpoints" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\fromgridpoints.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="fromgridpoints2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fromgridpoints2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="fromrevit" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\fromrevit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

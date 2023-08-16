@@ -273,6 +273,16 @@ namespace OpenSeesUtility.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap fromgridpoints2 {
+            get {
+                object obj = ResourceManager.GetObject("fromgridpoints2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap fromrevit {
             get {
                 object obj = ResourceManager.GetObject("fromrevit", resourceCulture);
