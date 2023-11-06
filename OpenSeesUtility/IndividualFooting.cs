@@ -280,7 +280,7 @@ namespace OpenSeesUtility
                 if (Dy[i] > 18.9 && Dy[i] < 28.9) { ftSy[i] = 345.0; }
                 else if (Dy[i] > 28.9) { ftSy[i] = 390.0; }
                 Sz.Add(A[i] * t[i] / 1e+3 * rho[i]);//[kN]
-                PL.Add((Rz[i][0] + Sz[i]) / A[i] + RMx[i][0] / Zx[i] + RMy[i][0] / Zy[i]);//[kN/m2]
+                PL.Add((Rz[i][0] + Sz[i]) / A[i] + Math.Abs(RMx[i][0]) / Zx[i] + Math.Abs(RMy[i][0]) / Zy[i]);//[kN/m2]
                 QxL.Add(Lx[i] * D[i] / 1e+6 * PL[i]); QyL.Add(Ly[i] * B[i] / 1e+6 * PL[i]);//[kN]
                 fsL.Add(Math.Min(Fc[i] / 10.0, 0.49 + Fc[i] / 100.0)); fsS.Add(fsL[i] * 1.5);//[N/mm2]
                 QaxL.Add(fsL[i] * D[i] * J[i] / 1e+3); QayL.Add(fsL[i] * B[i] * J[i] / 1e+3);//[kN]

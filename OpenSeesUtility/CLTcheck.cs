@@ -109,6 +109,7 @@ namespace CLTCheck
             pManager.AddNumberParameter("safe factor", "alpha", "Reduction rate taking into account cross-sectional defects", GH_ParamAccess.item);///
             pManager.AddNumberParameter("sec_f", "sec_f", "[[Pxi,Pyi,Pzi,Mxi,Myi,Mzi,Pxj,Pyj,Pzj,Mxj,Myj,Mzj,Pxc,Pyc,Pzc,Mxc,Myc,Mzc],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("kentei_hi", "kentei", "[[for Ni,for Qyi,for Qzi,for Myi,for Mzi,for Nj,for Qyj,for Qzj,for Myj,for Mzj,for Nc,for Qyc,for Qzc,for Myc,for Mzc],...](DataTree)", GH_ParamAccess.tree);///
+            pManager.AddNumberParameter("kentei(max)", "kentei(max)", "[[ele. No.,for Long-term, for Short-term],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("burnB", "burnB", "[double,double,...](Datalist)[m]", GH_ParamAccess.list);///
             pManager.AddNumberParameter("burnD", "burnD", "[double,double,...](Datalist)[m]", GH_ParamAccess.list);///
             pManager.AddNumberParameter("kmax", "kmax", "[[ele. No.,Long-term max],[ele. No.,Short-term max]](DataTree)", GH_ParamAccess.tree);///
@@ -150,7 +151,7 @@ namespace CLTCheck
             var unit = 1.0;///単位合わせのための係数
             unit /= 1000000.0;
             unit *= 1000.0;
-            List<double> index = new List<double>(); List<double> index3 = new List<double>();
+            List<double> index = new List<double>(); List<double> index3 = new List<double>(); var kenteimax = new GH_Structure<GH_Number>(); var kmax1 = new List<double>(); var kmax2 = new List<double>();
             DA.GetDataList("index", index); DA.GetDataList("index(burn)", index3);
             if (index[0] == -9999)
             {
@@ -235,6 +236,11 @@ namespace CLTCheck
                             var flist = new List<GH_Number>();
                             for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][i].Value)); }
                             kentei.AppendRange(klist, new GH_Path(new int[] { 0, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 0, ind })); ij_new.AppendRange(ij[e], new GH_Path(ind));
+                            var _kmax1 = 0.0; var _kmax2 = 0.0;
+                            _kmax2 = Math.Max(_kmax2, Math.Max(Math.Max(klist[3].Value, klist[4].Value) + klist[0].Value, Math.Max(Math.Max(klist[1].Value, klist[2].Value), klist[0].Value)));
+                            _kmax2 = Math.Max(_kmax2, Math.Max(Math.Max(klist[8].Value, klist[9].Value) + klist[5].Value, Math.Max(Math.Max(klist[6].Value, klist[7].Value), klist[5].Value)));
+                            _kmax2 = Math.Max(_kmax2, Math.Max(Math.Max(klist[13].Value, klist[14].Value) + klist[10].Value, Math.Max(Math.Max(klist[11].Value, klist[12].Value), klist[10].Value)));
+                            kenteimax.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(_kmax1), new GH_Number(_kmax2) }, new GH_Path(ind));
                             if (on_off_12 == 1)
                             {
                                 var ni = (int)ij[e][0].Value; var nj = (int)ij[e][1].Value;
@@ -366,6 +372,10 @@ namespace CLTCheck
                             var flist = new List<GH_Number>();
                             for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][i].Value)); }
                             kentei.AppendRange(klist, new GH_Path(new int[] { 0, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 0, ind })); ij_new.AppendRange(ij[e], new GH_Path(ind));
+                            var ki = Math.Max(Math.Max(klist[3].Value, klist[4].Value) + klist[0].Value, Math.Max(Math.Max(klist[1].Value, klist[2].Value), klist[0].Value));
+                            var kj = Math.Max(Math.Max(klist[8].Value, klist[9].Value) + klist[5].Value, Math.Max(Math.Max(klist[6].Value, klist[7].Value), klist[5].Value));
+                            var kc = Math.Max(Math.Max(klist[13].Value, klist[14].Value) + klist[10].Value, Math.Max(Math.Max(klist[11].Value, klist[12].Value), klist[10].Value));
+                            kmax1.Add(Math.Max(Math.Max(ki, kj), kc));
                             if (on_off_11 == 1)
                             {
                                 var ni = (int)ij[e][0].Value; var nj = (int)ij[e][1].Value;
@@ -647,7 +657,22 @@ namespace CLTCheck
                                     for (int i = 0; i < 18; i++) { flist.Add(new GH_Number(sec_f[e][18 * 4 + i].Value)); }
                                 }
                                 kentei.AppendRange(k4list, new GH_Path(new int[] { 4, ind })); sec_f_new.AppendRange(flist, new GH_Path(new int[] { 4, ind }));
-
+                                var k1 = Math.Max(Math.Max(k1list[3].Value, k1list[4].Value) + k1list[0].Value, Math.Max(Math.Max(k1list[1].Value, k1list[2].Value), k1list[0].Value));
+                                var k2 = Math.Max(Math.Max(k2list[3].Value, k2list[4].Value) + k2list[0].Value, Math.Max(Math.Max(k2list[1].Value, k2list[2].Value), k2list[0].Value));
+                                var k3 = Math.Max(Math.Max(k3list[3].Value, k3list[4].Value) + k3list[0].Value, Math.Max(Math.Max(k3list[1].Value, k3list[2].Value), k3list[0].Value));
+                                var k4 = Math.Max(Math.Max(k4list[3].Value, k4list[4].Value) + k4list[0].Value, Math.Max(Math.Max(k4list[1].Value, k4list[2].Value), k4list[0].Value));
+                                var ki = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                k1 = Math.Max(Math.Max(k1list[8].Value, k1list[9].Value) + k1list[5].Value, Math.Max(Math.Max(k1list[6].Value, k1list[7].Value), k1list[5].Value));
+                                k2 = Math.Max(Math.Max(k2list[8].Value, k2list[9].Value) + k2list[5].Value, Math.Max(Math.Max(k2list[6].Value, k2list[7].Value), k2list[5].Value));
+                                k3 = Math.Max(Math.Max(k3list[8].Value, k3list[9].Value) + k3list[5].Value, Math.Max(Math.Max(k3list[6].Value, k3list[7].Value), k3list[5].Value));
+                                k4 = Math.Max(Math.Max(k4list[8].Value, k4list[9].Value) + k4list[5].Value, Math.Max(Math.Max(k4list[6].Value, k4list[7].Value), k4list[5].Value));
+                                var kj = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                k1 = Math.Max(Math.Max(k1list[13].Value, k1list[14].Value) + k1list[10].Value, Math.Max(Math.Max(k1list[11].Value, k1list[12].Value), k1list[10].Value));
+                                k2 = Math.Max(Math.Max(k2list[13].Value, k2list[14].Value) + k2list[10].Value, Math.Max(Math.Max(k2list[11].Value, k2list[12].Value), k2list[10].Value));
+                                k3 = Math.Max(Math.Max(k3list[13].Value, k3list[14].Value) + k3list[10].Value, Math.Max(Math.Max(k3list[11].Value, k3list[12].Value), k3list[10].Value));
+                                k4 = Math.Max(Math.Max(k4list[13].Value, k4list[14].Value) + k4list[10].Value, Math.Max(Math.Max(k4list[11].Value, k4list[12].Value), k4list[10].Value));
+                                var kc = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
+                                kmax2.Add(Math.Max(Math.Max(ki, kj), kc));
                                 if (on_off_12 == 1)
                                 {
                                     var ni = (int)ij[e][0].Value; var nj = (int)ij[e][1].Value;
@@ -655,10 +680,10 @@ namespace CLTCheck
                                     var rc = (r1 + r2) / 2.0; var ri = (r1 + rc) / 2.0; var rj = (r2 + rc) / 2.0;
                                     if (on_off_21 == 1)
                                     {
-                                        var k1 = Math.Max(k1list[3].Value, k1list[4].Value) + k1list[0].Value;//i端の検定比
-                                        var k2 = Math.Max(k2list[3].Value, k2list[4].Value) + k2list[0].Value;
-                                        var k3 = Math.Max(k3list[3].Value, k3list[4].Value) + k3list[0].Value;
-                                        var k4 = Math.Max(k4list[3].Value, k4list[4].Value) + k4list[0].Value;
+                                        k1 = Math.Max(k1list[3].Value, k1list[4].Value) + k1list[0].Value;//i端の検定比
+                                        k2 = Math.Max(k2list[3].Value, k2list[4].Value) + k2list[0].Value;
+                                        k3 = Math.Max(k3list[3].Value, k3list[4].Value) + k3list[0].Value;
+                                        k4 = Math.Max(k4list[3].Value, k4list[4].Value) + k4list[0].Value;
                                         var k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
                                         _text.Add(k.ToString("F").Substring(0, digit));
                                         _p.Add(ri);
@@ -685,10 +710,10 @@ namespace CLTCheck
                                     }
                                     else if (on_off_22 == 1)
                                     {
-                                        var k1 = Math.Max(k1list[1].Value, k1list[2].Value);
-                                        var k2 = Math.Max(k2list[1].Value, k2list[2].Value);
-                                        var k3 = Math.Max(k3list[1].Value, k3list[2].Value);
-                                        var k4 = Math.Max(k4list[1].Value, k4list[2].Value);
+                                        k1 = Math.Max(k1list[1].Value, k1list[2].Value);
+                                        k2 = Math.Max(k2list[1].Value, k2list[2].Value);
+                                        k3 = Math.Max(k3list[1].Value, k3list[2].Value);
+                                        k4 = Math.Max(k4list[1].Value, k4list[2].Value);
                                         var k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
                                         _text.Add(k.ToString("F").Substring(0, digit));
                                         _p.Add(ri);
@@ -715,10 +740,10 @@ namespace CLTCheck
                                     }
                                     else if (on_off_23 == 1)
                                     {
-                                        var k1 = Math.Max(Math.Max(k1list[3].Value, k1list[4].Value) + k1list[0].Value, Math.Max(Math.Max(k1list[1].Value, k1list[2].Value), k1list[0].Value));
-                                        var k2 = Math.Max(Math.Max(k2list[3].Value, k2list[4].Value) + k2list[0].Value, Math.Max(Math.Max(k2list[1].Value, k2list[2].Value), k2list[0].Value));
-                                        var k3 = Math.Max(Math.Max(k3list[3].Value, k3list[4].Value) + k3list[0].Value, Math.Max(Math.Max(k3list[1].Value, k3list[2].Value), k3list[0].Value));
-                                        var k4 = Math.Max(Math.Max(k4list[3].Value, k4list[4].Value) + k4list[0].Value, Math.Max(Math.Max(k4list[1].Value, k4list[2].Value), k4list[0].Value));
+                                        k1 = Math.Max(Math.Max(k1list[3].Value, k1list[4].Value) + k1list[0].Value, Math.Max(Math.Max(k1list[1].Value, k1list[2].Value), k1list[0].Value));
+                                        k2 = Math.Max(Math.Max(k2list[3].Value, k2list[4].Value) + k2list[0].Value, Math.Max(Math.Max(k2list[1].Value, k2list[2].Value), k2list[0].Value));
+                                        k3 = Math.Max(Math.Max(k3list[3].Value, k3list[4].Value) + k3list[0].Value, Math.Max(Math.Max(k3list[1].Value, k3list[2].Value), k3list[0].Value));
+                                        k4 = Math.Max(Math.Max(k4list[3].Value, k4list[4].Value) + k4list[0].Value, Math.Max(Math.Max(k4list[1].Value, k4list[2].Value), k4list[0].Value));
                                         var k = Math.Max(Math.Max(k1, k2), Math.Max(k3, k4));
                                         _text.Add(k.ToString("F").Substring(0, digit));
                                         _p.Add(ri);
@@ -768,8 +793,14 @@ namespace CLTCheck
                         f_stree.AppendRange(f_slist, new GH_Path(0)); f_stree.AppendRange(f_s2list, new GH_Path(1));
                         f_botree.AppendRange(f_bolist, new GH_Path(0)); f_botree.AppendRange(f_bo2list, new GH_Path(1));
                         f_sotree.AppendRange(f_solist, new GH_Path(0)); f_sotree.AppendRange(f_so2list, new GH_Path(1));
+                        for (int i = 0; i < index.Count; i++)
+                        {
+                            int e = (int)index[i];
+                            if (m2 / 18 == 3 || m2 / 18 == 5) { kenteimax.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1[i]), new GH_Number(kmax2[i]) }, new GH_Path(i)); }
+                            else { kenteimax.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1[i]), new GH_Number(0.0) }, new GH_Path(i)); }
+                        }
                         DA.SetDataTree(1, ij_new); DA.SetDataTree(13, sec_f_new); DA.SetDataTree(14, kentei); DA.SetDataList("lambda", Lambda);
-                        DA.SetDataTree(6, f_ktree); DA.SetDataTree(7, f_ttree); DA.SetDataTree(8, f_btree); DA.SetDataTree(9, f_stree); DA.SetDataTree(10, f_botree); DA.SetDataTree(11, f_sotree); DA.SetDataList("index", index);
+                        DA.SetDataTree(6, f_ktree); DA.SetDataTree(7, f_ttree); DA.SetDataTree(8, f_btree); DA.SetDataTree(9, f_stree); DA.SetDataTree(10, f_botree); DA.SetDataTree(11, f_sotree); DA.SetDataList("index", index);DA.SetDataTree(15, kenteimax);
                         var kk = kentei.Branches;
                         var k1max = 0.0; var k2max = 0.0; var ij1 = -1; var ij2 = -1;
                         for (int i = 0; i < kk.Count / index.Count; i++)
@@ -799,7 +830,13 @@ namespace CLTCheck
                         var kmax = new GH_Structure<GH_Number>();
                         kmax.AppendRange(llist, new GH_Path(0));
                         if (ij2 != -1) { kmax.AppendRange(slist, new GH_Path(1)); }
-                        DA.SetDataTree(17, kmax);
+                        DA.SetDataTree(18, kmax);
+                        for (int i = 0; i < index.Count; i++)
+                        {
+                            int e = (int)index[i];
+                            if (m2 / 18 == 3 || m2 / 18 == 5) { kenteimax.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1[i]), new GH_Number(kmax2[i]) }, new GH_Path(i)); }
+                            else { kenteimax.AppendRange(new List<GH_Number> { new GH_Number(e), new GH_Number(kmax1[i]), new GH_Number(0.0) }, new GH_Path(i)); }
+                        }
                     }
                 }
             }

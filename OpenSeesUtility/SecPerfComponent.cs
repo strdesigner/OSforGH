@@ -164,15 +164,17 @@ namespace SectionPerformance
                         Point3d r1 = new Point3d(r[n1][0].Value, r[n1][1].Value, r[n1][2].Value); Point3d r2 = new Point3d(r[n2][0].Value, r[n2][1].Value, r[n2][2].Value);
                         Point3d rc = new Point3d((r[n1][0].Value + r[n2][0].Value) / 2.0, (r[n1][1].Value + r[n2][1].Value) / 2.0, (r[n1][2].Value + r[n2][2].Value) / 2.0);
                         Vector3d l1 = l_vec[e]; Vector3d l2 = rotation(l1, r2 - r1, 90);
+                        double p1 = P1[sec_e]; double p2 = P2[sec_e]; double p3 = P3[sec_e]; double p4 = P4[sec_e];
                         if (sec[sec_e] == "■" || sec[sec_e] == "1")
                         {
-                            VA[0] += P1[sec_e] * P2[sec_e] * (r2 - r1).Length; VA[1] += 2 * (P1[sec_e] + P2[sec_e]) * (r2 - r1).Length;
+                            double h = p1; double b = p2;
+                            VA[0] += b * h * (r2 - r1).Length; VA[1] += 2 * (h + b) * (r2 - r1).Length;
                             if (shape == 1 || render == 1)
                             {
-                                Point3d c1 = rc + l1 * P1[sec_e] / 2.0 + l2 * P2[sec_e] / 2.0;
-                                Point3d c2 = c1 - l1 * P1[sec_e];
-                                Point3d c3 = c2 - l2 * P2[sec_e];
-                                Point3d c4 = c3 + l1 * P1[sec_e];
+                                Point3d c1 = rc + l1 * p1 / 2.0 + l2 * p2 / 2.0;
+                                Point3d c2 = c1 - l1 * p1;
+                                Point3d c3 = c2 - l2 * p2;
+                                Point3d c4 = c3 + l1 * p1;
                                 if (shape == 1)
                                 {
                                     Brep brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { c1, c2, c3, c4, c1 }).ToNurbsCurve(), 0.001)[0];
@@ -192,7 +194,7 @@ namespace SectionPerformance
                                 double scale = 1;
                                 if (unit_of_length == "mm") { scale = 1000; }
                                 if (unit_of_length == "cm") { scale = 100; }
-                                double t1 = P1[sec_e] * scale; double t2 = P2[sec_e] * scale;
+                                double t1 = p1 * scale; double t2 = p2 * scale;
                                 _text.Add("■-" + t2.ToString() + "x" + t1.ToString());//幅×せい
                                 _point.Add(rc);
                                 _size.Add(fontsize);
@@ -200,15 +202,15 @@ namespace SectionPerformance
                         }
                         else if (sec[sec_e] == "●" || sec[sec_e] == "2")
                         {
-                            VA[0] += Math.Pow(P1[sec_e],2) * Math.PI/4.0 * (r2 - r1).Length; VA[1] += P1[sec_e] * Math.PI * (r2 - r1).Length;
+                            VA[0] += Math.Pow(p1,2) * Math.PI/4.0 * (r2 - r1).Length; VA[1] += p1 * Math.PI * (r2 - r1).Length;
                             if (shape == 1)
                             {
-                                Brep brep = Brep.CreatePlanarBreps(new Circle(new Arc(rc + l2 * P1[sec_e] / 2.0, rc + l1 * P1[sec_e] / 2.0, rc - l2 * P1[sec_e] / 2.0)).ToNurbsCurve(), 0.001)[0];
+                                Brep brep = Brep.CreatePlanarBreps(new Circle(new Arc(rc + l2 * p1 / 2.0, rc + l1 * p1 / 2.0, rc - l2 * p1 / 2.0)).ToNurbsCurve(), 0.001)[0];
                                 _rc.Add(brep);
                             }
                             if (render == 1)
                             {
-                                Brep brep = Brep.CreatePlanarBreps(new Circle(new Arc(r1 + l2 * P1[sec_e] / 2.0, r1 + l1 * P1[sec_e] / 2.0, r1 - l2 * P1[sec_e] / 2.0)).ToNurbsCurve(), 0.001)[0];
+                                Brep brep = Brep.CreatePlanarBreps(new Circle(new Arc(r1 + l2 * p1 / 2.0, r1 + l1 * p1 / 2.0, r1 - l2 * p1 / 2.0)).ToNurbsCurve(), 0.001)[0];
                                 var face = brep.Faces[0];
                                 var solid = face.CreateExtrusion(new Line(r1, r2).ToNurbsCurve(), true);
                                 ren.Add(solid);
@@ -218,7 +220,7 @@ namespace SectionPerformance
                                 double scale = 1;
                                 if (unit_of_length == "mm") { scale = 1000; }
                                 if (unit_of_length == "cm") { scale = 100; }
-                                double t1 = P1[sec_e] * scale;
+                                double t1 = p1 * scale;
                                 _text.Add("●-" + t1.ToString());
                                 _point.Add(rc);
                                 _size.Add(fontsize);
@@ -226,17 +228,19 @@ namespace SectionPerformance
                         }
                         else if (sec[sec_e] == "□" || sec[sec_e] == "3" || sec[sec_e] == "▢")
                         {
-                            VA[0] += (P1[sec_e] * P2[sec_e] - (P1[sec_e] - 2 * P3[sec_e]) * (P2[sec_e] - 2 * P4[sec_e])) * (r2 - r1).Length; VA[1] += 2 * (P1[sec_e] + P2[sec_e]) * (r2 - r1).Length;
+                            double h = p1; double b = p2; double tw = p3; double tf = p4;
+                            double b1 = b - 2 * tw; double h1 = h - 2 * tf;
+                            VA[0] += (b * h - b1 * h1) * (r2 - r1).Length; VA[1] += 2 * (p1 + p2) * (r2 - r1).Length;
                             if (shape == 1 || render == 1)
                             {
-                                Point3d c1 = rc + l1 * (P1[sec_e] - P4[sec_e] * 2) / 2.0 + l2 * (P2[sec_e] - P3[sec_e] * 2) / 2.0;
-                                Point3d c2 = rc + l1 * (P1[sec_e] - P4[sec_e] * 2) / 2.0 - l2 * (P2[sec_e] - P3[sec_e] * 2) / 2.0;
-                                Point3d c3 = rc - l1 * (P1[sec_e] - P4[sec_e] * 2) / 2.0 - l2 * (P2[sec_e] - P3[sec_e] * 2) / 2.0;
-                                Point3d c4 = rc - l1 * (P1[sec_e] - P4[sec_e] * 2) / 2.0 + l2 * (P2[sec_e] - P3[sec_e] * 2) / 2.0;
-                                Point3d c5 = rc + l1 * P1[sec_e] / 2.0 + l2 * P2[sec_e] / 2.0;
-                                Point3d c6 = rc + l1 * P1[sec_e] / 2.0 - l2 * P2[sec_e] / 2.0;
-                                Point3d c7 = rc - l1 * P1[sec_e] / 2.0 - l2 * P2[sec_e] / 2.0;
-                                Point3d c8 = rc - l1 * P1[sec_e] / 2.0 + l2 * P2[sec_e] / 2.0;
+                                Point3d c1 = rc + l1 * (p1 - p4 * 2) / 2.0 + l2 * (p2 - p3 * 2) / 2.0;
+                                Point3d c2 = rc + l1 * (p1 - p4 * 2) / 2.0 - l2 * (p2 - p3 * 2) / 2.0;
+                                Point3d c3 = rc - l1 * (p1 - p4 * 2) / 2.0 - l2 * (p2 - p3 * 2) / 2.0;
+                                Point3d c4 = rc - l1 * (p1 - p4 * 2) / 2.0 + l2 * (p2 - p3 * 2) / 2.0;
+                                Point3d c5 = rc + l1 * p1 / 2.0 + l2 * p2 / 2.0;
+                                Point3d c6 = rc + l1 * p1 / 2.0 - l2 * p2 / 2.0;
+                                Point3d c7 = rc - l1 * p1 / 2.0 - l2 * p2 / 2.0;
+                                Point3d c8 = rc - l1 * p1 / 2.0 + l2 * p2 / 2.0;
                                 if (shape == 1)
                                 {
                                     Brep brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { c1, c2, c3, c4, c8, c7, c6, c5, c1 }).ToNurbsCurve(), 0.001)[0];
@@ -261,7 +265,7 @@ namespace SectionPerformance
                                 double scale = 1;
                                 if (unit_of_length == "mm") { scale = 1000; }
                                 if (unit_of_length == "cm") { scale = 100; }
-                                double t1 = P1[sec_e] * scale; double t2 = P2[sec_e] * scale; double t3 = P3[sec_e] * scale; double t4 = P4[sec_e] * scale;
+                                double t1 = p1 * scale; double t2 = p2 * scale; double t3 = p3 * scale; double t4 = p4 * scale;
                                 _text.Add("□-" + t1.ToString() + "x" + t2.ToString() + "x" + t3.ToString() + "x" + t4.ToString());//せい×幅×tw×tf
                                 _point.Add(rc);
                                 _size.Add(fontsize);
@@ -269,21 +273,23 @@ namespace SectionPerformance
                         }
                         else if (sec[sec_e] == "〇" || sec[sec_e] == "4" || sec[sec_e] == "○")
                         {
-                            VA[0] += (Math.Pow(P1[sec_e], 2)- Math.Pow(P1[sec_e]-2*P2[sec_e], 2)) * Math.PI / 4.0 * (r2 - r1).Length; VA[1] += P1[sec_e] * Math.PI * (r2 - r1).Length;
+                            double d = p1; double t = p2;
+                            double d1 = d - t * 2;
+                            VA[0] += (Math.PI * (Math.Pow(d, 2) - Math.Pow(d1, 2)) / 4.0) * (r2 - r1).Length; VA[1] += p1 * Math.PI * (r2 - r1).Length;
                             if (shape == 1)
                             {
-                                Brep brep = new SweepOneRail().PerformSweep(new Arc(rc + l2 * P1[sec_e] / 2.0, rc + l1 * P1[sec_e] / 2.0, rc - l2 * P1[sec_e] / 2.0).ToNurbsCurve(), new Line(rc - l2 * P1[sec_e] / 2.0, rc - l2 * P1[sec_e] / 2.0 + l2 * P2[sec_e]).ToNurbsCurve())[0];
+                                Brep brep = new SweepOneRail().PerformSweep(new Arc(rc + l2 * p1 / 2.0, rc + l1 * p1 / 2.0, rc - l2 * p1 / 2.0).ToNurbsCurve(), new Line(rc - l2 * p1 / 2.0, rc - l2 * p1 / 2.0 + l2 * p2).ToNurbsCurve())[0];
                                 _rc.Add(brep);
-                                brep = new SweepOneRail().PerformSweep(new Arc(rc + l2 * P1[sec_e] / 2.0, rc - l1 * P1[sec_e] / 2.0, rc - l2 * P1[sec_e] / 2.0).ToNurbsCurve(), new Line(rc - l2 * P1[sec_e] / 2.0, rc - l2 * P1[sec_e] / 2.0 + l2 * P2[sec_e]).ToNurbsCurve())[0];
+                                brep = new SweepOneRail().PerformSweep(new Arc(rc + l2 * p1 / 2.0, rc - l1 * p1 / 2.0, rc - l2 * p1 / 2.0).ToNurbsCurve(), new Line(rc - l2 * p1 / 2.0, rc - l2 * p1 / 2.0 + l2 * p2).ToNurbsCurve())[0];
                                 _rc.Add(brep);
                             }
                             if (render == 1)
                             {
-                                Brep brep = new SweepOneRail().PerformSweep(new Arc(r1 + l2 * P1[sec_e] / 2.0, r1 + l1 * P1[sec_e] / 2.0, r1 - l2 * P1[sec_e] / 2.0).ToNurbsCurve(), new Line(r1 - l2 * P1[sec_e] / 2.0, r1 - l2 * P1[sec_e] / 2.0 + l2 * P2[sec_e]).ToNurbsCurve())[0];
+                                Brep brep = new SweepOneRail().PerformSweep(new Arc(r1 + l2 * p1 / 2.0, r1 + l1 * p1 / 2.0, r1 - l2 * p1 / 2.0).ToNurbsCurve(), new Line(r1 - l2 * p1 / 2.0, r1 - l2 * p1 / 2.0 + l2 * p2).ToNurbsCurve())[0];
                                 var face = brep.Faces[0];
                                 var solid = face.CreateExtrusion(new Line(r1, r2).ToNurbsCurve(), true);
                                 ren.Add(solid);
-                                brep = new SweepOneRail().PerformSweep(new Arc(r1 + l2 * P1[sec_e] / 2.0, r1 - l1 * P1[sec_e] / 2.0, r1 - l2 * P1[sec_e] / 2.0).ToNurbsCurve(), new Line(r1 - l2 * P1[sec_e] / 2.0, r1 - l2 * P1[sec_e] / 2.0 + l2 * P2[sec_e]).ToNurbsCurve())[0];
+                                brep = new SweepOneRail().PerformSweep(new Arc(r1 + l2 * p1 / 2.0, r1 - l1 * p1 / 2.0, r1 - l2 * p1 / 2.0).ToNurbsCurve(), new Line(r1 - l2 * p1 / 2.0, r1 - l2 * p1 / 2.0 + l2 * p2).ToNurbsCurve())[0];
                                 face = brep.Faces[0];
                                 solid = face.CreateExtrusion(new Line(r1, r2).ToNurbsCurve(), true);
                                 ren.Add(solid);
@@ -293,7 +299,7 @@ namespace SectionPerformance
                                 double scale = 1;
                                 if (unit_of_length == "mm") { scale = 1000; }
                                 if (unit_of_length == "cm") { scale = 100; }
-                                double t1 = P1[sec_e] * scale; double t2 = P2[sec_e] * scale;
+                                double t1 = p1 * scale; double t2 = p2 * scale;
                                 _text.Add("〇-" + t1.ToString() + "x" + t2.ToString());
                                 _point.Add(rc);
                                 _size.Add(fontsize);
@@ -301,21 +307,22 @@ namespace SectionPerformance
                         }
                         else if (sec[sec_e] == "H" || sec[sec_e] == "5")
                         {
-                            VA[0] += (P1[sec_e] * P2[sec_e] - (P1[sec_e] - 2 * P4[sec_e]) * (P2[sec_e] * P3[sec_e])) * (r2 - r1).Length; VA[1] += (P2[sec_e] * 2 + P4[sec_e] * 4 + (P2[sec_e] - P3[sec_e]) * 2 + (P1[sec_e] - 2 * P4[sec_e]) * 2) * (r2 - r1).Length;
+                            double h = p1; double b = p2; double tw = p3; double tf = p4;
+                            VA[0] += (h * b - (b - tw) * (h - 2 * tf)) * (r2 - r1).Length; VA[1] += (p2 * 2 + p4 * 4 + (p2 - p3) * 2 + (p1 - 2 * p4) * 2) * (r2 - r1).Length;
                             if (shape == 1 || render == 1)
                             {
-                                Point3d c1 = rc + l1 * (P1[sec_e] / 2.0 - P4[sec_e]) + l2 * P3[sec_e] / 2.0;
-                                Point3d c2 = c1 + l2 * (P2[sec_e] - P3[sec_e]) / 2.0;
-                                Point3d c3 = c2 + l1 * P4[sec_e];
-                                Point3d c4 = c3 - l2 * P2[sec_e];
-                                Point3d c5 = c4 - l1 * P4[sec_e];
-                                Point3d c6 = c5 + l2 * (P2[sec_e] - P3[sec_e]) / 2.0;
-                                Point3d c7 = c6 - l1 * (P1[sec_e] - 2 * P4[sec_e]);
-                                Point3d c8 = c7 - l2 * (P2[sec_e] - P3[sec_e]) / 2.0;
-                                Point3d c9 = c8 - l1 * P4[sec_e];
-                                Point3d c10 = c9 + l2 * P2[sec_e];
-                                Point3d c11 = c10 + l1 * P4[sec_e];
-                                Point3d c12 = c11 - l2 * (P2[sec_e] - P3[sec_e]) / 2.0;
+                                Point3d c1 = rc + l1 * (p1 / 2.0 - p4) + l2 * p3 / 2.0;
+                                Point3d c2 = c1 + l2 * (p2 - p3) / 2.0;
+                                Point3d c3 = c2 + l1 * p4;
+                                Point3d c4 = c3 - l2 * p2;
+                                Point3d c5 = c4 - l1 * p4;
+                                Point3d c6 = c5 + l2 * (p2 - p3) / 2.0;
+                                Point3d c7 = c6 - l1 * (p1 - 2 * p4);
+                                Point3d c8 = c7 - l2 * (p2 - p3) / 2.0;
+                                Point3d c9 = c8 - l1 * p4;
+                                Point3d c10 = c9 + l2 * p2;
+                                Point3d c11 = c10 + l1 * p4;
+                                Point3d c12 = c11 - l2 * (p2 - p3) / 2.0;
                                 if (shape == 1)
                                 {
                                     Brep brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c1 }).ToNurbsCurve(), 0.001)[0];
@@ -334,7 +341,7 @@ namespace SectionPerformance
                                 double scale = 1;
                                 if (unit_of_length == "mm") { scale = 1000; }
                                 if (unit_of_length == "cm") { scale = 100; }
-                                double t1 = P1[sec_e] * scale; double t2 = P2[sec_e] * scale; double t3 = P3[sec_e] * scale; double t4 = P4[sec_e] * scale;
+                                double t1 = p1 * scale; double t2 = p2 * scale; double t3 = p3 * scale; double t4 = p4 * scale;
                                 _text.Add("H-" + t1.ToString() + "x" + t2.ToString() + "x" + t3.ToString() + "x" + t4.ToString());
                                 _point.Add(rc);
                                 _size.Add(fontsize);
@@ -344,12 +351,12 @@ namespace SectionPerformance
                         {
                             if (shape == 1 || render == 1)
                             {
-                                Point3d c1 = rc - l2 * P2[sec_e] / 2.0 + l1 * P1[sec_e] / 2.0;
-                                Point3d c2 = c1 + l2 * P3[sec_e];
-                                Point3d c3 = c2 - l1 * (P1[sec_e] - P4[sec_e]);
-                                Point3d c4 = c3 + l2 * (P2[sec_e] - P3[sec_e]);
-                                Point3d c5 = c4 - l1 * P4[sec_e];
-                                Point3d c6 = c5 - l2 * P2[sec_e];
+                                Point3d c1 = rc - l2 * p2 / 2.0 + l1 * p1 / 2.0;
+                                Point3d c2 = c1 + l2 * p3;
+                                Point3d c3 = c2 - l1 * (p1 - p4);
+                                Point3d c4 = c3 + l2 * (p2 - p3);
+                                Point3d c5 = c4 - l1 * p4;
+                                Point3d c6 = c5 - l2 * p2;
                                 if (shape == 1)
                                 {
                                     Brep brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { c1, c2, c3, c4, c5, c6, c1 }).ToNurbsCurve(), 0.001)[0];
@@ -368,7 +375,7 @@ namespace SectionPerformance
                                 double scale = 1;
                                 if (unit_of_length == "mm") { scale = 1000; }
                                 if (unit_of_length == "cm") { scale = 100; }
-                                double t1 = P1[sec_e] * scale; double t2 = P2[sec_e] * scale; double t3 = P3[sec_e] * scale; double t4 = P4[sec_e] * scale;
+                                double t1 = p1 * scale; double t2 = p2 * scale; double t3 = p3 * scale; double t4 = p4 * scale;
                                 _text.Add("L-" + t1.ToString() + "x" + t2.ToString() + "x" + t3.ToString() + "x" + t4.ToString());
                                 _point.Add(rc);
                                 _size.Add(fontsize);
@@ -378,14 +385,14 @@ namespace SectionPerformance
                         {
                             if (shape == 1 || render == 1)
                             {
-                                Point3d c1 = rc - l1 * P1[sec_e] / 2.0 + l2 * P2[sec_e] / 2.0;
-                                Point3d c2 = c1 + l1 * P4[sec_e];
-                                Point3d c3 = c2 - l2 * (P2[sec_e] - P3[sec_e]);
-                                Point3d c4 = c3 + l1 * (P1[sec_e] - P4[sec_e]*2);
-                                Point3d c5 = c4 + l2 * (P2[sec_e] - P3[sec_e]);
-                                Point3d c6 = c5 + l1 * P4[sec_e];
-                                Point3d c7 = c6 - l2 * P2[sec_e];
-                                Point3d c8 = c7 - l1 * P1[sec_e];
+                                Point3d c1 = rc - l1 * p1 / 2.0 + l2 * p2 / 2.0;
+                                Point3d c2 = c1 + l1 * p4;
+                                Point3d c3 = c2 - l2 * (p2 - p3);
+                                Point3d c4 = c3 + l1 * (p1 - p4*2);
+                                Point3d c5 = c4 + l2 * (p2 - p3);
+                                Point3d c6 = c5 + l1 * p4;
+                                Point3d c7 = c6 - l2 * p2;
+                                Point3d c8 = c7 - l1 * p1;
                                 if (shape == 1)
                                 {
                                     Brep brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { c1, c2, c3, c4, c5, c6, c7, c8, c1 }).ToNurbsCurve(), 0.001)[0];
@@ -404,7 +411,7 @@ namespace SectionPerformance
                                 double scale = 1;
                                 if (unit_of_length == "mm") { scale = 1000; }
                                 if (unit_of_length == "cm") { scale = 100; }
-                                double t1 = P1[sec_e] * scale; double t2 = P2[sec_e] * scale; double t3 = P3[sec_e] * scale; double t4 = P4[sec_e] * scale;
+                                double t1 = p1 * scale; double t2 = p2 * scale; double t3 = p3 * scale; double t4 = p4 * scale;
                                 _text.Add("[-" + t1.ToString() + "x" + t2.ToString() + "x" + t3.ToString() + "x" + t4.ToString());
                                 _point.Add(rc);
                                 _size.Add(fontsize);
@@ -507,7 +514,6 @@ namespace SectionPerformance
                 {
                     double h = p1; double b = p2; double t1 = p3; double t2 = p4;
                     double e1 = (t1 * Math.Pow(h, 2) + (b - t1) * Math.Pow(t2, 2)) / (2 * (t1 * h + (b - t1) * t2)); double e2 = h - e1;
-                    //RhinoApp.WriteLine("e1="+e1.ToString()+" e2="+e2.ToString());
                     A.Add(b * h - (b - t1) * (h - t2));
                     Iy.Add((t1 * Math.Pow(e2, 3) + (b - t1) * Math.Pow(t2 - e1, 3) + b * Math.Pow(e1, 3)) / 3.0);
                     Zy.Add(Iy[i] / e2);////////////////////////////////////
