@@ -11,40 +11,16 @@ using System.Windows.Forms;
 using Grasshopper.Kernel.Attributes;
 using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
+using GH_IO.Serialization;
 ///****************************************
 
 namespace Boundary
 {
     public class Boundary : GH_Component
     {
-        static int fx = 1; static int fy = 1; static int fz = 1; static int rx = 0; static int ry = 0; static int rz = 0;
-        public static void SetButton(string s, int i)
-        {
-            if (s == "fx")
-            {
-                fx = i;
-            }
-            else if (s == "fy")
-            {
-                fy = i;
-            }
-            else if (s == "fz")
-            {
-                fz = i;
-            }
-            else if (s == "rx")
-            {
-                rx = i;
-            }
-            else if (s == "ry")
-            {
-                ry = i;
-            }
-            else if (s == "rz")
-            {
-                rz = i;
-            }
-        }
+        public int Fx = 0; public int Fy = 0; public int Fz = 0; public int Rx = 0; public int Ry = 0; public int Rz = 0;
+
+        CustomGUI m_customGUI => (CustomGUI)m_attributes;
         public override void CreateAttributes()
         {
             m_attributes = new CustomGUI(this);
@@ -78,7 +54,7 @@ namespace Boundary
         {
             GH_Structure<GH_Number> fix = new GH_Structure<GH_Number>();
             if (!DA.GetDataTree("nodal_coordinates", out GH_Structure<GH_Number> _r)) { }
-            else if(_r.Branches[0][0].Value != -9999)
+            else if (_r.Branches[0][0].Value != -9999)
             {
                 var r = _r.Branches; var n = r.Count;
                 var x = new List<double>(); DA.GetDataList(1, x); var y = new List<double>(); DA.GetDataList(2, y); var z = new List<double>(); DA.GetDataList(3, z); int e = 0;
@@ -101,12 +77,43 @@ namespace Boundary
                     if (k == 3)
                     {
                         List<GH_Number> fixlist = new List<GH_Number>();
-                        fixlist.Add(new GH_Number(i)); fixlist.Add(new GH_Number(fx)); fixlist.Add(new GH_Number(fy)); fixlist.Add(new GH_Number(fz)); fixlist.Add(new GH_Number(rx)); fixlist.Add(new GH_Number(ry)); fixlist.Add(new GH_Number(rz));
+                        fixlist.Add(new GH_Number(i));
+                        fixlist.Add(new GH_Number(Fx));
+                        fixlist.Add(new GH_Number(Fy));
+                        fixlist.Add(new GH_Number(Fz));
+                        fixlist.Add(new GH_Number(Rx));
+                        fixlist.Add(new GH_Number(Ry));
+                        fixlist.Add(new GH_Number(Rz));
                         fix.AppendRange(fixlist, new GH_Path(e)); e += 1;
                     }
                 }
             }
             DA.SetDataTree(0, fix);
+        }
+
+        public override bool Read(GH_IReader reader)
+        {
+            var fx = 0; var fy = 0; var fz = 0; var rx = 0; var ry = 0; var rz = 0;
+            if (!reader.TryGetInt32("Fx", ref fx)) return false;
+            if (!reader.TryGetInt32("Fy", ref fy)) return false;
+            if (!reader.TryGetInt32("Fz", ref fz)) return false;
+            if (!reader.TryGetInt32("Rx", ref rx)) return false;
+            if (!reader.TryGetInt32("Ry", ref ry)) return false;
+            if (!reader.TryGetInt32("Rz", ref rz)) return false;
+
+            Fx = fx; Fy = fy; Fz = fz; Rx = rx; Ry = ry; Rz = rz;
+            m_customGUI.GuiPreview();
+            return base.Read(reader);
+        }
+        public override bool Write(GH_IWriter writer)
+        {
+            writer.SetInt32("Fx", Fx);
+            writer.SetInt32("Fy", Fy);
+            writer.SetInt32("Fz", Fz);
+            writer.SetInt32("Rx", Rx);
+            writer.SetInt32("Ry", Ry);
+            writer.SetInt32("Rz", Rz);
+            return base.Write(writer);
         }
         /// <summary>
         /// Provides an Icon for the component.
@@ -130,6 +137,7 @@ namespace Boundary
         }///ここからGUIの作成*****************************************************************************************
         internal class CustomGUI : GH_ComponentAttributes
         {
+            Boundary _ownerBoundary => Owner as Boundary;
             internal CustomGUI(GH_Component owner) : base(owner)
             {
             }
@@ -225,58 +233,73 @@ namespace Boundary
                     RectangleF rec1 = radio_rec_1; RectangleF rec2 = radio_rec_2; RectangleF rec3 = radio_rec_3; RectangleF rec4 = radio_rec_4; RectangleF rec5 = radio_rec_5; RectangleF rec6 = radio_rec_6; RectangleF rec = radio_rec;
                     if (rec1.Contains(e.CanvasLocation))
                     {
-                        if (c1 == Brushes.White) { c1 = Brushes.Black; SetButton("fx", 1); }
-                        else { c1 = Brushes.White; SetButton("fx", 0); }
+                        if (c1 == Brushes.White) { c1 = Brushes.Black; _ownerBoundary.Fx = 1; }
+                        else { c1 = Brushes.White; _ownerBoundary.Fx = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec2.Contains(e.CanvasLocation))
                     {
-                        if (c2 == Brushes.White) { c2 = Brushes.Black; SetButton("fy", 1); }
-                        else { c2 = Brushes.White; SetButton("fy", 0); }
+                        if (c2 == Brushes.White) { c2 = Brushes.Black; _ownerBoundary.Fy = 1; }
+                        else { c2 = Brushes.White; _ownerBoundary.Fy = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec3.Contains(e.CanvasLocation))
                     {
-                        if (c3 == Brushes.White) { c3 = Brushes.Black; SetButton("fz", 1); }
-                        else { c3 = Brushes.White; SetButton("fz", 0); }
+                        if (c3 == Brushes.White) { c3 = Brushes.Black; _ownerBoundary.Fz = 1; }
+                        else { c3 = Brushes.White; _ownerBoundary.Fz = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec4.Contains(e.CanvasLocation))
                     {
-                        if (c4 == Brushes.White) { c4 = Brushes.Black; SetButton("rx", 1); }
-                        else { c4 = Brushes.White; SetButton("rx", 0); }
+                        if (c4 == Brushes.White) { c4 = Brushes.Black; _ownerBoundary.Rx = 1; }
+                        else { c4 = Brushes.White; _ownerBoundary.Rx = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec5.Contains(e.CanvasLocation))
                     {
-                        if (c5 == Brushes.White) { c5 = Brushes.Black; SetButton("ry", 1); }
-                        else { c5 = Brushes.White; SetButton("ry", 0); }
+                        if (c5 == Brushes.White) { c5 = Brushes.Black; _ownerBoundary.Ry = 1; }
+                        else { c5 = Brushes.White; _ownerBoundary.Ry = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec6.Contains(e.CanvasLocation))
                     {
-                        if (c6 == Brushes.White) { c6 = Brushes.Black; SetButton("rz", 1); }
-                        else { c6 = Brushes.White; SetButton("rz", 0); }
+                        if (c6 == Brushes.White) { c6 = Brushes.Black; _ownerBoundary.Rz = 1; }
+                        else { c6 = Brushes.White; _ownerBoundary.Rz = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else
                     {
-                        if (c1 == Brushes.White) { SetButton("fx", 0); } else { SetButton("fx", 1); }
-                        if (c2 == Brushes.White) { SetButton("fy", 0); } else { SetButton("fy", 1); }
-                        if (c3 == Brushes.White) { SetButton("fz", 0); } else { SetButton("fz", 1); }
-                        if (c4 == Brushes.White) { SetButton("rx", 0); } else { SetButton("rx", 1); }
-                        if (c5 == Brushes.White) { SetButton("ry", 0); } else { SetButton("ry", 1); }
-                        if (c6 == Brushes.White) { SetButton("rz", 0); } else { SetButton("rz", 1); }
+                        if (c1 == Brushes.White) { _ownerBoundary.Fx = 0; } else { _ownerBoundary.Fx = 1; }
+                        if (c2 == Brushes.White) { _ownerBoundary.Fy = 0; } else { _ownerBoundary.Fy = 1; }
+                        if (c3 == Brushes.White) { _ownerBoundary.Fz = 0; } else { _ownerBoundary.Fz = 1; }
+                        if (c4 == Brushes.White) { _ownerBoundary.Rx = 0; } else { _ownerBoundary.Rx = 1; }
+                        if (c5 == Brushes.White) { _ownerBoundary.Ry = 0; } else { _ownerBoundary.Ry = 1; }
+                        if (c6 == Brushes.White) { _ownerBoundary.Rz = 0; } else { _ownerBoundary.Rz = 1; }
                         Owner.ExpireSolution(true);
                     }
                 }
                 return base.RespondToMouseDown(sender, e);
+            }
+            public void GuiPreview()
+            {
+                if (_ownerBoundary.Fx == 0) c1 = Brushes.White;
+                else c1 = Brushes.Black;
+                if (_ownerBoundary.Fy == 0) c2 = Brushes.White;
+                else c2 = Brushes.Black;
+                if (_ownerBoundary.Fz == 0) c3 = Brushes.White;
+                else c3 = Brushes.Black;
+                if (_ownerBoundary.Rx == 0) c4 = Brushes.White;
+                else c4 = Brushes.Black;
+                if (_ownerBoundary.Ry == 0) c5 = Brushes.White;
+                else c5 = Brushes.Black;
+                if (_ownerBoundary.Rz == 0) c6 = Brushes.White;
+                else c6 = Brushes.Black;
             }
         }
     }
