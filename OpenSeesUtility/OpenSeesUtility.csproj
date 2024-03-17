@@ -431,15 +431,26 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)$(ProjectName).gha"
-Erase "$(TargetPath)"</PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(ProjectDir)$(OutputPath)$(ProjectName).dll $(ProjectDir)$(OutputPath)$(ProjectName).gha" />
+    <Exec Command="if not exist $(AppData)\Grasshopper\Libraries\$(ProjectName) mkdir $(AppData)\Grasshopper\Libraries\$(ProjectName)" />
+    <Exec Command="copy $(ProjectDir)$(OutputPath)*.gha $(AppData)\Grasshopper\Libraries\$(ProjectName)" />
+    <Exec Command="if exist $(ProjectDir)$(OutputPath)*.dll copy $(ProjectDir)$(OutputPath)*.dll $(AppData)\Grasshopper\Libraries\$(ProjectName)" />
+
+    <Exec Command="if not exist $(AppData)\Grasshopper\Libraries\$(ProjectName)\de mkdir $(AppData)\Grasshopper\Libraries\$(ProjectName)\de" />
+    <Exec Command="if exist $(ProjectDir)$(OutputPath)de\*.dll copy $(ProjectDir)$(OutputPath)de\*.dll $(AppData)\Grasshopper\Libraries\$(ProjectName)\de" />
+    <Exec Command="if exist $(ProjectDir)$(OutputPath)*.ghpy copy $(ProjectDir)$(OutputPath)*.ghpy $(AppData)\Grasshopper\Libraries\$(ProjectName)" />
+    <Exec Command="if exist $(ProjectDir)$(OutputPath)*.xml copy $(ProjectDir)$(OutputPath)*.xml $(AppData)\Grasshopper\Libraries\$(ProjectName)" />
+    <Exec Command="erase $(AppData)\Grasshopper\Libraries\$(ProjectName)\RhinoCommon.dll" />
+    <Exec Command="erase $(AppData)\Grasshopper\Libraries\$(ProjectName)\Grasshopper.dll" />
+    <Exec Command="erase $(AppData)\Grasshopper\Libraries\$(ProjectName)\GH_IO.dll" />
+    <Exec Command="copy $(ProjectDir)\..\*.dll $(AppData)\Grasshopper\Libraries\$(ProjectName)" />
+  </Target>
   <PropertyGroup>
     <FallbackCulture>en-US</FallbackCulture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartProgram>D:\Program Files\Rhino 6\System\Rhino.exe</StartProgram>
+    <StartProgram>C:\Program Files\Rhino 6\System\Rhino.exe</StartProgram>
     <StartArguments>
     </StartArguments>
     <StartAction>Program</StartAction>
