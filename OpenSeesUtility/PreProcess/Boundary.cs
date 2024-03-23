@@ -18,7 +18,7 @@ namespace Boundary
 {
     public class Boundary : GH_Component
     {
-        public int Fx = 0; public int Fy = 0; public int Fz = 0; public int Rx = 0; public int Ry = 0; public int Rz = 0;
+        public int Fx = 1; public int Fy = 1; public int Fz = 1; public int Rx = 0; public int Ry = 0; public int Rz = 0;
 
         CustomGUI m_customGUI => (CustomGUI)m_attributes;
         public override void CreateAttributes()
@@ -93,16 +93,15 @@ namespace Boundary
 
         public override bool Read(GH_IReader reader)
         {
-            var fx = 0; var fy = 0; var fz = 0; var rx = 0; var ry = 0; var rz = 0;
-            if (!reader.TryGetInt32("Fx", ref fx)) return false;
-            if (!reader.TryGetInt32("Fy", ref fy)) return false;
-            if (!reader.TryGetInt32("Fz", ref fz)) return false;
-            if (!reader.TryGetInt32("Rx", ref rx)) return false;
-            if (!reader.TryGetInt32("Ry", ref ry)) return false;
-            if (!reader.TryGetInt32("Rz", ref rz)) return false;
+            var fx = 1; var fy = 1; var fz = 1; var rx = 0; var ry = 0; var rz = 0;
+            reader.TryGetInt32("Fx", ref fx);
+            reader.TryGetInt32("Fy", ref fy);
+            reader.TryGetInt32("Fz", ref fz);
+            reader.TryGetInt32("Rx", ref rx);
+            reader.TryGetInt32("Ry", ref ry);
+            reader.TryGetInt32("Rz", ref rz);
 
             Fx = fx; Fy = fy; Fz = fz; Rx = rx; Ry = ry; Rz = rz;
-            m_customGUI.GuiPreview();
             return base.Read(reader);
         }
         public override bool Write(GH_IWriter writer)
@@ -180,7 +179,59 @@ namespace Boundary
 
                 Bounds = global_rec;
             }
-            Brush c1 = Brushes.Black; Brush c2 = Brushes.Black; Brush c3 = Brushes.Black; Brush c4 = Brushes.White; Brush c5 = Brushes.White; Brush c6 = Brushes.White;
+            Brush c1 
+            {
+                get {
+                    if (_ownerBoundary.Fx == 0)
+                        return Brushes.White;
+                    return Brushes.Black;
+                }
+            }
+            Brush c2
+            {
+                get
+                {
+                    if (_ownerBoundary.Fy == 0)
+                        return Brushes.White;
+                    return Brushes.Black;
+                }
+            }
+            Brush c3
+            {
+                get
+                {
+                    if (_ownerBoundary.Fz == 0)
+                        return Brushes.White;
+                    return Brushes.Black;
+                }
+            }
+            Brush c4
+            {
+                get
+                {
+                    if (_ownerBoundary.Rx == 0)
+                        return Brushes.White;
+                    return Brushes.Black;
+                }
+            }
+            Brush c5
+            {
+                get
+                {
+                    if (_ownerBoundary.Ry == 0)
+                        return Brushes.White;
+                    return Brushes.Black;
+                }
+            }
+            Brush c6
+            {
+                get
+                {
+                    if (_ownerBoundary.Rz == 0)
+                        return Brushes.White;
+                    return Brushes.Black;
+                }
+            }
             protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
             {
                 base.Render(canvas, graphics, channel);
@@ -233,73 +284,48 @@ namespace Boundary
                     RectangleF rec1 = radio_rec_1; RectangleF rec2 = radio_rec_2; RectangleF rec3 = radio_rec_3; RectangleF rec4 = radio_rec_4; RectangleF rec5 = radio_rec_5; RectangleF rec6 = radio_rec_6; RectangleF rec = radio_rec;
                     if (rec1.Contains(e.CanvasLocation))
                     {
-                        if (c1 == Brushes.White) { c1 = Brushes.Black; _ownerBoundary.Fx = 1; }
-                        else { c1 = Brushes.White; _ownerBoundary.Fx = 0; }
+                        if (_ownerBoundary.Fx == 0) { _ownerBoundary.Fx = 1; }
+                        else { _ownerBoundary.Fx = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec2.Contains(e.CanvasLocation))
                     {
-                        if (c2 == Brushes.White) { c2 = Brushes.Black; _ownerBoundary.Fy = 1; }
-                        else { c2 = Brushes.White; _ownerBoundary.Fy = 0; }
+                        if (_ownerBoundary.Fy == 0) { _ownerBoundary.Fy = 1; }
+                        else { _ownerBoundary.Fy = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec3.Contains(e.CanvasLocation))
                     {
-                        if (c3 == Brushes.White) { c3 = Brushes.Black; _ownerBoundary.Fz = 1; }
-                        else { c3 = Brushes.White; _ownerBoundary.Fz = 0; }
+                        if (_ownerBoundary.Fz == 0) { _ownerBoundary.Fz = 1; }
+                        else { _ownerBoundary.Fz = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec4.Contains(e.CanvasLocation))
                     {
-                        if (c4 == Brushes.White) { c4 = Brushes.Black; _ownerBoundary.Rx = 1; }
-                        else { c4 = Brushes.White; _ownerBoundary.Rx = 0; }
+                        if (_ownerBoundary.Rx == 0) { _ownerBoundary.Rx = 1; }
+                        else { _ownerBoundary.Rx = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec5.Contains(e.CanvasLocation))
                     {
-                        if (c5 == Brushes.White) { c5 = Brushes.Black; _ownerBoundary.Ry = 1; }
-                        else { c5 = Brushes.White; _ownerBoundary.Ry = 0; }
+                        if (_ownerBoundary.Ry == 0) { _ownerBoundary.Ry = 1; }
+                        else { _ownerBoundary.Ry = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
                     else if (rec6.Contains(e.CanvasLocation))
                     {
-                        if (c6 == Brushes.White) { c6 = Brushes.Black; _ownerBoundary.Rz = 1; }
-                        else { c6 = Brushes.White; _ownerBoundary.Rz = 0; }
+                        if (_ownerBoundary.Rz == 0) { _ownerBoundary.Rz = 1; }
+                        else { _ownerBoundary.Rz = 0; }
                         Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
-                    else
-                    {
-                        if (c1 == Brushes.White) { _ownerBoundary.Fx = 0; } else { _ownerBoundary.Fx = 1; }
-                        if (c2 == Brushes.White) { _ownerBoundary.Fy = 0; } else { _ownerBoundary.Fy = 1; }
-                        if (c3 == Brushes.White) { _ownerBoundary.Fz = 0; } else { _ownerBoundary.Fz = 1; }
-                        if (c4 == Brushes.White) { _ownerBoundary.Rx = 0; } else { _ownerBoundary.Rx = 1; }
-                        if (c5 == Brushes.White) { _ownerBoundary.Ry = 0; } else { _ownerBoundary.Ry = 1; }
-                        if (c6 == Brushes.White) { _ownerBoundary.Rz = 0; } else { _ownerBoundary.Rz = 1; }
-                        Owner.ExpireSolution(true);
-                    }
                 }
                 return base.RespondToMouseDown(sender, e);
-            }
-            public void GuiPreview()
-            {
-                if (_ownerBoundary.Fx == 0) c1 = Brushes.White;
-                else c1 = Brushes.Black;
-                if (_ownerBoundary.Fy == 0) c2 = Brushes.White;
-                else c2 = Brushes.Black;
-                if (_ownerBoundary.Fz == 0) c3 = Brushes.White;
-                else c3 = Brushes.Black;
-                if (_ownerBoundary.Rx == 0) c4 = Brushes.White;
-                else c4 = Brushes.Black;
-                if (_ownerBoundary.Ry == 0) c5 = Brushes.White;
-                else c5 = Brushes.Black;
-                if (_ownerBoundary.Rz == 0) c6 = Brushes.White;
-                else c6 = Brushes.Black;
             }
         }
     }
