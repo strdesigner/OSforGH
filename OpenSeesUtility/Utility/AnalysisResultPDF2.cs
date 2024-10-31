@@ -652,7 +652,7 @@ namespace OpenSeesUtility
                 }
                 var filename = dir + "/" + pdfname + "_model.pdf";
                 document.Save(filename);// ドキュメントを保存。
-                Process.Start(filename);// ビューアを起動。
+                Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 var kentei_index = new List<int>(); var kentei1_index = new List<int>(); var kentei2_index = new List<int>();
                 figname = new List<string>();
                 if (kentei[0][0].Value != -9999)
@@ -968,7 +968,7 @@ namespace OpenSeesUtility
                 }
                 filename = dir + "/" + pdfname + "_kentei.pdf";
                 document.Save(filename);// ドキュメントを保存。
-                Process.Start(filename);// ビューアを起動。
+                Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 //反力図
                 if (reac_f[0][0].Value != -9999)
                 {
@@ -1239,11 +1239,11 @@ namespace OpenSeesUtility
                         }
                         filename = dir + "/" + pdfname + "_R" + label[ii] + ".pdf";
                         document.Save(filename);// ドキュメントを保存。
-                        Process.Start(filename);// ビューアを起動。
+                        Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                     }
                 }
                 document.Save(filename);// ドキュメントを保存。
-                Process.Start(filename);// ビューアを起動。
+                Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 //応力図
                 if (l_vec[0] != new Vector3d(-9999, -9999, -9999) && sec_f[0][0].Value != -9999)
                 {
@@ -1545,7 +1545,7 @@ namespace OpenSeesUtility
                         }
                         filename = dir + "/" + pdfname + "_Qz" + label[ii] + ".pdf";
                         document.Save(filename);// ドキュメントを保存。
-                        Process.Start(filename);// ビューアを起動。
+                        Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                         //曲げモーメント図//////////////////////////////////////////////////////////////////////////////////
                         document = new PdfDocument();
                         document.Info.Title = pdfname;
@@ -1810,7 +1810,7 @@ namespace OpenSeesUtility
                         }
                         filename = dir + "/" + pdfname + "_My" + label[ii] + ".pdf";
                         document.Save(filename);// ドキュメントを保存。
-                        Process.Start(filename);// ビューアを起動。
+                        Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                         //軸力図///////////////////////////////////////////////////////////////////////////////////////////
                         document = new PdfDocument();
                         document.Info.Title = pdfname;
@@ -2048,7 +2048,7 @@ namespace OpenSeesUtility
                         }
                         filename = dir + "/" + pdfname + "_N" + label[ii] + ".pdf";
                         document.Save(filename);// ドキュメントを保存。
-                        Process.Start(filename);// ビューアを起動。
+                        Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                     }
                 }
                 //応力図(ばね)
@@ -2344,7 +2344,7 @@ namespace OpenSeesUtility
                         }
                         filename = dir + "/" + pdfname + "_Qzspring" + label[ii] + ".pdf";
                         document.Save(filename);// ドキュメントを保存。
-                        Process.Start(filename);// ビューアを起動。
+                        Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                         //引張力図///////////////////////////////////////////////////////////////////////////////////////////
                         document = new PdfDocument();
                         document.Info.Title = pdfname;
@@ -2571,7 +2571,7 @@ namespace OpenSeesUtility
                         }
                         filename = dir + "/" + pdfname + "_Tspring" + label[ii] + ".pdf";
                         document.Save(filename);// ドキュメントを保存。
-                        Process.Start(filename);// ビューアを起動。
+                        Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                     }
                 }
             }

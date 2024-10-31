@@ -441,7 +441,7 @@ namespace OpenSeesUtility
                 }
                 var filename = dir + "/" + pdfname + "_model.pdf";
                 document.Save(filename);// ドキュメントを保存。
-                Process.Start(filename);// ビューアを起動。
+                Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
 
                 //応力図
                 if (l_vec[0] != new Vector3d(-9999, -9999, -9999) && sec_f[0][0].Value != -9999)
@@ -708,7 +708,7 @@ namespace OpenSeesUtility
                         }
                         filename = dir + "/" + pdfname + "_Q" + label[ii] + ".pdf";
                         document.Save(filename);// ドキュメントを保存。
-                        Process.Start(filename);// ビューアを起動。
+                        Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                         //曲げモーメント図//////////////////////////////////////////////////////////////////////////////////
                         document = new PdfDocument();
                         document.Info.Title = pdfname;
@@ -960,7 +960,7 @@ namespace OpenSeesUtility
                         }
                         filename = dir + "/" + pdfname + "_M" + label[ii] + ".pdf";
                         document.Save(filename);// ドキュメントを保存。
-                        Process.Start(filename);// ビューアを起動。
+                        Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                         //軸力図///////////////////////////////////////////////////////////////////////////////////////////
                         document = new PdfDocument();
                         document.Info.Title = pdfname;
@@ -1126,7 +1126,7 @@ namespace OpenSeesUtility
                         }
                         filename = dir + "/" + pdfname + "_N" + label[ii] + ".pdf";
                         document.Save(filename);// ドキュメントを保存。
-                        Process.Start(filename);// ビューアを起動。
+                        Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                     }
                 }
             }

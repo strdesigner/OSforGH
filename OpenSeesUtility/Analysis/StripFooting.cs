@@ -458,7 +458,7 @@ namespace StripFooting
                 }
                 var filename = dir + "/" + pdfname + ".pdf";
                 document.Save(filename);// ドキュメントを保存。
-                Process.Start(filename);// ビューアを起動。
+                Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 ////支点番号と反力
                 //document = new PdfDocument();
                 //document.Info.Title = pdfname;
@@ -510,7 +510,7 @@ namespace StripFooting
                 //}
                 //filename = dir + "/" + pdfname + "_number.pdf";
                 //document.Save(filename);// ドキュメントを保存。
-                //Process.Start(filename);// ビューアを起動。
+                //Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
             }
         }
 

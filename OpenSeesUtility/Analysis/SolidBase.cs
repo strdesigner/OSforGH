@@ -354,7 +354,7 @@ namespace OpenSeesUtility
                 var filename = dir + "/" + pdfname + ".pdf";
                 document.Save(filename);
                 // ビューアを起動。
-                Process.Start(filename);
+                Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
             }
             DA.SetDataList("N/A+M/Z", N_A_p_M_Z); DA.SetDataList("N/A-M/Z", N_A_m_M_Z);
         }

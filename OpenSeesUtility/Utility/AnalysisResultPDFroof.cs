@@ -623,7 +623,7 @@ namespace OpenSeesUtility
                     DA.SetDataTree(0, nod); DA.SetDataTree(1, nodall);
                     var filename = dir + "/" + pdfname + "_planmodel.pdf";
                     document.Save(filename);// ドキュメントを保存。
-                    Process.Start(filename);// ビューアを起動。
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                     //反力図
                     if (reac_f[0][0].Value != -9999)
                     {
@@ -793,7 +793,7 @@ namespace OpenSeesUtility
                             }
                             filename = dir + "/" + pdfname + "_planR" + label[kkk] + ".pdf";
                             document.Save(filename);// ドキュメントを保存。
-                            Process.Start(filename);// ビューアを起動。
+                            Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                         }
                     }
                     //検定比図
@@ -1054,7 +1054,7 @@ namespace OpenSeesUtility
                     }
                     filename = dir + "/" + pdfname + "_plankentei.pdf";
                     document.Save(filename);// ドキュメントを保存。
-                    Process.Start(filename);// ビューアを起動。
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                     //引張力図
                     if (spring_f[0][0].Value != -9999)
                     {
@@ -1218,7 +1218,7 @@ namespace OpenSeesUtility
                             }
                             filename = dir + "/" + pdfname + "_planTspring" + label[ii] + ".pdf";
                             document.Save(filename);// ドキュメントを保存。
-                            Process.Start(filename);// ビューアを起動。
+                            Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                         }
                     }
                 }

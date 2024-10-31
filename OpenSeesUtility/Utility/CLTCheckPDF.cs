@@ -393,7 +393,7 @@ namespace CLTCheckPDF
                 var filename = dir + "/" + pdfname + ".pdf";
                 document.Save(filename);
                 // ビューアを起動。
-                Process.Start(filename);
+                Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
             }
         }
 

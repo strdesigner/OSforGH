@@ -828,7 +828,7 @@ namespace kabecheckRC
                     var filename = dir + "/" + pdfname + ".pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
             }
             DA.SetDataTree(0, tall); DA.SetDataTree(1, L0all); DA.SetDataTree(2, theta1all); DA.SetDataTree(3, theta2all); DA.SetDataTree(4, Lxall); DA.SetDataTree(5, Lyall); DA.SetDataTree(6, Axall); DA.SetDataTree(7, Ayall);

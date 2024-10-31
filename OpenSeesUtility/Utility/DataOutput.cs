@@ -184,7 +184,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_r.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (ij[0][0].Value != -9999)
                 {
@@ -252,7 +252,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_ij.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (B[0][0].Value != -9999)
                 {
@@ -306,7 +306,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_bnds.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (p_load1[0][0].Value != -9999)
                 {
@@ -378,7 +378,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_p1.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (p_load2[0][0].Value != -9999)
                 {
@@ -450,7 +450,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_p2.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (p_load3[0][0].Value != -9999)
                 {
@@ -522,7 +522,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_p3.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (e_load[0][0].Value != -9999)
                 {
@@ -579,7 +579,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_e_load1.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (e_load2[0][0].Value != -9999)
                 {
@@ -636,7 +636,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_e_load2.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (e_load3[0][0].Value != -9999)
                 {
@@ -693,7 +693,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_e_load3.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (sf_load[0][0].Value != -9999)
                 {
@@ -752,7 +752,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_sf_load.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (sf_load2[0][0].Value != -9999)
                 {
@@ -811,7 +811,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_sf_load2.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (sf_load3[0][0].Value != -9999)
                 {
@@ -870,7 +870,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_sf_load3.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (w_load[0][0].Value != -9999)
                 {
@@ -929,7 +929,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_w_load.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (w_load2[0][0].Value != -9999)
                 {
@@ -988,7 +988,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_w_load2.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (w_load3[0][0].Value != -9999)
                 {
@@ -1047,7 +1047,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_w_load3.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (spring[0][0].Value != -9999)
                 {
@@ -1116,7 +1116,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_spring.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (secname[0] != "-9999")
                 {
@@ -1176,7 +1176,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_sec.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (d[0][0].Value != -9999)
                 {
@@ -1244,7 +1244,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_disp.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (reac_f[0][0].Value != -9999)
                 {
@@ -1339,7 +1339,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_reac_f.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (sec_f1[0][0].Value != -9999)
                 {
@@ -1397,7 +1397,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_sec_f1.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (sec_f2[0][0].Value != -9999)
                 {
@@ -1455,7 +1455,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_sec_f2.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (sec_f3[0][0].Value != -9999)
                 {
@@ -1513,7 +1513,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_sec_f3.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (sec_f4[0][0].Value != -9999)
                 {
@@ -1571,7 +1571,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_sec_f4.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (spring_f1[0][0].Value != -9999)
                 {
@@ -1627,7 +1627,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_spring_f1.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (spring_f2[0][0].Value != -9999)
                 {
@@ -1683,7 +1683,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_spring_f2.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (spring_f3[0][0].Value != -9999)
                 {
@@ -1739,7 +1739,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_spring_f3.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (spring_f4[0][0].Value != -9999)
                 {
@@ -1795,7 +1795,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_spring_f4.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
                 if (spring_f5[0][0].Value != -9999)
                 {
@@ -1851,7 +1851,7 @@ namespace OpenSeesUtility
                     var filename = dir + "/" + pdfname + "_spring_f5.pdf";
                     document.Save(filename);
                     // ビューアを起動。
-                    Process.Start(filename);
+                    Process.Start(new ProcessStartInfo(@filename) { UseShellExecute = true });
                 }
             }
         }
