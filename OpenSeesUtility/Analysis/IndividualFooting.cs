@@ -401,7 +401,7 @@ namespace OpenSeesUtility
                 var pen = XPens.Black;
                 var labels = new List<string>
                         {
-                           "Node No.", "検討方向", "B x D [mm]", "t[mm]", "b x d [mm]", "ex, ey [mm]", "Lx, Ly [mm]", "配筋", "ρ[kN/m3]", "W[kN]", "Zx, Zy [m3]", "長期N[kN]", "+X荷重時N[kN]", "+Y荷重時N[kN]", "-X荷重時N[kN]", "-Y荷重時N[kN]", "長期M[kNm]","","PL[kN/m2]","PaL[kN/m2]","検定比","判定", "fs[N/mm2]", "QL[kN]", "QaL[kN]","検定比","判定", "ft[N/mm2]", "ML[kN]", "MaL[kN]","検定比","判定"
+                           "Node No.", "検討方向", "B x D [mm]", "t[mm]", "b x d [mm]", "ex, ey [mm]", "Lx, Ly [mm]", "配筋", "ρ[kN/m3]", "W[kN]", "Zx, Zy [m3]", "長期N[kN]", "長期M[kNm]","","PL[kN/m2]","PaL[kN/m2]","検定比","判定", "fs[N/mm2]", "QL[kN]", "QaL[kN]","検定比","判定", "ft[N/mm2]", "ML[kN]", "MaL[kN]","検定比","判定"
                         };
                 if (PS.Count != 0)
                 {
