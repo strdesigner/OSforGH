@@ -401,7 +401,7 @@ namespace OpenSeesUtility
                 var pen = XPens.Black;
                 var labels = new List<string>
                         {
-                           "Node No.", "検討方向", "B x D [mm]", "t[mm]", "b x d [mm]", "ex, ey [mm]", "Lx, Ly [mm]", "配筋", "ρ[kN/m3]", "W[kN]", "Zx, Zy [m3]", "長期N[kN]", "+X荷重時N[kN]", "+Y荷重時N[kN]", "-X荷重時N[kN]", "-Y荷重時N[kN]", "長期M[kNm]", "+X荷重時M[kNm]", "+Y荷重時M[kNm]", "-X荷重時M[kNm]", "-Y荷重時M[kNm]","","PL[kN/m2]","PaL[kN/m2]","検定比","判定", "fs[N/mm2]", "QL[kN]", "QaL[kN]","検定比","判定", "ft[N/mm2]", "ML[kN]", "MaL[kN]","検定比","判定"
+                           "Node No.", "検討方向", "B x D [mm]", "t[mm]", "b x d [mm]", "ex, ey [mm]", "Lx, Ly [mm]", "配筋", "ρ[kN/m3]", "W[kN]", "Zx, Zy [m3]", "長期N[kN]", "+X荷重時N[kN]", "+Y荷重時N[kN]", "-X荷重時N[kN]", "-Y荷重時N[kN]", "長期M[kNm]","","PL[kN/m2]","PaL[kN/m2]","検定比","判定", "fs[N/mm2]", "QL[kN]", "QaL[kN]","検定比","判定", "ft[N/mm2]", "ML[kN]", "MaL[kN]","検定比","判定"
                         };
                 if (PS.Count != 0)
                 {
@@ -432,15 +432,21 @@ namespace OpenSeesUtility
                     values.Add(new List<string>{ Math.Round(Sz[e],1).ToString()}); colors.Add(new List<XSolidBrush> { XBrushes.Black });
                     values.Add(new List<string>{ Math.Round(Zx[e],5).ToString(), Math.Round(Zy[e], 5).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black, XBrushes.Black });
                     values.Add(new List<string>{ Math.Round(Rz[e][0],2).ToString()}); colors.Add(new List<XSolidBrush> { XBrushes.Black });
-                    values.Add(new List<string>{ Math.Round(Rz[e][1],2).ToString()}); colors.Add(new List<XSolidBrush> { XBrushes.Black });
-                    values.Add(new List<string>{ Math.Round(Rz[e][2],2).ToString()}); colors.Add(new List<XSolidBrush> { XBrushes.Black });
-                    values.Add(new List<string>{ Math.Round(Rz[e][3],2).ToString()}); colors.Add(new List<XSolidBrush> { XBrushes.Black });
-                    values.Add(new List<string>{ Math.Round(Rz[e][4],2).ToString()}); colors.Add(new List<XSolidBrush> { XBrushes.Black });
+                    if (PS.Count != 0)
+                    {
+                        values.Add(new List<string> { Math.Round(Rz[e][1], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black });
+                        values.Add(new List<string> { Math.Round(Rz[e][2], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black });
+                        values.Add(new List<string> { Math.Round(Rz[e][3], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black });
+                        values.Add(new List<string> { Math.Round(Rz[e][4], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black });
+                    }
                     values.Add(new List<string>{ Math.Round(RMx[e][0], 2).ToString(), Math.Round(RMy[e][0], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black, XBrushes.Black });
-                    values.Add(new List<string>{ Math.Round(RMx[e][1], 2).ToString(), Math.Round(RMy[e][1], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black, XBrushes.Black });
-                    values.Add(new List<string>{ Math.Round(RMx[e][2], 2).ToString(), Math.Round(RMy[e][2], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black, XBrushes.Black });
-                    values.Add(new List<string>{ Math.Round(RMx[e][3], 2).ToString(), Math.Round(RMy[e][3], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black, XBrushes.Black });
-                    values.Add(new List<string>{ Math.Round(RMx[e][4], 2).ToString(), Math.Round(RMy[e][4], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black, XBrushes.Black });
+                    if (PS.Count != 0)
+                    {
+                        values.Add(new List<string> { Math.Round(RMx[e][1], 2).ToString(), Math.Round(RMy[e][1], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black, XBrushes.Black });
+                        values.Add(new List<string> { Math.Round(RMx[e][2], 2).ToString(), Math.Round(RMy[e][2], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black, XBrushes.Black });
+                        values.Add(new List<string> { Math.Round(RMx[e][3], 2).ToString(), Math.Round(RMy[e][3], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black, XBrushes.Black });
+                        values.Add(new List<string> { Math.Round(RMx[e][4], 2).ToString(), Math.Round(RMy[e][4], 2).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black, XBrushes.Black });
+                    }
                     values.Add(new List<string>{ "長期検討" }); colors.Add(new List<XSolidBrush> { XBrushes.Black });
                     values.Add(new List<string>{ Math.Round(PL[e], 1).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black });
                     values.Add(new List<string>{ Math.Round(PaL[e], 1).ToString() }); colors.Add(new List<XSolidBrush> { XBrushes.Black });

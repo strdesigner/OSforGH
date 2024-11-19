@@ -407,9 +407,9 @@ namespace StripFooting
                     var j_text = J[e].ToString("F").Substring(0, Digit((int)(J[e])) + 3);
                     var bar_text = bar[e];
                     var kentei2 = pressure[e] / Ac[e];
-                    var k2_text = kentei2.ToString("F").Substring(0, 4); var k2_color = new XSolidBrush(RGB((1 - Math.Min(kentei2, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                    var k2_text = kentei2.ToString("F").Substring(0, 4) + "     "; var k2_color = new XSolidBrush(RGB((1 - Math.Min(kentei2, 1.0)) * 1.9 / 3.0, 1, 0.5));
                     var kentei = M[e] / Ma[e];
-                    var k_text = kentei.ToString("F").Substring(0, 4); var k_color = new XSolidBrush(RGB((1 - Math.Min(kentei, 1.0)) * 1.9 / 3.0, 1, 0.5));
+                    var k_text = kentei.ToString("F").Substring(0, 4) + "     "; var k_color = new XSolidBrush(RGB((1 - Math.Min(kentei, 1.0)) * 1.9 / 3.0, 1, 0.5));
                     var Rzx_text = (Rz[e] + Sz[e] + Rzx[e]).ToString("F10").Substring(0, Math.Min(((Rz[e] + Sz[e] + Rzx[e]).ToString().Length), Digit((int)(Rz[e] + Sz[e] + Rzx[e])) + 3));
                     var Rzy_text = (Rz[e] + Sz[e] + Rzy[e]).ToString("F10").Substring(0, Math.Min(((Rz[e] + Sz[e] + Rzy[e]).ToString().Length), Digit((int)(Rz[e] + Sz[e] + Rzy[e])) + 3));
                     var Rzx2_text = (Rz[e] + Sz[e] + Rzx2[e]).ToString("F10").Substring(0, Math.Min(((Rz[e] + Sz[e] + Rzx2[e]).ToString().Length), Digit((int)(Rz[e] + Sz[e] + Rzx2[e])) + 3));
@@ -450,7 +450,28 @@ namespace StripFooting
                             gfx.DrawLine(pen, offset_x + label_width + text_width * 3 * j, offset_y + pitchy * (i + 1) + slide, offset_x + label_width + text_width * 3 * (j + 1), offset_y + pitchy * (i + 1) + slide);//横線
                         }
                         var color = XBrushes.Black;
-                        if (i == 11 || i == 19) { color = k2_color; }
+                        if (i == 11) {
+                            color = k2_color;
+                            if (kentei2 <= 1.0)
+                            {
+                                gfx.DrawString("    :O.K.", font, XBrushes.Black, new XRect(offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, text_width * 3, offset_y + pitchy * (i + 1) + slide), XStringFormats.TopCenter);
+                            }
+                            else
+                            {
+                                gfx.DrawString("    :N.G.", font, XBrushes.Black, new XRect(offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, text_width * 3, offset_y + pitchy * (i + 1) + slide), XStringFormats.TopCenter);
+                            }
+                        }
+                        if (i == 19) {
+                            color = k_color;
+                            if (kentei <= 1.0)
+                            {
+                                gfx.DrawString("    :O.K.", font, XBrushes.Black, new XRect(offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, text_width * 3, offset_y + pitchy * (i + 1) + slide), XStringFormats.TopCenter);
+                            }
+                            else
+                            {
+                                gfx.DrawString("    :N.G.", font, XBrushes.Black, new XRect(offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, text_width * 3, offset_y + pitchy * (i + 1) + slide), XStringFormats.TopCenter);
+                            }
+                        }
                         if (values[i] == "なし") { color = XBrushes.Blue; }
                         if (values[i] == "あり") { color = XBrushes.Red; }
                         gfx.DrawString(values[i], font, color, new XRect(offset_x + label_width + text_width * 3 * j, offset_y + pitchy * i + slide, text_width * 3, offset_y + pitchy * (i + 1) + slide), XStringFormats.TopCenter);
