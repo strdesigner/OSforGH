@@ -97,6 +97,7 @@ namespace StripFooting
             pManager.AddNumberParameter("N/A", "N/A", "N/A", GH_ParamAccess.list);
             pManager.AddNumberParameter("e_load", "e_load", "[[element No.,Wx,Wy,Wz],...](DataTree)", GH_ParamAccess.tree);///
             pManager.AddNumberParameter("B number", "B number", "Boundary numbers of each footing", GH_ParamAccess.tree);///
+            pManager.AddBrepParameter("shape", "shape", "base surfaces", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -185,7 +186,7 @@ namespace StripFooting
             DA.GetData("FS", ref fontsize);
             var pdfname = "StripBase"; DA.GetData("outputname", ref pdfname);
 
-            var pressure = new List<double>(); var baseshape = new List<Curve>();
+            var pressure = new List<double>(); var baseshape = new List<Curve>(); var basesurface = new List<Brep>();
             var B = new List<double>(); var T = new List<double>(); var L = new List<double>(); var Rz = new List<double>(); var Sz = new List<double>(); var A = new List<double>();
             var bar = new List<string>(); var M = new List<double>(); var Ma = new List<double>(); var LL = new List<double>(); var Ft = new List<double>(); var J = new List<double>(); var At = new List<double>(); var Ac = new List<double>(); var Ecc = new List<double>(); var Z = new List<double>();
             var Rzx = new List<double>(); var Rzy = new List<double>(); var Rzx2 = new List<double>(); var Rzy2 = new List<double>();
@@ -287,6 +288,7 @@ namespace StripFooting
                             var p1 = r1 + l1 * (b / 2.0 + ecc); var p2 = r2 + l1 * (b / 2.0 + ecc); var p3 = r2 - l1 * (b / 2.0 - ecc); var p4 = r1 - l1 * (b / 2.0 - ecc);
                             var brep = Brep.CreatePlanarBreps(new Polyline(new List<Point3d> { p1, p2, p3, p4, p1 }).ToNurbsCurve(), 0.001)[0];
                             _s.Add(brep);
+                            basesurface.Add(brep);
                         }
                     }
                     text = obj.Attributes.GetUserString(nameD);
@@ -316,6 +318,7 @@ namespace StripFooting
                 }
             }
             DA.SetDataList("base", baseshape);
+            DA.SetDataList("shape", basesurface);
             DA.SetDataList("N/A", pressure); DA.SetDataTree(3, B_number);
             DA.GetDataTree("element_node_relationship", out GH_Structure<GH_Number> _ij);
             var ij = _ij.Branches; GH_Structure<GH_Number> e_load = new GH_Structure<GH_Number>(); int kk = 0;
@@ -385,7 +388,7 @@ namespace StripFooting
                         };
 
                 }
-                var label_width = 105; var offset_x = 25; var offset_y = 25; var pitchy = 11; var text_width = 20; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
+                var label_width = 105; var offset_x = 25; var offset_y = 25; var pitchy = 10; var text_width = 20; PdfPage page = new PdfPage(); page.Size = PageSize.A4;
                 for (int e = 0; e < pressure.Count; e++)
                 {
                     var e_text = e.ToString();

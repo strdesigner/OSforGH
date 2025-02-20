@@ -82,7 +82,7 @@ namespace OpenSeesUtility
             pManager.AddNumberParameter("scale_factor_for_R", "RS", "scale factor for reaction force", GH_ParamAccess.item, 0.1);///
             pManager.AddTextParameter("casename", "casename", "files are named _casename.pdf", GH_ParamAccess.list, new List<string> { "L", "X", "Y", "P" });///
             pManager.AddTextParameter("casememo", "casememo", "load case name in sheets", GH_ParamAccess.list, new List<string> { "(長期荷重時)", "+X荷重時", "+Y荷重時", "接地圧作用時" });///
-            pManager.AddNumberParameter("fontsize", "fontsize", "fontsize", GH_ParamAccess.item, 9);///
+            pManager.AddNumberParameter("fontsize", "fontsize", "fontsize and  titlefontsize", GH_ParamAccess.list, new List<double> { 9, 12 });///
             pManager.AddNumberParameter("linewidth", "linewidth", "linewidth", GH_ParamAccess.item, 1);///
             pManager.AddNumberParameter("pointsize", "pointsize", "pointsize", GH_ParamAccess.item, 2);///
             pManager.AddNumberParameter("jointsize", "jointsize", "jointsize", GH_ParamAccess.item, 3);///
@@ -195,7 +195,8 @@ namespace OpenSeesUtility
                 var qwscale = 0.025; DA.GetData("scale_factor_for_Qw", ref qwscale); var rscale = 0.1; DA.GetData("scale_factor_for_R", ref rscale);
                 var index = new List<double>(); DA.GetDataList("index", index);
                 var index_spring = new List<double>(); DA.GetDataList("index(spring)", index_spring);
-                DA.GetData("fontsize", ref fontsize);
+                var _fontsize = new List<double>();
+                DA.GetDataList("fontsize", _fontsize); var fontsize = _fontsize[0]; var titlefontsize = _fontsize[1];
                 var layer = new List<string>(); var wick = new List<string>(); var wicks = new List<List<string>>(); var wicks2 = new List<List<string>>(); var wicks3 = new List<List<string>>();
                 DA.GetDataTree("spring", out GH_Structure<GH_Number> _spring); var spring = _spring.Branches;
                 DA.GetDataTree("spring_f", out GH_Structure<GH_Number> _spring_f); var spring_f = _spring_f.Branches;
@@ -251,7 +252,7 @@ namespace OpenSeesUtility
                     if (PdfCreate.JapaneseFontResolver.fontset == 0) { PdfSharp.Fonts.GlobalFontSettings.FontResolver = fontresolver; PdfCreate.JapaneseFontResolver.fontset = 1; }
                     // フォントを作成。
                     XFont font = new XFont("Gen Shin Gothic", fontsize, XFontStyle.Regular);
-                    XFont titlefont = new XFont("Gen Shin Gothic", fontsize * 2, XFontStyle.Regular);
+                    XFont titlefont = new XFont("Gen Shin Gothic", titlefontsize, XFontStyle.Regular);
                     XFont fontbold = new XFont("Gen Shin Gothic", fontsize, XFontStyle.Bold);
                     var pen = new XPen(XColors.Black, lw); var penspring = new XPen(XColors.BlueViolet, lw);
                     var pengray = new XPen(XColors.Gray, lw); var pengray2 = new XPen(XColor.FromArgb(60,255,0,0), lw * 0.5);
@@ -306,7 +307,7 @@ namespace OpenSeesUtility
                                         int ni = (int)ij[e][0].Value; int nj = (int)ij[e][1].Value;
                                         var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
                                         var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
-                                        if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                        if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 2e-3 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 2e-3)
                                         {
                                             list.Add(e);
                                             for (int a = 0; a < ij[e].Count; a++) { list.Add(ij[e][a].Value); }
@@ -331,7 +332,7 @@ namespace OpenSeesUtility
                                             int ni = (int)spring[e][0].Value; int nj = (int)spring[e][1].Value;
                                             var ri = new Point3d(R[ni][0].Value, R[ni][1].Value, R[ni][2].Value);
                                             var rj = new Point3d(R[nj][0].Value, R[nj][1].Value, R[nj][2].Value);
-                                            if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 1e-5 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 1e-5)
+                                            if (Math.Abs((p0 - ri).Length + (ri - p1).Length - lgh) < 2e-3 && Math.Abs((p0 - rj).Length + (rj - p1).Length - lgh) < 2e-3)
                                             {
                                                 sflist.Add(e); slist.Add(e);
                                                 for (int ii = 0; ii < spring_f[0].Count; ii++)

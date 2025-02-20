@@ -186,7 +186,7 @@ namespace OpenSeesUtility
                 var shear_w = new List<double>(); DA.GetDataList("shear_w", shear_w);
                 DA.GetDataTree("names", out GH_Structure<GH_String> _names); var names = _names.Branches; DA.GetDataTree("names(shell)", out GH_Structure<GH_String> _names2); var names2 = _names2.Branches; DA.GetDataTree("names(spring)", out GH_Structure<GH_String> _names3); var names3 = _names3.Branches;
                 var pdfname = "TimberCheck"; DA.GetData("outputname", ref pdfname); var scaling = 0.95; DA.GetData("scaling", ref scaling); var offset = 25.0; DA.GetData("offset", ref offset); var offsety = offset * 2; var lw = 1.0; DA.GetData("linewidth", ref lw); var js = 1.0; DA.GetData("jointsize", ref js); var ps = 1.0; DA.GetData("pointsize", ref ps);
-                var _nscale = new List<double>(); var nscale = 0.1; var nscale2 = 0.1;
+                var _nscale = new List<double>(); var nscale = 20.0; var nscale2 = 20.0;
                 DA.GetDataList("scale_factor_for_N", _nscale); nscale = _nscale[0]; nscale2 = _nscale[1];
                 var _qscale = new List<double>(); var qscale = 0.1; var qscale2 = 0.1;
                 DA.GetDataList("scale_factor_for_Q", _qscale); qscale = _qscale[0]; qscale2 = _qscale[1];
@@ -1261,8 +1261,8 @@ namespace OpenSeesUtility
                                 Qymax = Math.Max(Qymax, Math.Abs(sec_f[e][i * 6 + 1 + ii * 18].Value) * qscale); Qzmax = Math.Max(Qzmax, Math.Abs(sec_f[e][i * 6 + 2 + ii * 18].Value) * qscale);
                                 Mxmax = Math.Max(Mxmax, Math.Abs(sec_f[e][i * 6 + 3 + ii * 18].Value) * mscale); Mymax = Math.Max(Mymax, Math.Abs(sec_f[e][i * 6 + 4 + ii * 18].Value) * mscale); Mzmax = Math.Max(Mzmax, Math.Abs(sec_f[e][i * 6 + 5 + ii * 18].Value) * mscale);
                             }
-                            Nmax = Math.Max(Nmax, Math.Max(sec_f[e][0 + ii * 18].Value, Math.Max(-sec_f[e][6 + ii * 18].Value, sec_f[e][12 + ii * 18].Value)) * nscale);
-                            Nmin = Math.Min(Nmin, Math.Min(sec_f[e][0 + ii * 18].Value, Math.Min(-sec_f[e][6 + ii * 18].Value, sec_f[e][12 + ii * 18].Value)) * nscale);
+                            Nmax = Math.Max(Nmax, Math.Max(sec_f[e][0 + ii * 18].Value, Math.Max(-sec_f[e][6 + ii * 18].Value, sec_f[e][12 + ii * 18].Value)));
+                            Nmin = Math.Min(Nmin, Math.Min(sec_f[e][0 + ii * 18].Value, Math.Min(-sec_f[e][6 + ii * 18].Value, sec_f[e][12 + ii * 18].Value)));
                         }
                     }
                     for (int ii = 0; ii < nf / 18; ii++)
@@ -2033,10 +2033,10 @@ namespace OpenSeesUtility
                                     var element = new Line(new Point3d(ri), new Point3d(rj));
                                     var rc = (ri + rj) / 2.0;
                                     var l_ve = rotation(l_vec[nel], rj - ri, angle);
-                                    var Ni = sec_f_new[e][0] * nscale; var Nj = -sec_f_new[e][6] * nscale; var Nc = sec_f_new[e][12] * nscale;
+                                    var Ni = sec_f_new[e][0]; var Nj = -sec_f_new[e][6]; var Nc = sec_f_new[e][12];
                                     var p1 = new Vector2d(r1[0], r1[1]); var p4 = new Vector2d(r2[0], r2[1]); var p2 = p1 + (p4 - p1) / 3.0; var p3 = p1 + (p4 - p1) / 3.0 * 2.0;
                                     var c1 = RGB(Math.Max(0, (1 - (Ni - Nmin) / Math.Max(1e-10, Nmax - Nmin)) * 1.9 / 3.0), 1, 0.5); var c2 = RGB(Math.Max(0, (1 - (Nc - Nmin) / Math.Max(1e-10, Nmax - Nmin)) * 1.9 / 3.0), 1, 0.5); var c3 = RGB(Math.Max(0, (1 - (Nj - Nmin) / Math.Max(1e-10, Nmax - Nmin)) * 1.9 / 3.0), 1, 0.5);
-                                    var pen1 = new XPen(c1, Math.Abs(Ni) / Nmax * 20); var pen2 = new XPen(c2, Math.Abs(Nc) / Nmax * 20); var pen3 = new XPen(c3, Math.Abs(Nj) / Nmax * 20);
+                                    var pen1 = new XPen(c1, Math.Abs(Ni) / Nmax * nscale); var pen2 = new XPen(c2, Math.Abs(Nc) / Nmax * nscale); var pen3 = new XPen(c3, Math.Abs(Nj) / Nmax * nscale);
                                     gfx.DrawLine(pen1, p1.X, p1.Y, p2.X, p2.Y); gfx.DrawLine(pen2, p2.X, p2.Y, p3.X, p3.Y); gfx.DrawLine(pen3, p3.X, p3.Y, p4.X, p4.Y);//
                                     Ni = Math.Round(sec_f_new[e][0], 3); Nc = Math.Round(sec_f_new[e][12], 3); Nj = Math.Round(-sec_f_new[e][6], 3);
                                     if (Math.Abs(Ni) > Nbound) { gfx.DrawString(Ni.ToString().Substring(0, Math.Min(Ni.ToString().Length, 4)), font, XBrushes.Black, (p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0, position[np % 6]); np += 1; }//i端軸力数値
@@ -2083,8 +2083,8 @@ namespace OpenSeesUtility
                     {
                         for (int i = 0; i < spring_f.Count; i++)
                         {
-                            Tmax = Math.Max(Tmax, spring_f[i][ii * 6 + 0].Value * nscale2);
-                            Cmax = Math.Max(Cmax, -spring_f[i][ii * 6 + 0].Value * nscale2);
+                            Tmax = Math.Max(Tmax, spring_f[i][ii * 6 + 0].Value);
+                            Cmax = Math.Max(Cmax, -spring_f[i][ii * 6 + 0].Value);
                             Qymax = Math.Max(Qymax, Math.Abs(spring_f[i][ii * 6 + 1].Value) * qscale2);
                             Qzmax = Math.Max(Qzmax, Math.Abs(spring_f[i][ii * 6 + 2].Value) * qscale2);
                             Mxmax = Math.Max(Mxmax, Math.Abs(spring_f[i][ii * 6 + 3].Value) * mscale2);
@@ -2500,8 +2500,8 @@ namespace OpenSeesUtility
                                         var element = new Line(new Point3d(ri), new Point3d(rj));
                                         var l_ve = rotation(spring_vec[nel], rj - ri, angle);
                                         var p1 = new Vector2d(r1[0], r1[1]); var p2 = new Vector2d(r2[0], r2[1]);
-                                        var c1 = RGB((1 - Math.Min(T * nscale2 / Tmax, 1.0)) * 1.9 / 3.0, 1, 0.5);
-                                        var pen1 = new XPen(c1, T * nscale2 / Tmax * 20); gfx.DrawLine(pen1, p1.X, p1.Y, p2.X, p2.Y);
+                                        var c1 = RGB((1 - Math.Min(T / Tmax, 1.0)) * 1.9 / 3.0, 1, 0.5);
+                                        var pen1 = new XPen(c1, T / Tmax * nscale2); gfx.DrawLine(pen1, p1.X, p1.Y, p2.X, p2.Y);
                                         gfx.DrawString(T.ToString().Substring(0, Math.Min(T.ToString().Length, 4)), font, XBrushes.Black, (p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0, position2[np2 % 6]); np2 += 1;
                                     }
                                 }

@@ -319,6 +319,99 @@ namespace OpenSeesUtility
                     if (D_cb1 == 0) { D_cb1 = D_cb2; }
                     if (D_jt1 == 0) { D_jt1 = D_jt2; }
                     if (D_jb1 == 0) { D_jb1 = D_jb2; }
+                    var DD_it1 = D_it1; var DD_ct1 = D_ct1; var DD_jt1 = D_jt1; var DD_ib1 = D_ib1; var DD_cb1 = D_cb1; var DD_jb1 = D_jb1;
+                    var DD_it2 = D_it2; var DD_ct2 = D_ct2; var DD_jt2 = D_jt2; var DD_ib2 = D_ib2; var DD_cb2 = D_cb2; var DD_jb2 = D_jb2;
+                    var SS_i = S_i; var SS_c = S_c; var SS_j = S_j;
+                    if (SS_i < 16) { SS_i += 1; }
+                    else if (SS_i < 22) { SS_i += 2; }
+                    else if (SS_i < 29) { SS_i += 3; }
+                    else if (SS_i < 35) { SS_i += 4; }
+                    else if (SS_i < 51) { SS_i += 5; }
+                    else { SS_i += 7; }
+                    if (SS_c < 16) { SS_c += 1; }
+                    else if (SS_c < 22) { SS_c += 2; }
+                    else if (SS_c < 29) { SS_c += 3; }
+                    else if (SS_c < 35) { SS_c += 4; }
+                    else if (SS_c < 51) { SS_c += 5; }
+                    else { SS_c += 7; }
+                    if (SS_j < 16) { SS_j += 1; }
+                    else if (SS_j < 22) { SS_j += 2; }
+                    else if (SS_j < 29) { SS_j += 3; }
+                    else if (SS_j < 35) { SS_j += 4; }
+                    else if (SS_j < 51) { SS_j += 5; }
+                    else { SS_j += 7; }
+                    if (DD_it1 < 16) { DD_it1 += 1; }
+                    else if (DD_it1 < 22) {  DD_it1 += 2; }
+                    else if (DD_it1 < 29) { DD_it1 += 3; }
+                    else if (DD_it1 < 35) { DD_it1 += 4; }
+                    else if (DD_it1 < 51) { DD_it1 += 5; }
+                    else { DD_it1 += 7; }
+                    if (DD_ct1 < 16) { DD_ct1 += 1; }
+                    else if (DD_ct1 < 22) { DD_ct1 += 2; }
+                    else if (DD_ct1 < 29) { DD_ct1 += 3; }
+                    else if (DD_ct1 < 35) { DD_ct1 += 4; }
+                    else if (DD_ct1 < 51) { DD_ct1 += 5; }
+                    else { DD_ct1 += 7; }
+                    if (DD_jt1 < 16) { DD_jt1 += 1; }
+                    else if (DD_jt1 < 22) { DD_jt1 += 2; }
+                    else if (DD_jt1 < 29) { DD_jt1 += 3; }
+                    else if (DD_jt1 < 35) { DD_jt1 += 4; }
+                    else if (DD_jt1 < 51) { DD_jt1 += 5; }
+                    else { DD_jt1 += 7; }
+                    if (DD_ib1 < 16) { DD_ib1 += 1; }
+                    else if (DD_ib1 < 22) { DD_ib1 += 2; }
+                    else if (DD_ib1 < 29) { DD_ib1 += 3; }
+                    else if (DD_ib1 < 35) { DD_ib1 += 4; }
+                    else if (DD_ib1 < 51) { DD_ib1 += 5; }
+                    else { DD_ib1 += 7; }
+                    if (DD_cb1 < 16) { DD_cb1 += 1; }
+                    else if (DD_cb1 < 22) { DD_cb1 += 2; }
+                    else if (DD_cb1 < 29) { DD_cb1 += 3; }
+                    else if (DD_cb1 < 35) { DD_cb1 += 4; }
+                    else if (DD_cb1 < 51) { DD_cb1 += 5; }
+                    else { DD_cb1 += 7; }
+                    if (DD_jb1 < 16) { DD_jb1 += 1; }
+                    else if (DD_jb1 < 22) { DD_jb1 += 2; }
+                    else if (DD_jb1 < 29) { DD_jb1 += 3; }
+                    else if (DD_jb1 < 35) { DD_jb1 += 4; }
+                    else if (DD_jb1 < 51) { DD_jb1 += 5; }
+                    else { DD_jb1 += 7; }
+                    if (DD_it2 < 16) { DD_it2 += 1; }
+                    else if (DD_it2 < 22) { DD_it2 += 2; }
+                    else if (DD_it2 < 29) { DD_it2 += 3; }
+                    else if (DD_it2 < 35) { DD_it2 += 4; }
+                    else if (DD_it2 < 51) { DD_it2 += 5; }
+                    else { DD_it2 += 7; }
+                    if (DD_ct2 < 16) { DD_ct2 += 1; }
+                    else if (DD_ct2 < 22) { DD_ct2 += 2; }
+                    else if (DD_ct2 < 29) { DD_ct2 += 3; }
+                    else if (DD_ct2 < 35) { DD_ct2 += 4; }
+                    else if (DD_ct2 < 51) { DD_ct2 += 5; }
+                    else { DD_ct2 += 7; }
+                    if (DD_jt2 < 16) { DD_jt2 += 1; }
+                    else if (DD_jt2 < 22) { DD_jt2 += 2; }
+                    else if (DD_jt2 < 29) { DD_jt2 += 3; }
+                    else if (DD_jt2 < 35) { DD_jt2 += 4; }
+                    else if (DD_jt2 < 51) { DD_jt2 += 5; }
+                    else { DD_jt2 += 7; }
+                    if (DD_ib2 < 16) { DD_ib2 += 1; }
+                    else if (DD_ib2 < 22) { DD_ib2 += 2; }
+                    else if (DD_ib2 < 29) { DD_ib2 += 3; }
+                    else if (DD_ib2 < 35) { DD_ib2 += 4; }
+                    else if (DD_ib2 < 51) { DD_ib2 += 5; }
+                    else { DD_ib2 += 7; }
+                    if (DD_cb2 < 16) { DD_cb2 += 1; }
+                    else if (DD_cb2 < 22) { DD_cb2 += 2; }
+                    else if (DD_cb2 < 29) { DD_cb2 += 3; }
+                    else if (DD_cb2 < 35) { DD_cb2 += 4; }
+                    else if (DD_cb2 < 51) { DD_cb2 += 5; }
+                    else { DD_cb2 += 7; }
+                    if (DD_jb2 < 16) { DD_jb2 += 1; }
+                    else if (DD_jb2 < 22) { DD_jb2 += 2; }
+                    else if (DD_jb2 < 29) { DD_jb2 += 3; }
+                    else if (DD_jb2 < 35) { DD_jb2 += 4; }
+                    else if (DD_jb2 < 51) { DD_jb2 += 5; }
+                    else { DD_jb2 += 7; }
                     Size.Add(new List<string> { ((b).ToString()).Substring(0, Digit((int)b)) + "x" + ((D).ToString()).Substring(0, Digit((int)D)) });
                     var bartextit = (n_it1.ToString()).Substring(0, Digit((int)n_it1)) + "/" + (n_it2.ToString()).Substring(0, Digit((int)n_it2));
                     if (n_it2 < 1) { bartextit = (n_it1.ToString()).Substring(0, Digit((int)n_it1)); }
@@ -360,7 +453,7 @@ namespace OpenSeesUtility
                     var a_it = a_it1 + a_it2;//i端上端筋主筋断面積
                     var ft_itL = (ft_it1L * a_it1 + ft_it2L * a_it2) / a_it;//i端上端筋主筋許容引張応力度(長期)
                     var ft_itS = (ft_it1S * a_it1 + ft_it2S * a_it2) / a_it;//i端上端筋主筋許容引張応力度(短期)
-                    var d_it = ((kT + S_i + D_it1 / 2.0) * a_it1 + (kT + S_i + D_it1 + 25.0 + D_it2 / 2.0) * a_it2) / a_it;//i端の上端より鉄筋重心までの距離
+                    var d_it = ((kT + SS_i + DD_it1 / 2.0) * a_it1 + (kT + SS_i + DD_it1 + 25.0 + DD_it2 / 2.0) * a_it2) / a_it;//i端の上端より鉄筋重心までの距離
 
                     var a_ib1 = n_ib1 * Math.Pow(D_ib1, 2) * Math.PI / 4.0;//i端下端筋1段目主筋断面積
                     var a_ib2 = n_ib2 * Math.Pow(D_ib2, 2) * Math.PI / 4.0;//i端下端筋2段目主筋断面積
@@ -376,7 +469,7 @@ namespace OpenSeesUtility
                     var a_ib = a_ib1 + a_ib2;//i端下端筋主筋断面積
                     var ft_ibL = (ft_ib1L * a_ib1 + ft_ib2L * a_ib2) / a_ib;//i端上端筋主筋許容引張応力度(長期)
                     var ft_ibS = (ft_ib1S * a_ib1 + ft_ib2S * a_ib2) / a_ib;//i端上端筋主筋許容引張応力度(短期)
-                    var d_ib = ((kB + S_i + D_it1 / 2.0) * a_ib1 + (kB + S_i + D_ib1 + 25.0 + D_ib2 / 2.0) * a_ib2) / a_ib;//i端の下端より鉄筋重心までの距離
+                    var d_ib = ((kB + SS_i + DD_it1 / 2.0) * a_ib1 + (kB + SS_i + DD_ib1 + 25.0 + DD_ib2 / 2.0) * a_ib2) / a_ib;//i端の下端より鉄筋重心までの距離
 
                     var gamma_it = a_ib / a_it; var D_it = D - d_it; var dc1_it = d_ib / D_it; var pt_it = a_it / (b * D_it);
                     var xn1_it = pt_it * (Math.Sqrt(Math.Pow(n * (1 + gamma_it) - gamma_it, 2) + 2.0 / pt_it * (n * (1 + gamma_it * dc1_it) - gamma_it * dc1_it)) - (n * (1 + gamma_it) - gamma_it));//RC規準2010 P.123(13.5)
@@ -415,7 +508,7 @@ namespace OpenSeesUtility
                     var a_ct = a_ct1 + a_ct2;//i端上端筋主筋断面積
                     var ft_ctL = (ft_ct1L * a_ct1 + ft_ct2L * a_ct2) / a_ct;//中央上端筋主筋許容引張応力度(長期)
                     var ft_ctS = (ft_ct1S * a_ct1 + ft_ct2S * a_ct2) / a_ct;//中央上端筋主筋許容引張応力度(短期)
-                    var d_ct = ((kT + S_c + D_ct1 / 2.0) * a_ct1 + (kT + S_c + D_ct1 + 25.0 + D_ct2 / 2.0) * a_ct2) / a_ct;//中央の上端より鉄筋重心までの距離
+                    var d_ct = ((kT + SS_c + DD_ct1 / 2.0) * a_ct1 + (kT + SS_c + DD_ct1 + 25.0 + DD_ct2 / 2.0) * a_ct2) / a_ct;//中央の上端より鉄筋重心までの距離
 
                     var a_cb1 = n_cb1 * Math.Pow(D_cb1, 2) * Math.PI / 4.0;//中央下端筋1段目主筋断面積
                     var a_cb2 = n_cb2 * Math.Pow(D_cb2, 2) * Math.PI / 4.0;//中央下端筋2段目主筋断面積
@@ -431,7 +524,7 @@ namespace OpenSeesUtility
                     var a_cb = a_cb1 + a_cb2;//中央下端筋主筋断面積
                     var ft_cbL = (ft_cb1L * a_cb1 + ft_cb2L * a_cb2) / a_cb;//中央下端筋主筋許容引張応力度(長期)
                     var ft_cbS = (ft_cb1S * a_cb1 + ft_cb2S * a_cb2) / a_cb;//中央下端筋主筋許容引張応力度(短期)
-                    var d_cb = ((kB + S_c + D_ct1 / 2.0) * a_cb1 + (kB + S_c + D_cb1 + 25.0 + D_cb2 / 2.0) * a_cb2) / a_cb;//中央の下端より鉄筋重心までの距離
+                    var d_cb = ((kB + SS_c + DD_ct1 / 2.0) * a_cb1 + (kB + SS_c + DD_cb1 + 25.0 + DD_cb2 / 2.0) * a_cb2) / a_cb;//中央の下端より鉄筋重心までの距離
 
                     var gamma_ct = a_cb / a_ct; var D_ct = D - d_ct; var dc1_ct = d_cb / D_ct; var pt_ct = a_ct / (b * D_ct);
                     var xn1_ct = pt_ct * (Math.Sqrt(Math.Pow(n * (1 + gamma_ct) - gamma_ct, 2) + 2.0 / pt_ct * (n * (1 + gamma_ct * dc1_ct) - gamma_ct * dc1_ct)) - (n * (1 + gamma_ct) - gamma_ct));//RC規準2010 P.123(13.5)
@@ -470,7 +563,7 @@ namespace OpenSeesUtility
                     var a_jt = a_jt1 + a_jt2;//j端上端筋主筋断面積
                     var ft_jtL = (ft_jt1L * a_jt1 + ft_jt2L * a_jt2) / a_jt;//j端上端筋主筋許容引張応力度(長期)
                     var ft_jtS = (ft_jt1S * a_jt1 + ft_jt2S * a_jt2) / a_jt;//j端上端筋主筋許容引張応力度(短期)
-                    var d_jt = ((kT + S_j + D_jt1 / 2.0) * a_jt1 + (kT + S_j + D_jt1 + 25.0 + D_jt2 / 2.0) * a_jt2) / a_jt;//i端の上端より鉄筋重心までの距離
+                    var d_jt = ((kT + SS_j + DD_jt1 / 2.0) * a_jt1 + (kT + SS_j + DD_jt1 + 25.0 + DD_jt2 / 2.0) * a_jt2) / a_jt;//i端の上端より鉄筋重心までの距離
 
                     var a_jb1 = n_jb1 * Math.Pow(D_jb1, 2) * Math.PI / 4.0;//j端下端筋1段目主筋断面積
                     var a_jb2 = n_jb2 * Math.Pow(D_jb2, 2) * Math.PI / 4.0;//j端下端筋2段目主筋断面積
@@ -486,7 +579,7 @@ namespace OpenSeesUtility
                     var a_jb = a_jb1 + a_jb2;//j端下端筋主筋断面積
                     var ft_jbL = (ft_jb1L * a_jb1 + ft_jb2L * a_jb2) / a_jb;//j端下端筋主筋許容引張応力度(長期)
                     var ft_jbS = (ft_jb1S * a_jb1 + ft_jb2S * a_jb2) / a_jb;//j端下端筋主筋許容引張応力度(短期)
-                    var d_jb = ((kB + S_j + D_jt1 / 2.0) * a_jb1 + (kB + S_j + D_jb1 + 25.0 + D_jb2 / 2.0) * a_jb2) / a_jb;//j端の下端より鉄筋重心までの距離
+                    var d_jb = ((kB + SS_j + DD_jt1 / 2.0) * a_jb1 + (kB + SS_j + DD_jb1 + 25.0 + DD_jb2 / 2.0) * a_jb2) / a_jb;//j端の下端より鉄筋重心までの距離
 
                     var gamma_jt = a_jb / a_jt; var D_jt = D - d_jt; var dc1_jt = d_jb / D_jt; var pt_jt = a_jt / (b * D_jt);
                     var xn1_jt = pt_jt * (Math.Sqrt(Math.Pow(n * (1 + gamma_jt) - gamma_jt, 2) + 2.0 / pt_jt * (n * (1 + gamma_jt * dc1_jt) - gamma_jt * dc1_jt)) - (n * (1 + gamma_jt) - gamma_jt));//RC規準2010 P.123(13.5)
@@ -571,8 +664,8 @@ namespace OpenSeesUtility
                     var Qa_jLmX = (b * j_j * (2.0 / 3.0 * alpha_jLmX * fsS + 0.5 * wft_jS * (Math.Min(pw_j, 0.012) - 0.002))) * unitf;
                     var Qa_jLmY = (b * j_j * (2.0 / 3.0 * alpha_jLmY * fsS + 0.5 * wft_jS * (Math.Min(pw_j, 0.012) - 0.002))) * unitf;
                     //************************************************************************************************************************************************************
-                    Dt.Add(new List<string> { (d_it.ToString()).Substring(0, Digit((int)d_it)), (d_ct.ToString()).Substring(0, Digit((int)d_ct)), (d_jt.ToString()).Substring(0, Digit((int)d_jt)) });
-                    Db.Add(new List<string> { (d_ib.ToString()).Substring(0, Digit((int)d_ib)), (d_cb.ToString()).Substring(0, Digit((int)d_cb)), (d_jb.ToString()).Substring(0, Digit((int)d_jb)) });
+                    Dt.Add(new List<string> { ( Math.Round(d_it+0.1).ToString()).Substring(0, Digit((int)Math.Round(d_it + 0.1))), (Math.Round(d_ct+0.1).ToString()).Substring(0, Digit((int)Math.Round(d_ct + 0.1))), (Math.Round(d_jt+0.1).ToString()).Substring(0, Digit((int)Math.Round(d_jt + 0.1))) });
+                    Db.Add(new List<string> { (Math.Round(d_ib+0.1).ToString()).Substring(0, Digit((int)Math.Round(d_ib + 0.1))), (Math.Round(d_cb+0.1).ToString()).Substring(0, Digit((int)Math.Round(d_cb + 0.1))), (Math.Round(d_jb+0.1).ToString()).Substring(0, Digit((int)Math.Round(d_jb + 0.1))) });
                     Mt_aL.Add(new List<double> { Ma_itL, Ma_ctL, Ma_jtL }); Mb_aL.Add(new List<double> { Ma_ibL, Ma_cbL, Ma_jbL });
                     Mt_aS.Add(new List<double> { Ma_itS, Ma_ctS, Ma_jtS }); Mb_aS.Add(new List<double> { Ma_ibS, Ma_cbS, Ma_jbS });
                     Q_aL.Add(new List<double> { Qa_iL, Qa_cL, Qa_jL }); Q_aLpX.Add(new List<double> { Qa_iLpX, Qa_cLpX, Qa_jLpX }); Q_aLpY.Add(new List<double> { Qa_iLpY, Qa_cLpY, Qa_jLpY }); Q_aLmX.Add(new List<double> { Qa_iLmX, Qa_cLmX, Qa_jLmX }); Q_aLmY.Add(new List<double> { Qa_iLmY, Qa_cLmY, Qa_jLmY });
