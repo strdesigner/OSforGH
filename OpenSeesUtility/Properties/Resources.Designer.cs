@@ -503,6 +503,16 @@ namespace OpenSeesUtility.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap PrescribedDisplacementAnalysis {
+            get {
+                object obj = ResourceManager.GetObject("PrescribedDisplacementAnalysis", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap rcbeamcheck {
             get {
                 object obj = ResourceManager.GetObject("rcbeamcheck", resourceCulture);
@@ -606,6 +616,16 @@ namespace OpenSeesUtility.Properties {
         internal static System.Drawing.Bitmap readdamper {
             get {
                 object obj = ResourceManager.GetObject("readdamper", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap readdisp {
+            get {
+                object obj = ResourceManager.GetObject("readdisp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

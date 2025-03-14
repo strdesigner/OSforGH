@@ -60,6 +60,8 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\PrescribedDisplacementAnalysis.cs" />
+    <Compile Include="ReadingFromRhino\ReadDisp.cs" />
     <Compile Include="Utility\AnchorBoltCheck.cs" />
     <Compile Include="Utility\AssembleTree.cs" />
     <Compile Include="Utility\AssembleWalls.cs" />
@@ -422,6 +424,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\fromgridpoints2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PrescribedDisplacementAnalysis.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\readdisp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

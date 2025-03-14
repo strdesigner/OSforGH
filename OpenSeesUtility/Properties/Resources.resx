@@ -250,6 +250,9 @@
   <data name="platejoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\platejoint.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="PrescribedDisplacementAnalysis" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PrescribedDisplacementAnalysis.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="rcbeamcheck" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\rcbeamcheck.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -282,6 +285,9 @@
   </data>
   <data name="readdamper" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\readdamper.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="readdisp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\readdisp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="readpoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\readpoint.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
