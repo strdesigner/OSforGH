@@ -60,6 +60,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\Kabecheck2025.cs" />
     <Compile Include="Analysis\PrescribedDisplacementAnalysis.cs" />
     <Compile Include="ReadingFromRhino\ReadDisp.cs" />
     <Compile Include="Utility\AnchorBoltCheck.cs" />
@@ -430,6 +431,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\readdisp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\kabecheck2025.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
