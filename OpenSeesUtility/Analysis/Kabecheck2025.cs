@@ -211,7 +211,9 @@ namespace Kabecheck2025
             List<string> ylayer3 = new List<string>(); if (!DA.GetDataList("wind 3Y", ylayer3)) { ylayer3 = new List<string>(); };
             List<double> P = new List<double> { 0.0, 0.0, 0.0 }; if (!DA.GetDataList("p", P)) { };
             DA.GetData("fontsize", ref fontsize); var pdfname = "wkabe"; DA.GetData("outputname", ref pdfname);
-            string name_K = "K"; if (!DA.GetData("name K", ref name_K)) { }; var eathquakeW = new List<double> { 81.0, 62.0, 36.0 }; if (!DA.GetDataList("for eathquake", eathquakeW)) { }; var windW = 50.0; DA.GetData("for wind", ref windW); var maxW = 50.0; DA.GetData("max W", ref maxW);
+            string name_K = "K"; if (!DA.GetData("name K", ref name_K)) { };
+            List<double> eathquakeW = new List<double> { }; if (!DA.GetDataList("for eathquake", eathquakeW)) { };
+            var windW = 50.0; DA.GetData("for wind", ref windW); var maxW = 50.0; DA.GetData("max W", ref maxW);
             var xy1 = new List<List<double>>(); var xy2 = new List<List<double>>(); var xy3 = new List<List<double>>();
             if (flayer1.Count != 0 && wlayer1.Count != 0)
             {
