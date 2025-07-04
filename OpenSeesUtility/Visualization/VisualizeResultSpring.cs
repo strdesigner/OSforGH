@@ -153,7 +153,7 @@ namespace OpenSeesUtility
                 for (int ind = 0; ind < index.Count; ind++)
                 {
                     int e = (int)index[ind];
-                    Nmax = Math.Max(Nmax, spring_f[e][0].Value * nscale); Nmin = Math.Max(Nmax, spring_f[e][0].Value * nscale);
+                    Nmax = Math.Max(Nmax, spring_f[e][0].Value * nscale); Nmin = Math.Max(Nmin, spring_f[e][0].Value * nscale);
                     Qymax = Math.Max(Qymax, Math.Abs(spring_f[e][1].Value) * nscale);
                     Qzmax = Math.Max(Qzmax, Math.Abs(spring_f[e][2].Value) * nscale);
                     Mxmax = Math.Max(Mxmax, Math.Abs(spring_f[e][3].Value) * mscale);
@@ -236,12 +236,12 @@ namespace OpenSeesUtility
                             _stiffness.Add(text);
                             _pt2.Add((r1 + r2) / 2.0);
                         }
-                        if (on_off2_11 == 1 && N>0)
+                        if (on_off2_11 == 1 && N<0)
                         {
                             var l_ve = rotation(l_vec[ind], r2 - r1, 90);
                             var p1 = r1 - l_ve * N * nscale; var p2 = r2 - l_ve * N * nscale;
                             var mesh = new Mesh(); mesh.Vertices.Add(r1); mesh.Vertices.Add(r2); mesh.Vertices.Add(p2); mesh.Vertices.Add(p1);
-                            var color1 = new ColorHSL((1 - Math.Abs(N * nscale) / Math.Max(1e-10, Nmax)) * 1.9 / 3.0, 1, 0.5);
+                            var color1 = new ColorHSL((1 - Math.Abs(N * nscale) / Math.Max(1e-10, -Nmin)) * 1.9 / 3.0, 1, 0.5);
                             mesh.VertexColors.Add(color1); mesh.VertexColors.Add(color1); mesh.VertexColors.Add(color1); mesh.VertexColors.Add(color1);
                             mesh.Faces.AddFace(0, 1, 2, 3);
                             _mesh.Add(mesh);
@@ -250,12 +250,12 @@ namespace OpenSeesUtility
                                 _pt.Add((p1 + p2) / 2.0); _value.Add(Math.Abs(N)); _funit.Add("kN"); _lunit.Add("");
                             }
                         }
-                        if (on_off2_12 == 1 && N < 0)
+                        if (on_off2_12 == 1 && N > 0)
                         {
                             var l_ve = rotation(l_vec[ind], r2 - r1, 90);
                             var p1 = r1 - l_ve * N * nscale; var p2 = r2 - l_ve * N * nscale;
                             var mesh = new Mesh(); mesh.Vertices.Add(r1); mesh.Vertices.Add(r2); mesh.Vertices.Add(p2); mesh.Vertices.Add(p1);
-                            var color1 = new ColorHSL((1 - Math.Abs(N * nscale) / Math.Max(1e-10, Nmax)) * 1.9 / 3.0, 1, 0.5);
+                            var color1 = new ColorHSL((1 - Math.Abs(N * nscale) / Math.Max(1e-10, Math.Abs(Nmax))) * 1.9 / 3.0, 1, 0.5);
                             mesh.VertexColors.Add(color1); mesh.VertexColors.Add(color1); mesh.VertexColors.Add(color1); mesh.VertexColors.Add(color1);
                             mesh.Faces.AddFace(0, 1, 2, 3);
                             _mesh.Add(mesh);

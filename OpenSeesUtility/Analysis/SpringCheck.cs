@@ -209,133 +209,133 @@ namespace OpenSeesUtility
                         var kN4 = 0.0; var kQy4 = 0.0; var kQz4 = 0.0; var kMy4 = 0.0; var kMz4 = 0.0;
                         var kN5 = 0.0; var kQy5 = 0.0; var kQz5 = 0.0; var kMy5 = 0.0; var kMz5 = 0.0;
                         //L
-                        if (N >= 0)
+                        if (N <= 0)
                         {
-                            if (Na1 != 0) { kN1 = N / Na1 * nvalue; };
+                            if (Na1 != 0) { kN1 = -N / Na1 * nvalue; };
                         }
                         else
                         {
-                            if (Na2 != 0) { kN1 = -N / Na2 * nvalue; };
+                            if (Na2 != 0) { kN1 = N / Na2 * nvalue; };
                         }
-                        if (Qy >= 0)
+                        if (Qy <= 0)
                         {
-                            if (Qya1 != 0) { kQy1 = Qy / Qya1 * nvalue; };
-                        }
-                        else
-                        {
-                            if (Qya2 != 0) { kQy1 = -Qy / Qya2 * nvalue; };
-                        }
-                        if (Qz >= 0)
-                        {
-                            if (Qza1 != 0) { kQz1 = Qz / Qza1 * nvalue; };
+                            if (Qya1 != 0) { kQy1 = -Qy / Qya1 * nvalue; };
                         }
                         else
                         {
-                            if (Qza2 != 0) { kQz1 = -Qz / Qza2 * nvalue; };
+                            if (Qya2 != 0) { kQy1 = Qy / Qya2 * nvalue; };
+                        }
+                        if (Qz <= 0)
+                        {
+                            if (Qza1 != 0) { kQz1 = -Qz / Qza1 * nvalue; };
+                        }
+                        else
+                        {
+                            if (Qza2 != 0) { kQz1 = Qz / Qza2 * nvalue; };
                         }
                         if (Mya != 0) { kMy1 = Math.Abs(My) / Mya * nvalue; }; if (Mza != 0) { kMz1 = Math.Abs(Mz) / Mza * nvalue; };
                         //L+X
-                        if ((N + N_x1) >= 0)
+                        if ((N + N_x1) <= 0)
                         {
-                            if (Na1 != 0) { kN2 = (N + N_x1) / Na1; };
+                            if (Na1 != 0) { kN2 = -(N + N_x1) / Na1; };
                         }
                         else
                         {
-                            if (Na2 != 0) { kN2 = -(N + N_x1) / Na2; };
+                            if (Na2 != 0) { kN2 = (N + N_x1) / Na2; };
                         }
-                        if ((Qy + Qy_x1) >= 0)
+                        if ((Qy + Qy_x1) <= 0)
                         {
-                            if (Qya1 != 0) { kQy2 = (Qy + Qy_x1) / Qya1; };
-                        }
-                        else
-                        {
-                            if (Qya2 != 0) { kQy2 = -(Qy + Qy_x1) / Qya2; };
-                        }
-                        if ((Qz + Qz_x1) >= 0)
-                        {
-                            if (Qza1 != 0) { kQz2 = (Qz + Qz_x1) / Qza1; };
+                            if (Qya1 != 0) { kQy2 = -(Qy + Qy_x1) / Qya1; };
                         }
                         else
                         {
-                            if (Qza2 != 0) { kQz2 = -(Qz + Qz_x1) / Qza2; };
+                            if (Qya2 != 0) { kQy2 = (Qy + Qy_x1) / Qya2; };
+                        }
+                        if ((Qz + Qz_x1) <= 0)
+                        {
+                            if (Qza1 != 0) { kQz2 = -(Qz + Qz_x1) / Qza1; };
+                        }
+                        else
+                        {
+                            if (Qza2 != 0) { kQz2 = (Qz + Qz_x1) / Qza2; };
                         }
                         if (Mya != 0) { kMy2 = Math.Abs(My + My_x1) / Mya; }; if (Mza != 0) { kMz2 = Math.Abs(Mz + Mz_x1) / Mza; };
                         //L+Y
-                        if ((N + N_y1) >= 0)
+                        if ((N + N_y1) <= 0)
                         {
-                            if (Na1 != 0) { kN3 = (N + N_y1) / Na1; };
+                            if (Na1 != 0) { kN3 = -(N + N_y1) / Na1; };
                         }
                         else
                         {
-                            if (Na2 != 0) { kN3 = -(N + N_y1) / Na2; };
+                            if (Na2 != 0) { kN3 = (N + N_y1) / Na2; };
                         }
-                        if ((Qy + Qy_y1) >= 0)
+                        if ((Qy + Qy_y1) <= 0)
                         {
-                            if (Qya1 != 0) { kQy3 = (Qy + Qy_y1) / Qya1; };
-                        }
-                        else
-                        {
-                            if (Qya2 != 0) { kQy3 = -(Qy + Qy_y1) / Qya2; };
-                        }
-                        if ((Qz + Qz_y1) >= 0)
-                        {
-                            if (Qza1 != 0) { kQz3 = (Qz + Qz_y1) / Qza1; };
+                            if (Qya1 != 0) { kQy3 = -(Qy + Qy_y1) / Qya1; };
                         }
                         else
                         {
-                            if (Qza2 != 0) { kQz3 = -(Qz + Qz_y1) / Qza2; };
+                            if (Qya2 != 0) { kQy3 = (Qy + Qy_y1) / Qya2; };
+                        }
+                        if ((Qz + Qz_y1) <= 0)
+                        {
+                            if (Qza1 != 0) { kQz3 = -(Qz + Qz_y1) / Qza1; };
+                        }
+                        else
+                        {
+                            if (Qza2 != 0) { kQz3 = (Qz + Qz_y1) / Qza2; };
                         }
                         if (Mya != 0) { kMy3 = Math.Abs(My + My_y1) / Mya; }; if (Mza != 0) { kMz3 = Math.Abs(Mz + Mz_y1) / Mza; };
                         //L-X
-                        if ((N + N_x2) >= 0)
+                        if ((N + N_x2) <= 0)
                         {
-                            if (Na1 != 0) { kN4 = (N + N_x2) / Na1; };
+                            if (Na1 != 0) { kN4 = -(N + N_x2) / Na1; };
                         }
                         else
                         {
-                            if (Na2 != 0) { kN4 = -(N + N_x2) / Na2; };
+                            if (Na2 != 0) { kN4 = (N + N_x2) / Na2; };
                         }
-                        if ((Qy + Qy_x2) >= 0)
+                        if ((Qy + Qy_x2) <= 0)
                         {
-                            if (Qya1 != 0) { kQy4 = (Qy + Qy_x2) / Qya1; };
-                        }
-                        else
-                        {
-                            if (Qya2 != 0) { kQy4 = -(Qy + Qy_x2) / Qya2; };
-                        }
-                        if ((Qz + Qz_x2) >= 0)
-                        {
-                            if (Qza1 != 0) { kQz4 = (Qz + Qz_x2) / Qza1; };
+                            if (Qya1 != 0) { kQy4 = -(Qy + Qy_x2) / Qya1; };
                         }
                         else
                         {
-                            if (Qza2 != 0) { kQz4 = -(Qz + Qz_x2) / Qza2; };
+                            if (Qya2 != 0) { kQy4 = (Qy + Qy_x2) / Qya2; };
+                        }
+                        if ((Qz + Qz_x2) <= 0)
+                        {
+                            if (Qza1 != 0) { kQz4 = -(Qz + Qz_x2) / Qza1; };
+                        }
+                        else
+                        {
+                            if (Qza2 != 0) { kQz4 = (Qz + Qz_x2) / Qza2; };
                         }
                         if (Mya != 0) { kMy4 = Math.Abs(My + My_x2) / Mya; }; if (Mza != 0) { kMz4 = Math.Abs(Mz + Mz_x2) / Mza; };
                         //L-Y
-                        if ((N + N_y2) >= 0)
+                        if ((N + N_y2) <= 0)
                         {
-                            if (Na1 != 0) { kN5 = (N + N_y2) / Na1; };
+                            if (Na1 != 0) { kN5 = -(N + N_y2) / Na1; };
                         }
                         else
                         {
-                            if (Na2 != 0) { kN5 = -(N + N_y2) / Na2; };
+                            if (Na2 != 0) { kN5 = (N + N_y2) / Na2; };
                         }
-                        if ((Qy + Qy_y2) >= 0)
+                        if ((Qy + Qy_y2) <= 0)
                         {
-                            if (Qya1 != 0) { kQy5 = (Qy + Qy_y2) / Qya1; };
-                        }
-                        else
-                        {
-                            if (Qya2 != 0) { kQy5 = -(Qy + Qy_y2) / Qya2; };
-                        }
-                        if ((Qz + Qz_y2) >= 0)
-                        {
-                            if (Qza1 != 0) { kQz5 = (Qz + Qz_y2) / Qza1; };
+                            if (Qya1 != 0) { kQy5 = -(Qy + Qy_y2) / Qya1; };
                         }
                         else
                         {
-                            if (Qza2 != 0) { kQz5 = -(Qz + Qz_y2) / Qza2; };
+                            if (Qya2 != 0) { kQy5 = (Qy + Qy_y2) / Qya2; };
+                        }
+                        if ((Qz + Qz_y2) <= 0)
+                        {
+                            if (Qza1 != 0) { kQz5 = -(Qz + Qz_y2) / Qza1; };
+                        }
+                        else
+                        {
+                            if (Qza2 != 0) { kQz5 = (Qz + Qz_y2) / Qza2; };
                         }
                         if (Mya != 0) { kMy5 = Math.Abs(My + My_y2) / Mya; }; if (Mza != 0) { kMz5 = Math.Abs(Mz + Mz_y2) / Mza; };
                         var values = new List<List<string>>();

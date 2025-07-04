@@ -260,7 +260,7 @@ namespace OpenSeesUtility
                         {
                             var values = new List<string>();
                             int e = (int)index[j];
-                            values.Add(e.ToString()); values.Add(sec[j]); values.Add("■-" + hozosize[0].ToString() + "x" + hozosize[1].ToString()); values.Add(((A1[j] - A2)).ToString());
+                            values.Add(e.ToString()); values.Add(sec[j]); values.Add("■-" + Math.Round(hozosize[0],0).ToString() + "x" + Math.Round(hozosize[1],0).ToString()); values.Add((Math.Round(A1[j] - A2,0)).ToString());
                             values.Add("長期検討"); values.Add(f1.ToString());
                             values.Add(NaL[j].ToString("F6").Substring(0, Math.Max(4, Digit((int)NaL[j]) + 2)));
                             values.Add(NL[j].ToString("F6").Substring(0, Math.Max(4, Digit((int)NL[j]) + 2)));

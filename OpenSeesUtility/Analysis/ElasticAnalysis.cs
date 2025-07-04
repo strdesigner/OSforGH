@@ -698,9 +698,9 @@ namespace ElasticAnalysis
                             var ry = ue[10, 0] - ue[4, 0];//回転ひずみy
                             var rz = ue[11, 0] - ue[5, 0];//回転ひずみz
                             var N = 0.0; var Qy = 0.0; var Qz = 0.0; var Mx = 0.0; var My = 0.0; var Mz = 0.0;
-                            if (u > 0) { N = kxt * u; } else { N = kxc * u; }//軸力
-                            if (v > 0) { Qy = kyt * v; } else { Qy = kyc * v; }//せん断力y
-                            if (w > 0) { Qz = kzt * w; } else { Qz = kzc * w; }//せん断力z
+                            if (u > 0) { N = -kxt * u; } else { N = -kxc * u; }//軸力
+                            if (v > 0) { Qy = -kyt * v; } else { Qy = -kyc * v; }//せん断力y
+                            if (w > 0) { Qz = -kzt * w; } else { Qz = -kzc * w; }//せん断力z
                             Mx = mx * rx; My = my * ry; Mz = mz * rz;
                             List<GH_Number> flist = new List<GH_Number>();
                             flist.Add(new GH_Number(N)); flist.Add(new GH_Number(Qy)); flist.Add(new GH_Number(Qz)); flist.Add(new GH_Number(Mx)); flist.Add(new GH_Number(My)); flist.Add(new GH_Number(Mz));
