@@ -643,23 +643,23 @@ namespace ElasticAnalysis
                         {
                             double rad = theta * Math.PI / 180; var cs = Math.Cos(rad); var sn = Math.Sin(rad);
                             f_e[0] += -total_load[e][1].Value;///Ni
-                            f_e[1] += -total_load[e][2].Value * cs - total_load[e][3].Value * sn;///Qyi
-                            f_e[2] += -total_load[e][2].Value * sn - total_load[e][3].Value * cs;///Qzi
+                            f_e[1] += -total_load[e][2].Value;// - total_load[e][2].Value * cs - total_load[e][3].Value * sn;///Qyi
+                            f_e[2] += -total_load[e][3].Value;// - total_load[e][2].Value * sn - total_load[e][3].Value * cs;///Qzi
                             f_e[3] += -total_load[e][4].Value;///Mxi
-                            f_e[4] += -total_load[e][5].Value * cs - total_load[e][6].Value * sn;///Myi
-                            f_e[5] += total_load[e][5].Value * sn - total_load[e][6].Value * cs;///Mzi***
+                            f_e[4] += -total_load[e][5].Value;//-total_load[e][5].Value * cs - total_load[e][6].Value * sn;///Myi
+                            f_e[5] += -total_load[e][6].Value;// total_load[e][5].Value * sn - total_load[e][6].Value * cs;///Mzi***
                             f_e[6] += -total_load[e][7].Value;///Nj
-                            f_e[7] += -total_load[e][8].Value * cs - total_load[e][9].Value * sn;///Qyj
-                            f_e[8] += -total_load[e][9].Value * sn - total_load[e][9].Value * cs;///Qzj
+                            f_e[7] += -total_load[e][8].Value;// - total_load[e][8].Value * cs - total_load[e][9].Value * sn;///Qyj
+                            f_e[8] += -total_load[e][9].Value;// - total_load[e][9].Value * sn - total_load[e][9].Value * cs;///Qzj
                             f_e[9] += -total_load[e][10].Value;///Mxj
-                            f_e[10] += -total_load[e][11].Value * cs - total_load[e][12].Value * sn;///Myj
-                            f_e[11] += total_load[e][11].Value * sn - total_load[e][12].Value * cs;///Mzj***
+                            f_e[10] += -total_load[e][11].Value;// - total_load[e][11].Value * cs - total_load[e][12].Value * sn;///Myj
+                            f_e[11] += -total_load[e][12].Value;// total_load[e][11].Value * sn - total_load[e][12].Value * cs;///Mzj***
                             f_e[12] += total_load[e][13].Value;///Nc
-                            f_e[13] += total_load[e][14].Value * cs + total_load[e][15].Value * sn;///Qyc
-                            f_e[14] += total_load[e][14].Value * sn + total_load[e][15].Value * cs;///Qzc
+                            f_e[13] += total_load[e][14].Value;// total_load[e][14].Value * cs + total_load[e][15].Value * sn;///Qyc
+                            f_e[14] += total_load[e][15].Value;// total_load[e][14].Value * sn + total_load[e][15].Value * cs;///Qzc
                             f_e[15] += total_load[e][16].Value;///Mxc
-                            f_e[16] += total_load[e][17].Value * cs + total_load[e][18].Value * sn;///Myc
-                            f_e[17] += -total_load[e][17].Value * sn + total_load[e][18].Value * cs;///Mzc***
+                            f_e[16] += total_load[e][17].Value;// total_load[e][17].Value * cs + total_load[e][18].Value * sn;///Myc
+                            f_e[17] += total_load[e][18].Value;// - total_load[e][17].Value * sn + total_load[e][18].Value * cs;///Mzc***
                         }
                         var f_ei = element_sectional_force(ue, l, 0, E[mat], E[mat] / 2.0 / (1 + poi[mat]), A[sec], Iy[sec], Iz[sec], J[sec]);
                         var f_ej = element_sectional_force(ue, l, l, E[mat], E[mat] / 2.0 / (1 + poi[mat]), A[sec], Iy[sec], Iz[sec], J[sec]);
